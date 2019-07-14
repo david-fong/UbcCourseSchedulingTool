@@ -2,19 +2,20 @@ package org.bse.requirement.operators.unary;
 
 import org.bse.requirement.Requirement;
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.Set;
 
 /**
- * TODO: write documentation.
+ * Threshold is an inclusive lower bound.
  * @param <T>
  */
-public abstract class MatchThreshReq<T> implements Requirement<T> {
+public abstract class MatchThreshReq<T> extends Requirement<Set<T>> {
 
-    protected HashSet<T> candidates;
+    protected final int threshold;
+    protected final Set<T> candidates;
 
-    public MatchThreshReq(Collection<T> candidates) {
-        this.candidates = new HashSet<T>(candidates);
+    public MatchThreshReq(int threshold, Set<T> candidates) {
+        this.threshold  = threshold;
+        this.candidates = candidates;
     }
 
 }

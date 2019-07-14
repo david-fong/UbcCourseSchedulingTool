@@ -1,5 +1,8 @@
 
 # Intellij IDEA:
-.idea/
-*.iml
+/.idea/dictionaries
+/.idea/workspace.*
+/.idea/uiDesigner.*
 
+# Project Compilation Output:
+/out

@@ -23,7 +23,7 @@ public interface FacultyTreeNodeIf {
      * I've never understood what the deal was with
      * "school", "institute", and "centre". Sheesh.
      */
-    public enum FacultyTreeNodeType {
+    enum FacultyTreeNodeType {
         FACULTY,
         SCHOOL,
         // INSTITUTE,

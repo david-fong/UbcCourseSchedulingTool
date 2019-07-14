@@ -2,30 +2,45 @@ package org.bse.requirement.operators.unary;
 
 import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
+import org.bse.requirement.Requirement;
 
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * TODO: write documentation.
  * @param <T>
  */
-public class CountMatchThreshReq<T> extends MatchThreshReq<T> {
+public final class CountMatchThreshReq<T> extends MatchThreshReq<T> {
 
-    private final int threshold;
+    public CountMatchThreshReq(int threshold, Set<T> candidates) {
+        super(threshold, candidates);
+    }
 
-    public CountMatchThreshReq(int threshold, Collection<T> candidates) {
-        super(candidates);
-        this.threshold = threshold;
+    /**
+     * TODO: make this account for the possibility of an [INDETERMINATE] result status.
+     * @param items Items to be checked against one or more complex requirements.
+     * @return
+     */
+    @Override
+    public RequireOpResultStatus requireOf(Set<T> items) {
+        final long countOfMatches = this.candidates.stream()
+                .filter(items::contains)
+                .count();
+        return countOfMatches >= this.threshold
+                ? RequireOpResultStatus.PASSED_REQ
+                : RequireOpResultStatus.FAILED_REQ;
+    }
+
+    // TODO:
+    @Override
+    public RequireOpResult<Set<T>> requireOfVerbose(Set<T> item) {
+        return null;
     }
 
     @Override
-    public RequireOpResultStatus requireOf(T item) {
-        return null; // TODO
-    }
-
-    @Override
-    public RequireOpResult<T> requireOfVerbose(T item) {
-        return null; // TODO
+    public Requirement<Set<T>> copy() {
+        return new CountMatchThreshReq<>(threshold, new HashSet<>(candidates));
     }
 
 }

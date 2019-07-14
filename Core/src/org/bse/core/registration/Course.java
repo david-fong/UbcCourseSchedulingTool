@@ -5,6 +5,10 @@ import org.bse.requirement.Requirement;
 
 import java.util.Set;
 
+/**
+ *
+ * Pretty much an interface but can only be used by extension.
+ */
 public abstract class Course implements CreditValued {
 
     abstract FacultyTreeNodeIf getFacultyTreeNode();
@@ -43,11 +47,9 @@ public abstract class Course implements CreditValued {
         public int getYear() {
             return year;
         }
-
         public int getValue() {
             return value;
         }
-
         public String getSuffix() {
             return suffix;
         }

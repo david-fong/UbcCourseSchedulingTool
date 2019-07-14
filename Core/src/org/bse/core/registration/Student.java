@@ -24,7 +24,7 @@ public final class Student {
         this.name = name;
         this.currentYear = yearOfStudy;
         this.campus = campus;
-        this.previousSchedules = new EnumMap<YearOfStudy, CourseSchedule>(YearOfStudy.class);
+        this.previousSchedules = new EnumMap<>(YearOfStudy.class);
         this.worklists = new HashSet<>();
     }
 
@@ -39,6 +39,9 @@ public final class Student {
     }
     public Map<YearOfStudy, CourseSchedule> getPreviousSchedules() {
         return previousSchedules;
+    }
+    public HashSet<Worklist> getWorklists() {
+        return worklists;
     }
 
 }
