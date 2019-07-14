@@ -13,15 +13,19 @@ import java.time.DayOfWeek;
 public class CourseSectionBlock {
 
     private final CourseSection parentSection;
+    private final boolean isWaitlist;
+
     private final Semester semester;
     private final DayOfWeek dayOfWeek;
     private final BlockRepetition repetitionType;
     private final BlockTimeEnclosure timeEnclosure;
 
-    public CourseSectionBlock(CourseSection parentSection, Semester semester,
-                              DayOfWeek dayOfWeek, BlockRepetition repetitionType,
+    public CourseSectionBlock(CourseSection parentSection, boolean isWaitlist,
+                              Semester semester, DayOfWeek dayOfWeek,
+                              BlockRepetition repetitionType,
                               BlockTimeEnclosure timeEnclosure) {
         this.parentSection = parentSection;
+        this.isWaitlist = isWaitlist;
         this.semester = semester;
         this.dayOfWeek = dayOfWeek;
         this.repetitionType = repetitionType;
@@ -33,11 +37,17 @@ public class CourseSectionBlock {
     public CourseSection getParentSection() {
         return parentSection;
     }
+    public boolean getIsWaitlist() {
+        return isWaitlist;
+    }
     public Semester getSemester() {
         return semester;
     }
     public DayOfWeek getDayOfWeek() {
         return dayOfWeek;
+    }
+    public BlockRepetition getRepetitionType() {
+        return repetitionType;
     }
     public BlockTimeEnclosure getTimeEnclosure() {
         return timeEnclosure;

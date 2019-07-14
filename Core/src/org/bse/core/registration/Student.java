@@ -1,5 +1,6 @@
 package org.bse.core.registration;
 
+import org.bse.core.registration.CourseUtils.UbcCampus;
 import org.bse.core.registration.CourseUtils.YearOfStudy;
 
 import java.util.EnumMap;
@@ -12,16 +13,17 @@ import java.util.Map;
 public final class Student {
 
     private final String name;
-    private final YearOfStudy currentYear;
+    private YearOfStudy currentYear;
+    private UbcCampus campus;
 
     // TODO: discuss alternative of a set, and giving the CourseSchedule class a YearOfStudy field.
     private final EnumMap<YearOfStudy, CourseSchedule> previousSchedules;
+    private final HashSet<Worklist> worklists; // Worklists must not have the same name.
 
-    private final HashSet<Worklist> worklists;
-
-    public Student(String name, YearOfStudy yearOfStudy) {
+    public Student(String name, YearOfStudy yearOfStudy, UbcCampus campus) {
         this.name = name;
         this.currentYear = yearOfStudy;
+        this.campus = campus;
         this.previousSchedules = new EnumMap<YearOfStudy, CourseSchedule>(YearOfStudy.class);
         this.worklists = new HashSet<>();
     }
@@ -31,6 +33,9 @@ public final class Student {
     }
     public YearOfStudy getCurrentYear() {
         return currentYear;
+    }
+    public UbcCampus getCampus() {
+        return campus;
     }
     public Map<YearOfStudy, CourseSchedule> getPreviousSchedules() {
         return previousSchedules;

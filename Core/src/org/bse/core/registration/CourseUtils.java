@@ -5,6 +5,17 @@ package org.bse.core.registration;
  */
 public abstract class CourseUtils {
 
+    public enum UbcCampus {
+        VANCOUVER ("Vancouver"),
+        OKANAGAN  ("Okanagan"),
+        ;
+        public final String name;
+
+        UbcCampus(String name) {
+            this.name = name;
+        }
+    }
+
     public enum CourseType {
         PROGRAM  ("Program"),
         LECTURE  ("Lecture"),

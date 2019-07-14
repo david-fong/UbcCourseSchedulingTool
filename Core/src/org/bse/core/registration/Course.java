@@ -1,12 +1,11 @@
 package org.bse.core.registration;
 
-import org.bse.core.utils.FacultyTreeNodeIf;
 import org.bse.core.utils.HyperlinkBookIf;
 import org.bse.requirement.Requirement;
 
 import java.util.Set;
 
-public abstract class CourseIf implements CreditValued {
+public abstract class Course implements CreditValued {
 
     abstract FacultyTreeNodeIf getFacultyTreeNode();
     abstract CourseCode getCourseCode();
@@ -14,7 +13,6 @@ public abstract class CourseIf implements CreditValued {
 
     abstract String getCourseDescription();
     abstract HyperlinkBookIf getHyperlinkBook();
-    // abstract int getCreditValue();
 
     /**
      *
