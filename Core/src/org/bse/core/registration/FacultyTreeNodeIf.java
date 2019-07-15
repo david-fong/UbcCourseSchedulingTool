@@ -9,27 +9,39 @@ package org.bse.core.registration;
 public interface FacultyTreeNodeIf {
 
     String getNameNoTitle();
+
     String getAbbreviation();
+
     FacultyTreeNodeType getType();
 
-    /* These may return null if they do not apply.
+    /* These must return null if they do not apply.
      * Each node in the returned array of some implementation
      * "A"'s implementation of getChildren must return A.
      */
     FacultyTreeNodeIf getParentNode();
     FacultyTreeNodeIf[] getChildren();
 
+    default FacultyTreeNodeIf recursiveGetParentNode() {
+        if (getParentNode() == null) return this;
+        else return getParentNode().recursiveGetParentNode();
+    }
+
     /**
      * I've never understood what the deal was with
      * "school", "institute", and "centre". Sheesh.
      */
     enum FacultyTreeNodeType {
-        FACULTY,
-        SCHOOL,
+        FACULTY    ("Faculty of "),
+        SCHOOL     ("School of "),
         // INSTITUTE,
         // CENTRE,
-        DEPARTMENT,
+        DEPARTMENT ("Department of "),
         ;
+        public final String title;
+
+        FacultyTreeNodeType(String title) {
+            this.title = title;
+        }
     }
 
 }

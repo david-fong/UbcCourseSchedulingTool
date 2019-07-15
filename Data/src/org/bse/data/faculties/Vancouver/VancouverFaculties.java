@@ -2,6 +2,7 @@ package org.bse.data.faculties.Vancouver;
 
 import org.bse.core.registration.FacultyTreeNodeIf;
 import org.bse.data.faculties.Vancouver.appliedscience.AppliedScienceFaculties;
+import org.bse.data.faculties.Vancouver.science.ScienceFaculties;
 
 import static org.bse.core.registration.FacultyTreeNodeIf.FacultyTreeNodeType.*;
 
@@ -9,17 +10,11 @@ import static org.bse.core.registration.FacultyTreeNodeIf.FacultyTreeNodeType.*;
  * https://www.ubc.ca/our-campuses/vancouver/directories/faculties-schools.html
  */
 public enum VancouverFaculties implements FacultyTreeNodeIf {
+    // TODO: add entries as needed. prefer alphabetical order.
     APSC (FACULTY, "Applied Science", AppliedScienceFaculties.class),
-    // TODO:
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
+    // ...
+    SCIE (FACULTY, "Science", ScienceFaculties.class),
+    // ...
     ;
     private final FacultyTreeNodeType type;
     private final String name;
