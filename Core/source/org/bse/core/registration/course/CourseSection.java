@@ -1,12 +1,18 @@
-package org.bse.core.registration;
+package org.bse.core.registration.course;
 
+
+import org.bse.core.registration.CourseUtils;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents a section of a [Course].
+ * Represents a section of a [Course]. On top of the properties provided by a
+ * [Course], a [CourseSection] includes information on the lecturer, times and
+ * places of meetings, and seating availability and restrictions.
+ *
+ * TODO: add representation of seating.
  */
 public class CourseSection {
 
@@ -14,9 +20,10 @@ public class CourseSection {
     private final SectionCode sectionCode;
     private final HashSet<CourseSectionBlock> blocks;
 
-    public CourseSection(Course parentCourse, SectionCode sectionCode, Collection<CourseSectionBlock> blocks) {
+    public CourseSection(Course parentCourse, SectionCode sectionCode,
+                         Collection<CourseSectionBlock> blocks) {
         this.parentCourse = parentCourse;
-        this.sectionCode = sectionCode;
+        this.sectionCode  = sectionCode;
         this.blocks = new HashSet<>(blocks);
     }
 

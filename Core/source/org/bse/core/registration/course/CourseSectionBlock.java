@@ -1,4 +1,4 @@
-package org.bse.core.registration;
+package org.bse.core.registration.course;
 
 import org.bse.core.registration.CourseUtils.Semester;
 import org.bse.core.registration.CourseUtils.BlockRepetition;

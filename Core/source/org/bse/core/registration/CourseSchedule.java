@@ -1,5 +1,7 @@
 package org.bse.core.registration;
 
+import org.bse.core.registration.course.CourseSectionBlock;
+
 import java.util.HashSet;
 
 public class CourseSchedule {

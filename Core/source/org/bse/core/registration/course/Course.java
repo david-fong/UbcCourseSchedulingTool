@@ -1,5 +1,9 @@
-package org.bse.core.registration;
+package org.bse.core.registration.course;
 
+import org.bse.core.registration.CourseSchedule;
+import org.bse.core.registration.CourseUtils;
+import org.bse.core.registration.CreditValued;
+import org.bse.core.registration.FacultyTreeNodeIf;
 import org.bse.core.utils.HyperlinkBookIf;
 import org.bse.requirement.Requirement;
 

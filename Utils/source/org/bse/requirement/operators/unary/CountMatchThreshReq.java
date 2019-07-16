@@ -4,6 +4,7 @@ import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
 import org.bse.requirement.Requirement;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,6 +42,12 @@ public final class CountMatchThreshReq<T> extends MatchThreshReq<T> {
     @Override
     public Requirement<Set<T>> copy() {
         return new CountMatchThreshReq<>(threshold, new HashSet<>(candidates));
+    }
+
+
+
+    public static <T> CountMatchThreshReq<T> ONLY(T candidate) {
+        return new CountMatchThreshReq<T>(1, Collections.singleton(candidate));
     }
 
 }
