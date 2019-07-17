@@ -2,6 +2,7 @@ package org.bse.core.registration;
 
 import org.bse.core.registration.CourseUtils.UbcCampus;
 import org.bse.core.registration.CourseUtils.YearOfStudy;
+import org.bse.core.registration.scheduler.CourseSchedule;
 
 import java.util.EnumMap;
 import java.util.HashSet;
