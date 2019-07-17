@@ -1,5 +1,14 @@
 package org.bse.core.registration.scheduler;
 
+import org.bse.core.registration.course.Course;
+import org.bse.core.registration.course.CourseSection;
+import org.bse.requirement.Requirement;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * STEP 0. [producer]
  * This step aims to take a program/specialization and generate a collection of all
@@ -66,13 +75,34 @@ package org.bse.core.registration.scheduler;
  * This aim of this step is to produce a collection of all [Schedule]s (collections of
  * [CourseSection]s) that satisfy the user's program/specialization's requirements, and
  * has no time conflicts. This collection will be sorted according to how preferable
- * they are to the user. NOTE: a [Timetable] is a utility class for a [CourseSection] that
- * stores all its blocks in a map from [DayOfWeek]s to collections of non-overlapping
- * [CourseSectionBlock]s.
+ * they are to the user.
  * TODO
  */
-public class Scheduler {
 
+/**
+ * If spiders get to be called spiders because they traverse the web, then I get to
+ * call this thing a [SchedulerMonkey] because it traverses [Requirement] trees.
+ */
+public final class SchedulerMonkey {
 
+    // TODO: narrow down typing bounds:
+    /**
+     * NOTE: "PU" stands for "Possibly Usable" Ie. known to exclude some children
+     * that are known to be impossible to use based on pieces of important information
+     * acquired at a certain point in the Schedule-generating procedure. All fields
+     * of this class should be effectively final (not modified) after they are
+     * initialized.
+     */
+    private Requirement<?> PUProgramReqs;           // Initialized during 0.2.
+
+    private Collection<Set<Course>> PUCourseCombos; // Initialized during 0.4.
+
+    private List<Map.Entry<Course, Set<CourseSection>>> PUCourseSections; // Initialized during 1.0.
+
+    // Used as a more direct representation of a List<VariadicAndRequirement<Set<CourseSection>>>
+    // where the AND requirements children are all CountMatchThreshReq<Set<CourseSection>>> with
+    // thresholds of one, and their respective candidates are all usable [CourseSection]s of the
+    // same parent [Course].
+    private List<Set<Set<CourseSection>>> AllPUPUSectionCombos; // Initialized during 1.1.
 
 }
