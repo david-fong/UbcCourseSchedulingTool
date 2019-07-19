@@ -1,4 +1,4 @@
-package org.bse.requirement.operators.unary;
+package org.bse.requirement.operators.matching;
 
 import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
@@ -56,4 +56,13 @@ public final class CountMatchThreshReq<T> extends MatchThreshReq<T> {
         return new CountMatchThreshReq<>(1, Collections.singleton(candidate));
     }
 
+    @Override
+    public int getNumBarelyPassingCombinations() {
+        return 0; // TODO: can use combination math :D
+    }
+
+    @Override
+    public Set<Set<T>> getAllBarelyPassingCombinations() {
+        return null; // TODO: get all [threshold] sized permutations.
+    }
 }

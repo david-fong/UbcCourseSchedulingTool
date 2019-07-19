@@ -1,4 +1,4 @@
-package org.bse.requirement.operators.variadic;
+package org.bse.requirement.operators.logical;
 
 import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
@@ -14,9 +14,9 @@ import static org.bse.requirement.RequireOpResult.RequireOpResultStatus.PASSED_R
  * TODO
  * @param <T>
  */
-public final class VariadicOrReq<T> extends VariadicLogicalReq<T> {
+public final class VariadicAndReq<T> extends VariadicLogicalReq<T> {
 
-    public VariadicOrReq(Set<Requirement<T>> children) {
+    public VariadicAndReq(Set<Requirement<T>> children) {
         super(children);
     }
 
@@ -24,7 +24,7 @@ public final class VariadicOrReq<T> extends VariadicLogicalReq<T> {
     @Override
     public RequireOpResultStatus requireOf(final T testSubject) {
         boolean success = this.getChildren().stream()
-                .anyMatch(childReq -> childReq.requireOf(testSubject) == PASSED_REQ);
+                .allMatch(childReq -> childReq.requireOf(testSubject) == PASSED_REQ);
         return success ? PASSED_REQ : FAILED_REQ;
     }
 
@@ -36,7 +36,7 @@ public final class VariadicOrReq<T> extends VariadicLogicalReq<T> {
 
     @Override
     public Requirement<T> copy() {
-        return new VariadicOrReq<>(
+        return new VariadicAndReq<>(
                 new HashSet<>(getChildren())
         );
     }

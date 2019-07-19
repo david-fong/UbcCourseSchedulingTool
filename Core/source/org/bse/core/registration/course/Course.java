@@ -34,12 +34,18 @@ public abstract class Course implements CreditValued, CodeStringRegistered {
      * (Ie. [getInstance]) for accessing a singleton instance that is lazily
      * instantiated- as opposed to using a static method of identical function
      * in each [Course] implementation, which cannot be used as part of an
-     * interface. This should help to avoid unnecessary memory consumption.
+     * interface. This should help to avoid unnecessary memory consumption, and
+     * also makes the reasoning about the [equals] method extremely simple: Ie.
+     * we don't have to override anything.
      */
     public static abstract class CourseFactory {
 
         private Course singleton = null;
 
+        /**
+         * @return The singleton instance of the
+         *     [Course] created by this [CourseFactory].
+         */
         public final Course getInstance() {
             return singleton == null
                     ? singleton = createInstance()

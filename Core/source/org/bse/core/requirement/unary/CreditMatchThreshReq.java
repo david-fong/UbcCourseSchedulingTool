@@ -4,10 +4,11 @@ import org.bse.core.registration.CreditValued;
 import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
 import org.bse.requirement.Requirement;
-import org.bse.requirement.operators.unary.MatchThreshReq;
+import org.bse.requirement.operators.matching.MatchThreshReq;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 /**
  * TODO: write documentation.
@@ -15,8 +16,15 @@ import java.util.Set;
  */
 public final class CreditMatchThreshReq<T extends CreditValued> extends MatchThreshReq<T> {
 
+    private final Integer[] candidateCreditValues;
+
     public CreditMatchThreshReq(int threshold, Set<T> candidates) {
         super(threshold, candidates);
+
+        candidateCreditValues = Stream.of(getCandidates())
+                .map(candidate -> ((CreditValued)candidate).getCreditValue())
+                .toArray(Integer[]::new);
+        Arrays.sort(candidateCreditValues, Collections.reverseOrder());
     }
 
     /**
@@ -50,6 +58,32 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends MatchThr
 
     @Override
     public RequireOpResult<Set<T>> excludingPassingTermsFor(final Set<T> givens) {
+        return null;
+    }
+
+    @Override
+    public int getNumBarelyPassingCombinations() {
+        return recursiveCountCombos(this.threshold, 0);
+    }
+    // TODO: test.
+    private int recursiveCountCombos(final int threshold, final int startIdx) {
+        int numPassing = 0;
+        // TODO: think about how to add another conditional to further avoid unnecessary work.
+        if (threshold <= 0) {
+            numPassing++;
+        } else {
+            for (int next = startIdx + 1; next < candidateCreditValues.length; next++) {
+                numPassing += recursiveCountCombos(
+                        threshold - candidateCreditValues[startIdx], next
+                );
+            }
+        }
+        return numPassing;
+
+    }
+
+    @Override
+    public Set<Set<T>> getAllBarelyPassingCombinations() {
         return null;
     }
 
