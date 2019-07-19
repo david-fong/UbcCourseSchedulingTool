@@ -12,6 +12,9 @@ public class RequireOpResult<T> {
     /**
      *
      * @param scope May be null if status is RequireOpResultStatus.PASSED_REQ.
+     *     Otherwise, it should contain a view of the [Requirement] that created
+     *     this [RequireOfResult] that excludes all terms that were not necessary
+     *     not make [testSubject] fail against it.
      * @param percentPassed A double value between zero and one approximating
      *     how close the requireOfVerbose operation that created this object was
      *     to being fulfilled.

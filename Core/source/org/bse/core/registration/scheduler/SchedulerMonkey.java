@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
+/*
  * STEP 0. [producer]
  * This step aims to take a program/specialization and generate a collection of all
  * usable combinations of courses based ONLY ON PREREQUISITES and not on other info
@@ -90,8 +90,10 @@ public final class SchedulerMonkey {
      * NOTE: "PU" stands for "Possibly Usable" Ie. known to exclude some children
      * that are known to be impossible to use based on pieces of important information
      * acquired at a certain point in the Schedule-generating procedure. All fields
-     * of this class should be effectively final (not modified) after they are
-     * initialized.
+     * of this class should be effectively final (not modified or mutated) after they
+     * are initialized.
+     *
+     * TODO: change these from fields to variables in static methods
      */
     private Requirement<?> PUProgramReqs;           // Initialized during 0.2.
 
@@ -104,5 +106,9 @@ public final class SchedulerMonkey {
     // thresholds of one, and their respective candidates are all usable [CourseSection]s of the
     // same parent [Course].
     private List<Set<Set<CourseSection>>> AllPUPUSectionCombos; // Initialized during 1.1.
+
+    static void STEP_0() {
+        return;
+    }
 
 }

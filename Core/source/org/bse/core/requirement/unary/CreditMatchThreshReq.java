@@ -21,13 +21,13 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends MatchThr
 
     /**
      * TODO: make this account for possibility of an [INDETERMINATE] result status.
-     * @param items Items to be checked against one or more complex requirements.
+     * @param testSubject Items to be checked against one or more complex requirements.
      * @return
      */
     @Override
-    public RequireOpResultStatus requireOf(Set<T> items) {
-        final int creditsOfMatching = this.candidates.stream()
-                .filter(items::contains)
+    public RequireOpResultStatus requireOf(final Set<T> testSubject) {
+        final int creditsOfMatching = this.getCandidates().stream()
+                .filter(testSubject::contains)
                 .mapToInt(CreditValued::getCreditValue)
                 .sum();
         return creditsOfMatching >= this.threshold
@@ -37,13 +37,20 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends MatchThr
 
     // TODO:
     @Override
-    public RequireOpResult<Set<T>> requireOfVerbose(Set<T> item) {
+    public RequireOpResult<Set<T>> requireOfVerbose(final Set<T> testSubject) {
         return null;
     }
 
     @Override
     public Requirement<Set<T>> copy() {
-        return new CreditMatchThreshReq<>(threshold, new HashSet<>(candidates));
+        return new CreditMatchThreshReq<>(
+                threshold, new HashSet<>(getCandidates())
+        );
+    }
+
+    @Override
+    public RequireOpResult<Set<T>> excludingPassingTermsFor(final Set<T> givens) {
+        return null;
     }
 
 }

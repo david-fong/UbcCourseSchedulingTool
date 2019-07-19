@@ -2,6 +2,7 @@ package org.bse.requirement.operators.variadic;
 
 import org.bse.requirement.Requirement;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -14,10 +15,14 @@ import java.util.Set;
  */
 public abstract class VariadicLogicalReq<T> extends Requirement<T> {
 
-    protected final Set<Requirement<T>> children;
+    private final Set<Requirement<T>> children;
 
     protected VariadicLogicalReq(Set<Requirement<T>> children) {
-        this.children = children;
+        this.children = Collections.unmodifiableSet(children);
+    }
+
+    protected Set<Requirement<T>> getChildren() {
+        return children;
     }
 
 }

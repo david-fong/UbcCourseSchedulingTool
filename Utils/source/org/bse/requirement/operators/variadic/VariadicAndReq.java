@@ -22,20 +22,28 @@ public final class VariadicAndReq<T> extends VariadicLogicalReq<T> {
 
     // TODO: make this account for the possibility of an [INDETERMINATE] result status.
     @Override
-    public RequireOpResultStatus requireOf(T item) {
-        boolean success = this.children.stream()
-                .allMatch(childReq -> childReq.requireOf(item) == PASSED_REQ);
+    public RequireOpResultStatus requireOf(final T testSubject) {
+        boolean success = this.getChildren().stream()
+                .allMatch(childReq -> childReq.requireOf(testSubject) == PASSED_REQ);
         return success ? PASSED_REQ : FAILED_REQ;
     }
 
     // TODO:
     @Override
-    public RequireOpResult<T> requireOfVerbose(T item) {
+    public RequireOpResult<T> requireOfVerbose(final T testSubject) {
         return null;
     }
 
     @Override
     public Requirement<T> copy() {
-        return new VariadicAndReq<>(new HashSet<>(children));
+        return new VariadicAndReq<>(
+                new HashSet<>(getChildren())
+        );
     }
+
+    @Override
+    public RequireOpResult<T> excludingPassingTermsFor(final T givens) {
+        return null;
+    }
+
 }

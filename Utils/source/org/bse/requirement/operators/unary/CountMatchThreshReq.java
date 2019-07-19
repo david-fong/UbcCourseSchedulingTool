@@ -20,13 +20,13 @@ public final class CountMatchThreshReq<T> extends MatchThreshReq<T> {
 
     /**
      * TODO: make this account for the possibility of an [INDETERMINATE] result status.
-     * @param items Items to be checked against one or more complex requirements.
+     * @param testSubject Items to be checked against one or more complex requirements.
      * @return
      */
     @Override
-    public RequireOpResultStatus requireOf(Set<T> items) {
-        final long countOfMatches = this.candidates.stream()
-                .filter(items::contains)
+    public RequireOpResultStatus requireOf(Set<T> testSubject) {
+        final long countOfMatches = this.getCandidates().stream()
+                .filter(testSubject::contains)
                 .count();
         return countOfMatches >= this.threshold
                 ? RequireOpResultStatus.PASSED_REQ
@@ -35,19 +35,25 @@ public final class CountMatchThreshReq<T> extends MatchThreshReq<T> {
 
     // TODO:
     @Override
-    public RequireOpResult<Set<T>> requireOfVerbose(Set<T> item) {
+    public RequireOpResult<Set<T>> requireOfVerbose(Set<T> testSubject) {
         return null;
     }
 
     @Override
     public Requirement<Set<T>> copy() {
-        return new CountMatchThreshReq<>(threshold, new HashSet<>(candidates));
+        return new CountMatchThreshReq<>(
+                threshold, new HashSet<>(getCandidates())
+        );
+    }
+
+    @Override
+    public RequireOpResult<Set<T>> excludingPassingTermsFor(Set<T> givens) {
+        return null;
     }
 
 
-
     public static <T> CountMatchThreshReq<T> ONLY(T candidate) {
-        return new CountMatchThreshReq<T>(1, Collections.singleton(candidate));
+        return new CountMatchThreshReq<>(1, Collections.singleton(candidate));
     }
 
 }
