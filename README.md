@@ -20,7 +20,7 @@ Create a program where a user can input their program of study, the year, and th
 ##### Data Structures:
 - Courses:
   - Have a faculty
-  - Impose prerequisites and corequisites (ex. labs and tutorials)
+  - Impose prerequisites and co-requisites (ex. labs and tutorials)
 - Course Sections:
   - Have a lecturer
   - Have a semester
@@ -31,5 +31,5 @@ Create a program where a user can input their program of study, the year, and th
   - Matching requirements that require a test subject to contain matches of candidates
 
 ##### Data Data Data:
-- Please see [UbcCourseSpider.java](Data/source/bse/data/spider/UbcCourseSpider.java).
+- Please see [UbcCourseSpider.java](Data/source/bse/data/utils/UbcCourseSpider.java).
 - I am slowly realizing that the task of managing all the data is a fool's goal. For now we can just implement the data that only we will use. Perhaps I need to scale back my vision and look at this project as more of a proof of concept.

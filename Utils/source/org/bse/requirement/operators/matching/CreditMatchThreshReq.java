@@ -1,9 +1,7 @@
-package org.bse.core.requirement.unary;
+package org.bse.requirement.operators.matching;
 
-import org.bse.core.registration.CreditValued;
 import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
-import org.bse.requirement.operators.matching.AbstractMatchThreshReq;
 
 import java.util.Arrays;
 import java.util.Collections;
