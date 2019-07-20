@@ -11,7 +11,10 @@ import java.util.Set;
 
 /**
  *
- * Pretty much an interface but can only be used by extension.
+ * Pretty much an interface that can only be used by extension.
+ * To enforce the singleton pattern, final implementations should configure
+ * themselves as private static inner-classes of a public [CourseFactory] class.
+ * Their constructors should be made private, and should be created lazily.
  */
 public abstract class Course implements CreditValued, CodeStringRegistered {
 
@@ -40,19 +43,13 @@ public abstract class Course implements CreditValued, CodeStringRegistered {
      */
     public static abstract class CourseFactory {
 
-        private Course singleton = null;
+        // private static Course singleton = null;
 
         /**
-         * @return The singleton instance of the
-         *     [Course] created by this [CourseFactory].
+         * @return The singleton instance of the [Course] lazily created by this
+         *     [CourseFactory].
          */
-        public final Course getInstance() {
-            return singleton == null
-                    ? singleton = createInstance()
-                    : singleton;
-        }
-
-        protected abstract Course createInstance();
+        public abstract Course getInstance();
 
     }
 

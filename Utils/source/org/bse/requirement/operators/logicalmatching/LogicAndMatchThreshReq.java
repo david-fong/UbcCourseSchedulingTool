@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Requires all candidate requirements to pass against a test subject to return
- * with a passing status. You can also think of this as a very special instance
+ * Requires all candidate requirements to pass against a test subject in order to
+ * return with a passing status. You can also think of this as a very special instance
  * of a [CountMatchThreshReq] where all the candidates are [MatchThreshReqIf]s, and
  * the threshold is the number of [candidates].
  *

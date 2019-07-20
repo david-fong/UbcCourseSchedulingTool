@@ -3,7 +3,7 @@ package org.bse.core.registration;
 /**
  * TODO: write documentation.
  */
-public abstract class CourseUtils {
+public final class CourseUtils {
 
     public enum UbcCampus {
         VANCOUVER ("Vancouver"),
@@ -40,7 +40,8 @@ public abstract class CourseUtils {
         THIRD_YEAR  ("Third year"),
         FOURTH_YEAR ("Fourth year"),
         FIFTH_YEAR  ("Fifth year"),
-        SIXTH_YEAR  ("Sixth year")
+        SIXTH_YEAR  ("Sixth year"),
+        SEVENTH_YEAR("Seventh year"), // :0
         ;
         public final int value;
         public final String label;

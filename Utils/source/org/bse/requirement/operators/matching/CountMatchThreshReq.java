@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
-    public CountMatchThreshReq(int threshold, Set<T> candidates) throws IllegalArgumentException {
+    public CountMatchThreshReq(int threshold, Set<T> candidates) {
         super(threshold, candidates);
         assert threshold > candidates.size() : "threshold > num provided candidates";
     }

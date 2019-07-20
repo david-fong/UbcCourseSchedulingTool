@@ -11,7 +11,9 @@ import static org.bse.requirement.RequireOpResult.RequireOpResultStatus.FAILED_R
 import static org.bse.requirement.RequireOpResult.RequireOpResultStatus.PASSED_REQ;
 
 /**
- * TODO
+ * Requires only one candidate requirement to pass against a test subject in
+ * order to return with a passing status.
+ *
  * @param <T>
  */
 public class VariadicOrReq<T> extends VariadicLogicalReq<T> {
