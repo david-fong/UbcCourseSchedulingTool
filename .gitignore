@@ -6,3 +6,6 @@
 
 # Project Compilation Output:
 /out
+
+# Project/Module Dependencies:
+/lib
