@@ -29,8 +29,6 @@ public interface Requirement<T> {
     RequireOpResult<T> requireOfVerbose(final T testSubject);
 
     /**
-     * TODO: decide on whether the subclasses should return types the same
-     * as their own type (implementation type and not just [Requirement].
      * @return A deep copy of this [Requirement] object.
      */
     Requirement<T> copy();

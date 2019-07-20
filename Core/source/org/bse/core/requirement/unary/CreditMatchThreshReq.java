@@ -3,18 +3,19 @@ package org.bse.core.requirement.unary;
 import org.bse.core.registration.CreditValued;
 import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
-import org.bse.requirement.Requirement;
-import org.bse.requirement.operators.matching.MatchThreshReq;
+import org.bse.requirement.operators.matching.AbstractMatchThreshReq;
 
-import java.util.*;
-import java.util.function.BiFunction;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
  * TODO: write documentation.
  * @param <T>
  */
-public final class CreditMatchThreshReq<T extends CreditValued> extends MatchThreshReq<T> {
+public final class CreditMatchThreshReq<T extends CreditValued> extends AbstractMatchThreshReq<T> {
 
     private final Integer[] candidateCreditValues;
 
@@ -50,7 +51,7 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends MatchThr
     }
 
     @Override
-    public Requirement<Set<T>> copy() {
+    public CreditMatchThreshReq<T> copy() {
         return new CreditMatchThreshReq<>(
                 threshold, new HashSet<>(getCandidates())
         );

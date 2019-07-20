@@ -6,6 +6,7 @@ import org.bse.requirement.Requirement;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.bse.requirement.RequireOpResult.RequireOpResultStatus.FAILED_REQ;
 import static org.bse.requirement.RequireOpResult.RequireOpResultStatus.PASSED_REQ;
@@ -35,15 +36,16 @@ public class VariadicOrReq<T> extends VariadicLogicalReq<T> {
     }
 
     @Override
-    public Requirement<T> copy() {
-        return new VariadicOrReq<>(
-                new HashSet<>(getChildren())
+    public VariadicOrReq<T> copy() {
+        return new VariadicOrReq<>(getChildren().stream()
+                .map(Requirement::copy)
+                .collect(Collectors.toSet())
         );
     }
 
     @Override
     public RequireOpResult<T> excludingPassingTermsFor(final T givens) {
-        return null;
+        return null; // TODO
     }
 
 }

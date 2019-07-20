@@ -13,16 +13,19 @@ import java.util.Set;
  *
  * @param <T> The type of element to passed to [requireOf] for each .
  */
-public abstract class VariadicLogicalReq<T> implements Requirement<T> {
+abstract class VariadicLogicalReq<T> implements Requirement<T> {
 
     private final Set<Requirement<T>> children;
 
-    public VariadicLogicalReq(Set<? extends Requirement<T>> children) {
+    VariadicLogicalReq(Set<? extends Requirement<T>> children) {
         this.children = Collections.unmodifiableSet(children);
     }
 
-    protected final Set<Requirement<T>> getChildren() {
+    final Set<Requirement<T>> getChildren() {
         return children;
     }
+
+    @Override
+    public abstract VariadicLogicalReq<T> copy();
 
 }

@@ -2,7 +2,6 @@ package org.bse.requirement.operators.matching;
 
 import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
-import org.bse.requirement.Requirement;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,7 +11,7 @@ import java.util.Set;
  * TODO: write documentation.
  * @param <T>
  */
-public final class CountMatchThreshReq<T> extends MatchThreshReq<T> {
+public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
     public CountMatchThreshReq(int threshold, Set<T> candidates) {
         super(threshold, candidates);
@@ -40,7 +39,7 @@ public final class CountMatchThreshReq<T> extends MatchThreshReq<T> {
     }
 
     @Override
-    public Requirement<Set<T>> copy() {
+    public CountMatchThreshReq<T> copy() {
         return new CountMatchThreshReq<>(
                 threshold, new HashSet<>(getCandidates())
         );

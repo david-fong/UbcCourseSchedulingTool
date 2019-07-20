@@ -6,6 +6,7 @@ import org.bse.requirement.Requirement;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.bse.requirement.RequireOpResult.RequireOpResultStatus.FAILED_REQ;
 import static org.bse.requirement.RequireOpResult.RequireOpResultStatus.PASSED_REQ;
@@ -16,7 +17,7 @@ import static org.bse.requirement.RequireOpResult.RequireOpResultStatus.PASSED_R
  */
 public class VariadicAndReq<T> extends VariadicLogicalReq<T> {
 
-    public VariadicAndReq(Set<Requirement<T>> children) {
+    public VariadicAndReq(Set<? extends Requirement<T>> children) {
         super(children);
     }
 
@@ -35,15 +36,16 @@ public class VariadicAndReq<T> extends VariadicLogicalReq<T> {
     }
 
     @Override
-    public Requirement<T> copy() {
-        return new VariadicAndReq<>(
-                new HashSet<>(getChildren())
+    public VariadicAndReq<T> copy() {
+        return new VariadicAndReq<>(getChildren().stream()
+                .map(Requirement::copy)
+                .collect(Collectors.toSet())
         );
     }
 
     @Override
     public RequireOpResult<T> excludingPassingTermsFor(final T givens) {
-        return null;
+        return null; // TODO:
     }
 
 }

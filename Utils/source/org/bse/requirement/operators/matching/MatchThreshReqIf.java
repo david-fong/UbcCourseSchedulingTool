@@ -17,10 +17,13 @@ public interface MatchThreshReqIf<T> extends Requirement<Set<T>> {
 
     /**
      * @return A collection of all combinations of items that can satisfy the passing
-     *     conditions of the implementing [MatchThreshReq] or [LogicalMatchThreshReq].
-     *     No combinations are included that include any more match-items than are
-     *     absolutely necessary to satisfy the implementing [Requirement].
+     *     conditions of the implementing [MatchThreshReqIf]. No combinations should be
+     *     included that include any more match-items than are absolutely necessary to
+     *     satisfy the implementing [MatchThreshReqIf].
      */
     Set<Set<T>> getAllBarelyPassingCombinations();
+
+    @Override
+    MatchThreshReqIf<T> copy();
 
 }
