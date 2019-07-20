@@ -8,37 +8,37 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Requires all candidate requirements to pass against a test subject in order to
- * return with a passing status. You can also think of this as a very special instance
- * of a [CountMatchThreshReq] where all the candidates are [MatchThreshReqIf]s, and
- * the threshold is the number of [candidates].
+ * Requires all child requirements to pass against a test subject in order to
+ * return with a passing status. You can also think of this as a very special
+ * instance of a [CountMatchThreshReq] where all the children are [MatchThreshReqIf]s,
+ * and the threshold is the number of [children].
  *
  * @param <T>
  */
 public final class LogicAndMatchThreshReq<T> extends VariadicAndReq<Set<T>> implements MatchThreshReqIf<T> {
 
-    private final Set<MatchThreshReqIf<T>> candidates;
+    private final Set<MatchThreshReqIf<T>> children;
 
-    public LogicAndMatchThreshReq(Set<MatchThreshReqIf<T>> candidates) {
-        super(candidates);
-        this.candidates = Collections.unmodifiableSet(candidates);
+    public LogicAndMatchThreshReq(Set<MatchThreshReqIf<T>> children) {
+        super(children);
+        this.children = Collections.unmodifiableSet(children);
     }
 
     @Override
     public int getNumBarelyPassingCombinations() {
-        return candidates.stream()
+        return children.stream()
                 .mapToInt(MatchThreshReqIf::getNumBarelyPassingCombinations)
                 .reduce(1, Math::multiplyExact);
     }
 
     @Override
     public Set<Set<T>> getAllBarelyPassingCombinations() {
-        return null; // TODO:
+        return null; // TODO: create all combinations of size [children.size()]
     }
 
     @Override
     public LogicAndMatchThreshReq<T> copy() {
-        return new LogicAndMatchThreshReq<>(candidates.stream()
+        return new LogicAndMatchThreshReq<>(children.stream()
                 .map(MatchThreshReqIf::copy)
                 .collect(Collectors.toSet())
         );

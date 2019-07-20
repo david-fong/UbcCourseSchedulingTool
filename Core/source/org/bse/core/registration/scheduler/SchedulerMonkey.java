@@ -58,17 +58,24 @@ import java.util.Set;
      * items ([Course]s) to a map from those [Course]s to their available sections.
      * Exclude [CourseSection]s that the user cannot register for and report their
      * reasons. Sort entries of this map first by the depth they were found during the
-     * traversal, breaking ties by how many usable sections are available.
+     * traversal, breaking ties by how many usable sections are available. The reasoning
+     * behind this is that depth closely relates to how 'optional' those courses are,
+     * and that the number of sections translates to how non-restrictive the collection
+     * of usable sections is for a course to the user. This information will be used
+     * when generating schedules in this way: the least-optional and most-scheduling-
+     * restrictive courses should be the first to attempt to add to a generating schedule.
+     * By starting with the least-flexible players ([CourseSections]), we can avoid
+     * treading down many unfruitful paths.
      *
      * 1.1. [filter]
      * Translate each combination of (usable) courses produced by [@STEP 0]  into a
-     * [Requirement:CourseSection], which is a single [VariadicAndRequirement] where
-     * the children requirements are each [CountMatchThreshReq]s with a threshold of
-     * one, where the candidates are usable [CourseSection]s with the same [Course]
+     * [MatchThreshReqIf:CourseSection], which is a single [LogicalAndMatchThreshReq]
+     * where the children requirements are each [CountMatchThreshReq]s with a threshold
+     * of one, where the candidates are usable [CourseSection]s with the same [Course]
      * parent, obtained from [@STEP 1.0]. Using these structures is optional since their
-     * meaning is so simple. You could use a list(courses) of sets(sections) instead
-     * of a [Requirement:CourseSection]. Sort those entries of those lists by the
-     * indices of the courses they represent in the list produced by the previous step.
+     * meaning is so simple. You could use a collection(courses) of sets(sections) instead
+     * of a [MatchThreshReqIf:CourseSection]. (Sort those entries of those lists by the
+     * indices of the courses they represent in the list produced by the previous step?)
      * /
  *
  * STEP 2.
@@ -80,18 +87,18 @@ import java.util.Set;
  */
 
 /**
- * If spiders get to be called spiders because they traverse the web, then I get to
- * call this thing a [SchedulerMonkey] because it traverses [Requirement] trees.
+ * If spiders get to be called spiders because they traverse the web,
+ * then I get to call this thing a [SchedulerMonkey] because it traverses
+ * [Requirement] trees.
  */
 public final class SchedulerMonkey {
 
     // TODO: narrow down typing bounds:
     /**
-     * NOTE: "PU" stands for "Possibly Usable" Ie. known to exclude some children
-     * that are known to be impossible to use based on pieces of important information
-     * acquired at a certain point in the Schedule-generating procedure. All fields
-     * of this class should be effectively final (not modified or mutated) after they
-     * are initialized.
+     * NOTE: "PU" stands for "Possibly Usable" Ie. Using all information prior to
+     * initialization, excludes all children that are known to be impossible to use.
+     * All fields of this class should be effectively final (not modified or mutated)
+     * after they are initialized.
      *
      * TODO: change these from fields to variables in static methods
      */

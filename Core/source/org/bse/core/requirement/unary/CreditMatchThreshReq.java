@@ -12,12 +12,13 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * TODO: write documentation.
+ * Requires the sum of the credit values of items matching against certain
+ * candidates to meet a credit threshold.
  * @param <T>
  */
 public final class CreditMatchThreshReq<T extends CreditValued> extends AbstractMatchThreshReq<T> {
 
-    private final Integer[] candidateCreditValues;
+    private final Integer[] candidateCreditValues; // Do not modify or reassign entries.
 
     public CreditMatchThreshReq(int threshold, Set<T> candidates) {
         super(threshold, candidates);

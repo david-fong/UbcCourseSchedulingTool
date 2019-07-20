@@ -14,7 +14,7 @@ import java.util.Set;
  * Pretty much an interface that can only be used by extension.
  * To enforce the singleton pattern, final implementations should configure
  * themselves as private static inner-classes of a public [CourseFactory] class.
- * Their constructors should be made private, and should be created lazily.
+ * Their constructors should be made private, and they should be created lazily.
  */
 public abstract class Course implements CreditValued, CodeStringRegistered {
 

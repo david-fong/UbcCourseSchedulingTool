@@ -21,6 +21,9 @@ public interface MatchThreshReqIf<T> extends Requirement<Set<T>> {
     int getNumBarelyPassingCombinations();
 
     /**
+     * This method has nothing to do with whether a test subject can pass
+     * this [MatchThreshReqIf]'s requirement. Rather, it should generate:
+     *
      * @return A collection of all combinations of items that can satisfy the passing
      *     conditions of the implementing [MatchThreshReqIf]. No combinations should be
      *     included that include any more match-items than are absolutely necessary to
