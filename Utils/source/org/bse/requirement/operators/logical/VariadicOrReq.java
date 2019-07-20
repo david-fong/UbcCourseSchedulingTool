@@ -4,7 +4,6 @@ import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
 import org.bse.requirement.Requirement;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,7 @@ public class VariadicOrReq<T> extends VariadicLogicalReq<T> {
 
     // TODO: make this account for the possibility of an [INDETERMINATE] result status.
     @Override
-    public RequireOpResultStatus requireOf(final T testSubject) {
+    public final RequireOpResultStatus requireOf(final T testSubject) {
         boolean success = this.getChildren().stream()
                 .anyMatch(childReq -> childReq.requireOf(testSubject) == PASSED_REQ);
         return success ? PASSED_REQ : FAILED_REQ;
@@ -31,7 +30,7 @@ public class VariadicOrReq<T> extends VariadicLogicalReq<T> {
 
     // TODO:
     @Override
-    public RequireOpResult<T> requireOfVerbose(final T testSubject) {
+    public final RequireOpResult<T> requireOfVerbose(final T testSubject) {
         return null;
     }
 
@@ -44,7 +43,7 @@ public class VariadicOrReq<T> extends VariadicLogicalReq<T> {
     }
 
     @Override
-    public RequireOpResult<T> excludingPassingTermsFor(final T givens) {
+    public final RequireOpResult<T> excludingPassingTermsFor(final T givens) {
         return null; // TODO
     }
 

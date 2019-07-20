@@ -13,8 +13,9 @@ import java.util.Set;
  */
 public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
-    public CountMatchThreshReq(int threshold, Set<T> candidates) {
+    public CountMatchThreshReq(int threshold, Set<T> candidates) throws IllegalArgumentException {
         super(threshold, candidates);
+        assert threshold > candidates.size() : "threshold > num provided candidates";
     }
 
     /**
@@ -50,11 +51,6 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
         return null;
     }
 
-
-    public static <T> CountMatchThreshReq<T> ONLY(T candidate) {
-        return new CountMatchThreshReq<>(1, Collections.singleton(candidate));
-    }
-
     @Override
     public int getNumBarelyPassingCombinations() {
         return 0; // TODO: can use combination math :D
@@ -64,4 +60,16 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
     public Set<Set<T>> getAllBarelyPassingCombinations() {
         return null; // TODO: get all [threshold] sized permutations.
     }
+
+
+    /**
+     *
+     * @param candidate
+     * @param <T>
+     * @return
+     */
+    public static <T> CountMatchThreshReq<T> ONLY(T candidate) {
+        return new CountMatchThreshReq<>(1, Collections.singleton(candidate));
+    }
+
 }

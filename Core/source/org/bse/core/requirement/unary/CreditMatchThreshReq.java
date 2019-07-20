@@ -21,10 +21,12 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
 
     public CreditMatchThreshReq(int threshold, Set<T> candidates) {
         super(threshold, candidates);
+        Stream<Integer> creditValueStream = Stream.of(getCandidates())
+                .map(candidate -> ((CreditValued)candidate).getCreditValue());
 
-        candidateCreditValues = Stream.of(getCandidates())
-                .map(candidate -> ((CreditValued)candidate).getCreditValue())
-                .toArray(Integer[]::new);
+        assert creditValueStream.reduce(0, (x, y) -> x + y) > threshold
+                : "threshold > sum of all credits of provided candidates";
+        candidateCreditValues = creditValueStream.toArray(Integer[]::new);
         Arrays.sort(candidateCreditValues, Collections.reverseOrder());
     }
 

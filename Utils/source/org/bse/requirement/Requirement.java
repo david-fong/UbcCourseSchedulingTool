@@ -57,15 +57,15 @@ public interface Requirement<T> {
      * A Class for a [Requirement] that always returns with a passing status.
      * @param <T>
      */
-    final class StrictlyPassingReq<T> implements Requirement<T> {
+    class StrictlyPassingReq<T> implements Requirement<T> {
 
         @Override
-        public RequireOpResultStatus requireOf(T testSubject) {
+        public final RequireOpResultStatus requireOf(T testSubject) {
             return RequireOpResultStatus.PASSED_REQ;
         }
 
         @Override
-        public RequireOpResult<T> requireOfVerbose(T testSubject) {
+        public final RequireOpResult<T> requireOfVerbose(T testSubject) {
             return new RequireOpResult<>(
                     null,
                     1.0,
@@ -79,7 +79,7 @@ public interface Requirement<T> {
         }
 
         @Override
-        public RequireOpResult<T> excludingPassingTermsFor(T givens) {
+        public final RequireOpResult<T> excludingPassingTermsFor(T givens) {
             return new RequireOpResult<>(
                     copy(),
                     1.0,
@@ -91,15 +91,15 @@ public interface Requirement<T> {
     /**
      * A Class for a [Requirement] that always returns with a failing status.
      */
-    final class StrictlyFailingReq<T> implements Requirement<T> {
+    class StrictlyFailingReq<T> implements Requirement<T> {
 
         @Override
-        public RequireOpResultStatus requireOf(T testSubject) {
+        public final RequireOpResultStatus requireOf(T testSubject) {
             return RequireOpResultStatus.FAILED_REQ;
         }
 
         @Override
-        public RequireOpResult<T> requireOfVerbose(T testSubject) {
+        public final RequireOpResult<T> requireOfVerbose(T testSubject) {
             return new RequireOpResult<>(
                     copy(),
                     1.0,
@@ -113,7 +113,7 @@ public interface Requirement<T> {
         }
 
         @Override
-        public RequireOpResult<T> excludingPassingTermsFor(T givens) {
+        public final RequireOpResult<T> excludingPassingTermsFor(T givens) {
             return new RequireOpResult<>(
                     copy(),
                     1.0,

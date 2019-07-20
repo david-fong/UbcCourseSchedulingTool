@@ -2,10 +2,15 @@ package org.bse.requirement.operators.matching;
 
 import org.bse.requirement.Requirement;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * TODO:
+ *
+ * Checks should be done in constructors to ensure that the [MatchThreshReqIf] is
+ * not impossible to satisfy from the get-go, and throw an exception if that is the
+ * case.
  */
 public interface MatchThreshReqIf<T> extends Requirement<Set<T>> {
 
@@ -26,4 +31,50 @@ public interface MatchThreshReqIf<T> extends Requirement<Set<T>> {
     @Override
     MatchThreshReqIf<T> copy();
 
+
+    /**
+     * TODO:
+     */
+    final class StrictlyPassingMatchThreshReq<T>
+            extends StrictlyPassingReq<Set<T>>
+            implements MatchThreshReqIf<T> {
+
+        @Override
+        public int getNumBarelyPassingCombinations() {
+            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        public Set<Set<T>> getAllBarelyPassingCombinations() {
+            return null; // TODO: not sure what to do here...
+        }
+
+        @Override
+        public StrictlyPassingMatchThreshReq<T> copy() {
+            return new StrictlyPassingMatchThreshReq<>();
+        }
+    }
+
+    /**
+     * TODO:
+     */
+    final class StrictlyFailingMatchThreshReq<T>
+            extends StrictlyFailingReq<Set<T>>
+            implements MatchThreshReqIf<T> {
+
+        @Override
+        public int getNumBarelyPassingCombinations() {
+            return 0;
+        }
+
+        @Override
+        public Set<Set<T>> getAllBarelyPassingCombinations() {
+            return new HashSet<>(new HashSet<>());
+        }
+
+        @Override
+        public StrictlyFailingMatchThreshReq<T> copy() {
+            return new StrictlyFailingMatchThreshReq<>();
+        }
+    }
 }
