@@ -9,14 +9,14 @@ import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
  *
  * @param <T> The type of element that will be tested against this requirement.
  */
-public abstract class Requirement<T> {
+public interface Requirement<T> {
 
     /**
      *
      * @param testSubject An item to be checked against complex requirements.
      * @return A [RequireOpResultStatus] indicating the result status of the operation.
      */
-    public abstract RequireOpResultStatus requireOf(final T testSubject);
+    RequireOpResultStatus requireOf(final T testSubject);
 
     /**
      *
@@ -26,14 +26,14 @@ public abstract class Requirement<T> {
      *     this [Requirement] object must follow exactly that of this requirement
      *     when used against [testSubject].
      */
-    public abstract RequireOpResult<T> requireOfVerbose(final T testSubject);
+    RequireOpResult<T> requireOfVerbose(final T testSubject);
 
     /**
      * TODO: decide on whether the subclasses should return types the same
      * as their own type (implementation type and not just [Requirement].
      * @return A deep copy of this [Requirement] object.
      */
-    public abstract Requirement<T> copy();
+    Requirement<T> copy();
 
     /**
      * Returns a Requirement that has the exact same behaviour as [this] one for the
@@ -51,7 +51,7 @@ public abstract class Requirement<T> {
      *     behaviour as [this] one when specifically used against the parameter
      *     [givens]. Must not be null.
      */
-    public abstract RequireOpResult<T> excludingPassingTermsFor(T givens);
+    RequireOpResult<T> excludingPassingTermsFor(T givens);
 
 
 
@@ -59,7 +59,7 @@ public abstract class Requirement<T> {
      * A Class for a [Requirement] that always returns with a passing status.
      * @param <T>
      */
-    public static final class StrictlyPassingReq<T> extends Requirement<T> {
+    final class StrictlyPassingReq<T> implements Requirement<T> {
 
         @Override
         public RequireOpResultStatus requireOf(T testSubject) {
@@ -93,7 +93,7 @@ public abstract class Requirement<T> {
     /**
      * A Class for a [Requirement] that always returns with a failing status.
      */
-    public static final class StrictlyFailingReq<T> extends Requirement<T> {
+    final class StrictlyFailingReq<T> implements Requirement<T> {
 
         @Override
         public RequireOpResultStatus requireOf(T testSubject) {

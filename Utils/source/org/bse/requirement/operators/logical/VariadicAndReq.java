@@ -14,7 +14,7 @@ import static org.bse.requirement.RequireOpResult.RequireOpResultStatus.PASSED_R
  * TODO
  * @param <T>
  */
-public final class VariadicAndReq<T> extends VariadicLogicalReq<T> {
+public class VariadicAndReq<T> extends VariadicLogicalReq<T> {
 
     public VariadicAndReq(Set<Requirement<T>> children) {
         super(children);

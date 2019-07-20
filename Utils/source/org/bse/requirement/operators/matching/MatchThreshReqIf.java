@@ -1,11 +1,13 @@
 package org.bse.requirement.operators.matching;
 
+import org.bse.requirement.Requirement;
+
 import java.util.Set;
 
 /**
  * TODO:
  */
-public interface MatchThreshReqIf<T> {
+public interface MatchThreshReqIf<T> extends Requirement<Set<T>> {
 
     /**
      * @return The expected size of the collection that should be returned from the

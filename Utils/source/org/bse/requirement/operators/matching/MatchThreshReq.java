@@ -1,7 +1,5 @@
 package org.bse.requirement.operators.matching;
 
-import org.bse.requirement.Requirement;
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -10,9 +8,7 @@ import java.util.Set;
  * Matching is done through the [equals] method.
  * @param <T>
  */
-public abstract class MatchThreshReq<T>
-        extends       Requirement<Set<T>>
-        implements    MatchThreshReqIf<T> {
+public abstract class MatchThreshReq<T> implements MatchThreshReqIf<T> {
 
     protected final int threshold;
     private final Set<T> candidates;
@@ -22,7 +18,7 @@ public abstract class MatchThreshReq<T>
         this.candidates = Collections.unmodifiableSet(candidates);
     }
 
-    protected Set<T> getCandidates() {
+    protected final Set<T> getCandidates() {
         return candidates;
     }
 
