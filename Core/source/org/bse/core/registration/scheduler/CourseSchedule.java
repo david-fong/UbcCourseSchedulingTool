@@ -27,13 +27,9 @@ public class CourseSchedule {
     }
 
     /**
-     * The operation will fail with a return value of false if any scheduling conflicts
-     * would arise as a result of adding [section] to this [CourseSchedule].
      *
-     * @param section A [CourseSection] to attempt to add to this [CourseSchedule].
-     * @return true if the operation was successful.
      */
-    public boolean addSection(CourseSection section) {
+    public boolean canAddSection(CourseSection section) {
         if (!courseSections.contains(section)) {
             EnumMap<DayOfWeek, Set<CourseSectionBlock>> timetable = timetables.get(section.getSemester());
             for (CourseSectionBlock block : section.getBlocks()) {
@@ -42,7 +38,23 @@ public class CourseSchedule {
                     return false;
                 }
             }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * The operation will fail with a return value of false if any scheduling conflicts
+     * would arise as a result of adding [section] to this [CourseSchedule].
+     *
+     * @param section A [CourseSection] to attempt to add to this [CourseSchedule].
+     * @return true if the operation was successful.
+     */
+    public boolean addSection(CourseSection section) {
+        if (!courseSections.contains(section)) {
             // Success (no conflicts will result from the following operation):
+            EnumMap<DayOfWeek, Set<CourseSectionBlock>> timetable = timetables.get(section.getSemester());
             courseSections.add(section);
             for (CourseSectionBlock block : section.getBlocks()) {
                 timetable.get(block.getDayOfWeek()).add(block);

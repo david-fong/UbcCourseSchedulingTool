@@ -4,6 +4,7 @@ import org.bse.requirement.operators.logical.VariadicAndReq;
 import org.bse.requirement.operators.matching.MatchThreshReqIf;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,15 @@ public final class LogicAndMatchThreshReq<T> extends VariadicAndReq<Set<T>> impl
 
     @Override
     public Set<Set<T>> getAllBarelyPassingCombinations() {
-        return null; // TODO: create all combinations of size [children.size()]
+        List<Set<Set<T>>> childCombos = children.stream()
+                .map(MatchThreshReqIf::getAllBarelyPassingCombinations)
+                .collect(Collectors.toList());
+        return recursiveGenerateBarelyPassingCombinations(0, childCombos);
+        // TODO: create all combinations of size [children.size()]
+    }
+    private Set<Set<T>> recursiveGenerateBarelyPassingCombinations
+            (final int startIdx, final List<Set<Set<T>>> childCombos) {
+        return null; // TODO:
     }
 
     @Override

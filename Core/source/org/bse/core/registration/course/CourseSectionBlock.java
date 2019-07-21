@@ -2,7 +2,6 @@ package org.bse.core.registration.course;
 
 import org.bse.core.registration.CourseUtils.BlockRepetition;
 import org.bse.core.registration.CourseUtils.BlockTime;
-import org.bse.core.registration.CourseUtils.Semester;
 
 import java.time.DayOfWeek;
 

@@ -1,6 +1,5 @@
 package org.bse.core.registration.course;
 
-
 import org.bse.core.registration.CourseUtils.Semester;
 
 import java.util.Collection;

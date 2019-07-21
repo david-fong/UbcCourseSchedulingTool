@@ -24,6 +24,7 @@ import java.util.Set;
      * Do a preliminary check to discontinue further operations if it is immediately
      * known that it is impossible for the user to satisfy the program's required
      * course options based on their prerequisites.
+     * >>> See [Requirement.requireOf]
      *
      * 0.2. [filter]
      * Create a version of the program's co-requisites that excludes all unusable
@@ -33,17 +34,20 @@ import java.util.Set;
      * step has the potential to significantly reduce later workload, especially in
      * the case of elective lists written for multiple specializations like is the
      * case for ECE (unfortunately).
+     * >>> See [Requirement.excludingPassingTermsFor]
      *
      * 0.3. [filter]
      * For any [MatchThresholdReq] nodes in the narrowed [Requirement] that are
      * considerably large after the previous step (such as elective option lists),
      * ask the user to supply further restrictions based on their own preferences,
      * and then go back to the previous step.
+     * >>> See [MatchThreshReqIf.getNumBarelyPassingCombinations]
      *
      * 0.4. [filter]
      * Use the narrowed program [Requirement] to generate a collection of all
      * combinations of usable courses that satisfy the narrowed [Requirement] and do
      * not include any more courses than necessary to do so.
+     * >>> See [MatchThreshReqIf.getAllBarelyPassingCombinations]
      * /
  *
  * STEP 1.
@@ -66,9 +70,10 @@ import java.util.Set;
      * restrictive courses should be the first to attempt to add to a generating schedule.
      * By starting with the least-flexible players ([CourseSections]), we can avoid
      * treading down many unfruitful paths.
+     * >>> See [CourseSchedule.canAddSection]
      *
      * 1.1. [filter]
-     * Translate each combination of (usable) courses produced by [@STEP 0]  into a
+     * Translate each combination of (usable) courses produced by [@STEP 0] into a
      * [MatchThreshReqIf:CourseSection], which is a single [LogicalAndMatchThreshReq]
      * where the children requirements are each [CountMatchThreshReq]s with a threshold
      * of one, where the candidates are usable [CourseSection]s with the same [Course]

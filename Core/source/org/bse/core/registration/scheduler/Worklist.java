@@ -1,6 +1,4 @@
-package org.bse.core.registration;
-
-import org.bse.core.registration.scheduler.CourseSchedule;
+package org.bse.core.registration.scheduler;
 
 /**
  * Wrapper for a [CourseSchedule] object.

@@ -13,7 +13,8 @@ import java.net.URI;
 public abstract class Spider {
 
     protected final Document fetchDocument(URI uri) throws IOException {
-        return Jsoup.connect(uri.toASCIIString()).get();
+        final Document document = Jsoup.connect(uri.toASCIIString()).get();
+        return document;
     }
 
 }
