@@ -27,7 +27,11 @@ public class CourseSchedule {
     }
 
     /**
+     * The operation will fail with a return value of false if any scheduling conflicts
+     * would arise as a result of adding [section] to this [CourseSchedule].
      *
+     * @param section A [CourseSection] to test adding to this [CourseSchedule].
+     * @return true if the operation was successful.
      */
     public boolean canAddSection(CourseSection section) {
         if (!courseSections.contains(section)) {
@@ -52,7 +56,7 @@ public class CourseSchedule {
      * @return true if the operation was successful.
      */
     public boolean addSection(CourseSection section) {
-        if (!courseSections.contains(section)) {
+        if (canAddSection(section)) {
             // Success (no conflicts will result from the following operation):
             EnumMap<DayOfWeek, Set<CourseSectionBlock>> timetable = timetables.get(section.getSemester());
             courseSections.add(section);

@@ -36,7 +36,7 @@ import java.util.Set;
      * case for ECE (unfortunately).
      * >>> See [Requirement.excludingPassingTermsFor]
      *
-     * 0.3. [filter]
+     * 0.3. [control]
      * For any [MatchThresholdReq] nodes in the narrowed [Requirement] that are
      * considerably large after the previous step (such as elective option lists),
      * ask the user to supply further restrictions based on their own preferences,
