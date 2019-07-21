@@ -1,13 +1,13 @@
-package org.bse.data.faculties.Vancouver;
+package org.bse.data.faculties.vancouver;
 
 import org.bse.core.registration.FacultyTreeNodeIf;
-import org.bse.data.faculties.Vancouver.appliedscience.AppliedScienceFaculties;
-import org.bse.data.faculties.Vancouver.science.ScienceFaculties;
 
 import static org.bse.core.registration.FacultyTreeNodeIf.FacultyTreeNodeType.*;
 
 /**
+ * We will go by the hierarchy specified in the second link.
  * https://www.ubc.ca/our-campuses/vancouver/directories/faculties-schools.html
+ * https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments
  */
 public enum VancouverFaculties implements FacultyTreeNodeIf {
     // TODO: add entries as needed. prefer alphabetical order.

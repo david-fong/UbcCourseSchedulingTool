@@ -1,9 +1,9 @@
-package org.bse.data.faculties.Vancouver.appliedscience;
+package org.bse.data.faculties.vancouver;
 
 import org.bse.core.registration.FacultyTreeNodeIf;
 
-public enum EngineeringFacultyTreeNode implements FacultyTreeNodeIf {
-    BMEG("Biomedical"), // Should be "School of"
+public enum AppliedScienceFaculties implements FacultyTreeNodeIf {
+    BMEG("Biomedical"),
     CHML("Chemical and Biological"),
     CIVL("Civil"),
     CPEN("Computer"),
@@ -13,15 +13,15 @@ public enum EngineeringFacultyTreeNode implements FacultyTreeNodeIf {
     GEOE("Geological"),
     IGEN("Integrated"),
     MECH("Mechanical"),
-    MINE("Mining"), // Should be "Keevil Institute of"
+    MINE("Mining"),
     MTRL("Materials"),
     ;
     private final String name;
 
-    EngineeringFacultyTreeNode(String name) {
-        this.name = name + "";
+    AppliedScienceFaculties(String name) {
+        this.name = name + " Engineering";
     }
-    EngineeringFacultyTreeNode(String name, String s) {
+    AppliedScienceFaculties(String name, String s) {
         this.name = name;
     }
 
@@ -42,7 +42,7 @@ public enum EngineeringFacultyTreeNode implements FacultyTreeNodeIf {
 
     @Override
     public FacultyTreeNodeIf getParentNode() {
-        return AppliedScienceFaculties._ENGINEERING_;
+        return VancouverFaculties.APSC;
     }
 
     @Override

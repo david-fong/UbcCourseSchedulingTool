@@ -6,7 +6,7 @@ package org.bse.core.registration;
 public final class CourseUtils {
 
     public enum UbcCampus {
-        VANCOUVER ("Vancouver"),
+        VANCOUVER ("vancouver"),
         OKANAGAN  ("Okanagan"),
         ;
         public final String name;
