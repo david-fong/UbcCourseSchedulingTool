@@ -3,8 +3,10 @@ package org.bse.requirement.operators.matching;
 import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -71,7 +73,31 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
     @Override
     public Set<Set<T>> getAllBarelyPassingCombinations() {
-        return null; // TODO: get all [threshold] sized permutations.
+        return recursiveGetPassingCombinations(
+                threshold, 0, new ArrayList<>(getCandidates())
+        );
+    }
+    private Set<Set<T>> recursiveGetPassingCombinations
+            (final int threshold, final int startIdx, final List<T> children) {
+        // Check break condition:
+        if (threshold == 1) {
+            return Collections.singleton(Collections.singleton(
+                    children.get(startIdx)
+            ));
+        }
+
+        final Set<Set<T>> accumulator = new HashSet<>();
+        for (int i = startIdx + 1; i <= children.size() - threshold; i++) {
+            final Set<Set<T>> subRoot = recursiveGetPassingCombinations(
+                    threshold - 1, startIdx + 1, children
+            );
+            for (Set<T> subCombo : subRoot) {
+                final Set<T> combined = new HashSet<>(subCombo);
+                combined.add(children.get(startIdx));
+                accumulator.add(combined);
+            }
+        }
+        return accumulator;
     }
 
 

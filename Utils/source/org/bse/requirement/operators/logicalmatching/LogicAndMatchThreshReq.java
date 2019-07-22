@@ -54,7 +54,7 @@ public final class LogicAndMatchThreshReq<T> extends VariadicAndReq<Set<T>> impl
         );
         for (Set<T> rootCombo : childCombos.get(startIdx)) {
             for (Set<T> subCombo : subRoot) {
-                Set<T> combined = new HashSet<>(rootCombo);
+                final Set<T> combined = new HashSet<>(rootCombo);
                 combined.addAll(subCombo);
                 accumulator.add(combined);
             }
