@@ -6,13 +6,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO:
+ * An interface for requirements that take a set of test subjects to check that
+ * the sum of some mapping of them to values meets a certain threshold.
  *
- * Checks should be done in constructors to ensure that the [MatchThreshReqIf] is
- * not impossible to satisfy from the get-go, and throw an exception if that is the
- * case.
+ * Checks should be done in constructors to ensure that the [MatchingRequirementIf]
+ * is not impossible to satisfy from the get-go, and throw an exception if that is
+ * the case.
  */
-public interface MatchThreshReqIf<T> extends Requirement<Set<T>> {
+public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
 
     /**
      * @return The expected size of the collection that should be returned from the
@@ -22,17 +23,17 @@ public interface MatchThreshReqIf<T> extends Requirement<Set<T>> {
 
     /**
      * This method has nothing to do with whether a test subject can pass
-     * this [MatchThreshReqIf]'s requirement. Rather, it should generate:
+     * this [MatchingRequirementIf]'s requirement. Rather, it should generate:
      *
      * @return A collection of all combinations of items that can satisfy the passing
-     *     conditions of the implementing [MatchThreshReqIf]. No combinations should be
-     *     included that include any more match-items than are absolutely necessary to
-     *     satisfy the implementing [MatchThreshReqIf].
+     *     conditions of the implementing [MatchingRequirementIf]. No combinations
+     *     should be included that include any more match-items than are absolutely
+     *     necessary to satisfy the implementing [MatchingRequirementIf].
      */
     Set<Set<T>> getAllBarelyPassingCombinations();
 
     @Override
-    MatchThreshReqIf<T> copy();
+    MatchingRequirementIf<T> copy();
 
 
     /**
@@ -40,7 +41,7 @@ public interface MatchThreshReqIf<T> extends Requirement<Set<T>> {
      */
     final class StrictlyPassingMatchThreshReq<T>
             extends StrictlyPassingReq<Set<T>>
-            implements MatchThreshReqIf<T> {
+            implements MatchingRequirementIf<T> {
 
         @Override
         public int getNumBarelyPassingCombinations() {
@@ -63,7 +64,7 @@ public interface MatchThreshReqIf<T> extends Requirement<Set<T>> {
      */
     final class StrictlyFailingMatchThreshReq<T>
             extends StrictlyFailingReq<Set<T>>
-            implements MatchThreshReqIf<T> {
+            implements MatchingRequirementIf<T> {
 
         @Override
         public int getNumBarelyPassingCombinations() {

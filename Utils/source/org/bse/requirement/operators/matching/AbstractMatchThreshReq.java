@@ -8,10 +8,14 @@ import java.util.Set;
  * Matching is done through the [equals] method.
  * @param <T>
  */
-public abstract class AbstractMatchThreshReq<T> implements MatchThreshReqIf<T> {
+public abstract class AbstractMatchThreshReq<T> implements MatchingRequirementIf<T> {
 
     protected final int threshold;
     private final Set<T> candidates;
+
+    public final int getThreshold() {
+        return threshold;
+    }
 
     public AbstractMatchThreshReq(int threshold, Set<T> candidates) {
         this.threshold  = threshold;

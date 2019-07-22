@@ -1,7 +1,7 @@
 package org.bse.requirement.operators.logicalmatching;
 
 import org.bse.requirement.operators.logical.VariadicAndReq;
-import org.bse.requirement.operators.matching.MatchThreshReqIf;
+import org.bse.requirement.operators.matching.MatchingRequirementIf;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,16 +12,16 @@ import java.util.stream.Collectors;
 /**
  * Requires all child requirements to pass against a test subject in order to
  * return with a passing status. You can also think of this as a very special
- * instance of a [CountMatchThreshReq] where all the children are [MatchThreshReqIf]s,
+ * instance of a [CountMatchThreshReq] where all the children are [MatchingRequirementIf]s,
  * and the threshold is the number of [children].
  *
  * @param <T>
  */
-public final class LogicAndMatchThreshReq<T> extends VariadicAndReq<Set<T>> implements MatchThreshReqIf<T> {
+public final class LogicAndMatchReq<T> extends VariadicAndReq<Set<T>> implements MatchingRequirementIf<T> {
 
-    private final Set<MatchThreshReqIf<T>> children;
+    private final Set<MatchingRequirementIf<T>> children;
 
-    public LogicAndMatchThreshReq(Set<MatchThreshReqIf<T>> children) {
+    public LogicAndMatchReq(Set<MatchingRequirementIf<T>> children) {
         super(children);
         this.children = Collections.unmodifiableSet(children);
     }
@@ -29,14 +29,14 @@ public final class LogicAndMatchThreshReq<T> extends VariadicAndReq<Set<T>> impl
     @Override
     public int getNumBarelyPassingCombinations() {
         return children.stream()
-                .mapToInt(MatchThreshReqIf::getNumBarelyPassingCombinations)
+                .mapToInt(MatchingRequirementIf::getNumBarelyPassingCombinations)
                 .reduce(1, Math::multiplyExact);
     }
 
     @Override
     public Set<Set<T>> getAllBarelyPassingCombinations() {
         List<Set<Set<T>>> childCombos = children.stream()
-                .map(MatchThreshReqIf::getAllBarelyPassingCombinations)
+                .map(MatchingRequirementIf::getAllBarelyPassingCombinations)
                 .collect(Collectors.toList());
         childCombos = Collections.unmodifiableList(childCombos);
         return recursiveGetPassingCombinations(0, childCombos);
@@ -63,9 +63,9 @@ public final class LogicAndMatchThreshReq<T> extends VariadicAndReq<Set<T>> impl
     }
 
     @Override
-    public LogicAndMatchThreshReq<T> copy() {
-        return new LogicAndMatchThreshReq<>(children.stream()
-                .map(MatchThreshReqIf::copy)
+    public LogicAndMatchReq<T> copy() {
+        return new LogicAndMatchReq<>(children.stream()
+                .map(MatchingRequirementIf::copy)
                 .collect(Collectors.toSet())
         );
     }

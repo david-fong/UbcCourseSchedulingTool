@@ -10,7 +10,7 @@ import org.bse.requirement.Requirement;
 import java.util.Set;
 
 /**
- * In interface that can only be used by extension.
+ * An interface that can only be used by extension (mwahaha).
  *
  * To enforce the lazy singleton pattern, final (non-abstract) implementations
  * should be public with private constructors, and define a public static method

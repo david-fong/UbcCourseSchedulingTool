@@ -1,11 +1,11 @@
 package org.bse.data.utils.spider;
 
 import org.bse.core.registration.course.Course;
-import org.bse.requirement.operators.logicalmatching.LogicAndMatchThreshReq;
-import org.bse.requirement.operators.logicalmatching.LogicOrMatchThreshReq;
+import org.bse.requirement.operators.logicalmatching.LogicAndMatchReq;
+import org.bse.requirement.operators.logicalmatching.LogicOrMatchReq;
 import org.bse.requirement.operators.matching.CountMatchThreshReq;
 import org.bse.requirement.operators.matching.CreditMatchThreshReq;
-import org.bse.requirement.operators.matching.MatchThreshReqIf;
+import org.bse.requirement.operators.matching.MatchingRequirementIf;
 
 import java.util.Set;
 
@@ -14,12 +14,12 @@ import java.util.Set;
  */
 public final class CourseReqMacros {
 
-    public static LogicAndMatchThreshReq<Course> AND(MatchThreshReqIf<Course>... children) {
-        return new LogicAndMatchThreshReq<>(Set.of(children));
+    public static LogicAndMatchReq<Course> AND(MatchingRequirementIf<Course>... children) {
+        return new LogicAndMatchReq<>(Set.of(children));
     }
 
-    public static LogicOrMatchThreshReq<Course> OR(MatchThreshReqIf<Course>... children) {
-        return new LogicOrMatchThreshReq<>(Set.of(children));
+    public static LogicOrMatchReq<Course> OR(MatchingRequirementIf<Course>... children) {
+        return new LogicOrMatchReq<>(Set.of(children));
     }
 
     public static CountMatchThreshReq<Course> COUNT_REQ(int countThreshold, Course... candidates) {

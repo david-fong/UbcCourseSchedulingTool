@@ -1,7 +1,7 @@
 package org.bse.requirement.operators.logicalmatching;
 
 import org.bse.requirement.operators.logical.VariadicOrReq;
-import org.bse.requirement.operators.matching.MatchThreshReqIf;
+import org.bse.requirement.operators.matching.MatchingRequirementIf;
 
 import java.util.Collections;
 import java.util.Set;
@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
  * Requires only one child requirement to pass against a test subject in
  * order to return with a passing status. You can also think of this as a
  * very special instance of a [CountMatchThreshReq] where all the children
- * are [MatchThreshReqIf]s, and the threshold is one.
+ * are [MatchingRequirementIf]s, and the threshold is one.
  *
  * @param <T>
  */
-public final class LogicOrMatchThreshReq<T> extends VariadicOrReq<Set<T>> implements MatchThreshReqIf<T> {
+public final class LogicOrMatchReq<T> extends VariadicOrReq<Set<T>> implements MatchingRequirementIf<T> {
 
-    private final Set<MatchThreshReqIf<T>> children;
+    private final Set<MatchingRequirementIf<T>> children;
 
-    public LogicOrMatchThreshReq(Set<MatchThreshReqIf<T>> children) {
+    public LogicOrMatchReq(Set<MatchingRequirementIf<T>> children) {
         super(children);
         this.children = Collections.unmodifiableSet(children);
     }
@@ -27,22 +27,22 @@ public final class LogicOrMatchThreshReq<T> extends VariadicOrReq<Set<T>> implem
     @Override
     public int getNumBarelyPassingCombinations() {
         return children.stream()
-                .mapToInt(MatchThreshReqIf::getNumBarelyPassingCombinations)
+                .mapToInt(MatchingRequirementIf::getNumBarelyPassingCombinations)
                 .sum();
     }
 
     @Override
     public Set<Set<T>> getAllBarelyPassingCombinations() {
         return children.stream()
-                .map(MatchThreshReqIf::getAllBarelyPassingCombinations)
+                .map(MatchingRequirementIf::getAllBarelyPassingCombinations)
                 .flatMap(Set::stream)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public LogicOrMatchThreshReq<T> copy() {
-        return new LogicOrMatchThreshReq<>(children.stream()
-                .map(MatchThreshReqIf::copy)
+    public LogicOrMatchReq<T> copy() {
+        return new LogicOrMatchReq<>(children.stream()
+                .map(MatchingRequirementIf::copy)
                 .collect(Collectors.toSet())
         );
     }

@@ -41,13 +41,13 @@ import java.util.Set;
      * considerably large after the previous step (such as elective option lists),
      * ask the user to supply further restrictions based on their own preferences,
      * and then go back to the previous step.
-     * >>> See [MatchThreshReqIf.getNumBarelyPassingCombinations]
+     * >>> See [MatchingRequirementIf.getNumBarelyPassingCombinations]
      *
      * 0.4. [filter]
      * Use the narrowed program [Requirement] to generate a collection of all
      * combinations of usable courses that satisfy the narrowed [Requirement] and do
      * not include any more courses than necessary to do so.
-     * >>> See [MatchThreshReqIf.getAllBarelyPassingCombinations]
+     * >>> See [MatchingRequirementIf.getAllBarelyPassingCombinations]
      * /
  *
  * STEP 1.
@@ -74,12 +74,12 @@ import java.util.Set;
      *
      * 1.1. [filter]
      * Translate each combination of (usable) courses produced by [@STEP 0] into a
-     * [MatchThreshReqIf:CourseSection], which is a single [LogicalAndMatchThreshReq]
+     * [MatchingRequirementIf:CourseSection], which is a single [LogicalAndMatchThreshReq]
      * where the children requirements are each [CountMatchThreshReq]s with a threshold
      * of one, where the candidates are usable [CourseSection]s with the same [Course]
      * parent, obtained from [@STEP 1.0]. Using these structures is optional since their
      * meaning is so simple. You could use a collection(courses) of sets(sections) instead
-     * of a [MatchThreshReqIf:CourseSection]. (Sort those entries of those lists by the
+     * of a [MatchingRequirementIf:CourseSection]. (Sort those entries of those lists by the
      * indices of the courses they represent in the list produced by the previous step?)
      * /
  *
