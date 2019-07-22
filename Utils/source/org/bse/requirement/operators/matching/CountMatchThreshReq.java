@@ -53,7 +53,20 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
     @Override
     public int getNumBarelyPassingCombinations() {
-        return 0; // TODO: can use combination math :D
+        // constructor assertions ensure this calculation is correct.
+        final int n = getCandidates().size();
+//        BigInteger numCombinations = BigInteger.ONE;
+//        for (int i = 0; i < n - threshold; i++) {
+//            numCombinations = numCombinations.multiply(BigInteger.valueOf(n - i));
+//            numCombinations = numCombinations.divide(BigInteger.valueOf(i + i));
+//        }
+//        return numCombinations.intValue();
+        long numCombinations = 1;
+        for (int i = 0; i < n - threshold; i++) {
+            numCombinations *= n - i;
+            numCombinations /= i + i;
+        }
+        return (int)numCombinations;
     }
 
     @Override
