@@ -1,8 +1,12 @@
 package org.bse.data.utils.spider;
 
+import org.bse.data.DataMain;
+import org.bse.data.courses.vancouver.VancouverCoursesPackageMarker;
+import org.bse.data.faculties.vancouver.VancouverFaculties;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
@@ -12,9 +16,25 @@ import java.net.URI;
  */
 public abstract class Spider {
 
+    public static final File VAN_FACULTIES_DIR = getSourceDir(VancouverFaculties.class);
+    public static final File VAN_COURSES_DIR = getSourceDir(VancouverCoursesPackageMarker.class);
+
     protected final Document fetchDocument(URI uri) throws IOException {
-        final Document document = Jsoup.connect(uri.toASCIIString()).get();
-        return document;
+        return Jsoup.connect(uri.toASCIIString()).get();
+    }
+
+    /**
+     * This should not have any package name conflicts since all the packages are
+     * anchored with the module name as an included token.
+     * @param classObject The class to get the package for. Must be in this module.
+     * @return The [File] (directory) object containing [classObject]'s source file.
+     */
+    protected static File getSourceDir(final Class<?> classObject) {
+        final File file = new File(DataMain.MODULE_SOURCES_DIR,
+                classObject.getPackageName().replace(".", File.separator)
+        );
+        assert file.isDirectory() : "package directory not found";
+        return file;
     }
 
 }
