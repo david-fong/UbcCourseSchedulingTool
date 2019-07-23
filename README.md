@@ -32,3 +32,15 @@ Create a program where a user can input their program of study, the year, and th
 
 ##### Data Data Data:
 - Please see [Spider.java](Data/source/bse/data/utils/Spider.java).
+
+##### TODO's:
+- Right now (~the coming 2 weeks):
+  - @Everyone: list out their gripes with UBC's web registration interface, and how they might solve them.
+  - Map out the rest of the short term TODO's.
+- Later (and then the following ~1.5 months):
+  - Implement all of the representation and algorithms for Requirements.
+  - ^ While writing and performing tests
+- Further later (and then the following ~1.5 months):
+  - Work on the spider
+- Much Later (and then the following ~2 months):
+  - Design (as in sketch and not implement (yet)) the Graphical user interface.
