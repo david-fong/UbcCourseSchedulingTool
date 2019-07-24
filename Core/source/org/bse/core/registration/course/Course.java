@@ -2,10 +2,10 @@ package org.bse.core.registration.course;
 
 import org.bse.core.registration.scheduler.CourseSchedule;
 import org.bse.core.registration.CourseUtils;
-import org.bse.requirement.operators.matching.CreditValued;
+import org.bse.utils.requirement.operators.matching.CreditValued;
 import org.bse.core.registration.FacultyTreeNodeIf;
 import org.bse.core.utils.HyperlinkBookIf;
-import org.bse.requirement.Requirement;
+import org.bse.utils.requirement.Requirement;
 
 import java.util.Set;
 

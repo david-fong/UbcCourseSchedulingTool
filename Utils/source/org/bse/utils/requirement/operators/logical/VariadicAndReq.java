@@ -1,15 +1,15 @@
-package org.bse.requirement.operators.logical;
+package org.bse.utils.requirement.operators.logical;
 
-import org.bse.requirement.RequireOpResult;
-import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
-import org.bse.requirement.Requirement;
+import org.bse.utils.requirement.RequireOpResult;
+import org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus;
+import org.bse.utils.requirement.Requirement;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.bse.requirement.RequireOpResult.RequireOpResultStatus.FAILED_REQ;
-import static org.bse.requirement.RequireOpResult.RequireOpResultStatus.PASSED_REQ;
+import static org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus.FAILED_REQ;
+import static org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus.PASSED_REQ;
 
 /**
  * Requires all candidate requirements to pass against a test subject in order to

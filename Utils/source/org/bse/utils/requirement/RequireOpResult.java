@@ -1,4 +1,4 @@
-package org.bse.requirement;
+package org.bse.utils.requirement;
 
 /**
  * The return value from a Requirement.requireOfVerbose(...) operation.

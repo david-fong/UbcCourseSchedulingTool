@@ -1,8 +1,8 @@
-package org.bse.requirement.operators.matching;
+package org.bse.utils.requirement.operators.matching;
 
-import org.bse.requirement.RequireOpResult;
-import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
-import org.bse.requirement.Requirement;
+import org.bse.utils.requirement.RequireOpResult;
+import org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus;
+import org.bse.utils.requirement.Requirement;
 
 import java.util.ArrayList;
 import java.util.Collections;

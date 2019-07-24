@@ -1,6 +1,6 @@
-package org.bse.requirement.operators.logical;
+package org.bse.utils.requirement.operators.logical;
 
-import org.bse.requirement.Requirement;
+import org.bse.utils.requirement.Requirement;
 
 import java.util.Collections;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package org.bse.requirement.operators.matching;
+package org.bse.utils.requirement.operators.matching;
 
 import java.util.Collections;
 import java.util.Set;

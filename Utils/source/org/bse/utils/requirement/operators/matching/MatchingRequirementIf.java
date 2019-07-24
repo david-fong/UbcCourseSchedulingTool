@@ -1,6 +1,6 @@
-package org.bse.requirement.operators.matching;
+package org.bse.utils.requirement.operators.matching;
 
-import org.bse.requirement.Requirement;
+import org.bse.utils.requirement.Requirement;
 
 import java.util.HashSet;
 import java.util.Set;

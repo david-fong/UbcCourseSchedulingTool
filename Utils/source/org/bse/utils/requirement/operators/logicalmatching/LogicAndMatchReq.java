@@ -1,8 +1,7 @@
-package org.bse.requirement.operators.logicalmatching;
+package org.bse.utils.requirement.operators.logicalmatching;
 
-import org.bse.requirement.Requirement;
-import org.bse.requirement.operators.logical.VariadicAndReq;
-import org.bse.requirement.operators.matching.MatchingRequirementIf;
+import org.bse.utils.requirement.operators.logical.VariadicAndReq;
+import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
 
 import java.util.Collections;
 import java.util.HashSet;

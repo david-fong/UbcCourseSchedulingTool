@@ -1,4 +1,4 @@
-package org.bse.requirement.operators.matching;
+package org.bse.utils.requirement.operators.matching;
 
 public interface CreditValued {
     int getCreditValue();

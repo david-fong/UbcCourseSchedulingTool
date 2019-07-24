@@ -1,11 +1,11 @@
 package org.bse.data.utils.spider;
 
 import org.bse.core.registration.course.Course;
-import org.bse.requirement.operators.logicalmatching.LogicAndMatchReq;
-import org.bse.requirement.operators.logicalmatching.LogicOrMatchReq;
-import org.bse.requirement.operators.matching.CountMatchThreshReq;
-import org.bse.requirement.operators.matching.CreditMatchThreshReq;
-import org.bse.requirement.operators.matching.MatchingRequirementIf;
+import org.bse.utils.requirement.operators.logicalmatching.LogicAndMatchReq;
+import org.bse.utils.requirement.operators.logicalmatching.LogicOrMatchReq;
+import org.bse.utils.requirement.operators.matching.CountMatchThreshReq;
+import org.bse.utils.requirement.operators.matching.CreditMatchThreshReq;
+import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
 
 import java.util.Set;
 

@@ -1,6 +1,6 @@
-package org.bse.requirement;
+package org.bse.utils.requirement;
 
-import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
+import org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus;
 
 /**
  * All implementations of this class MUST BE IMMUTABLE. They must not provide any
