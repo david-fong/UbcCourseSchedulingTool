@@ -1,5 +1,6 @@
 package org.bse.requirement.operators.logicalmatching;
 
+import org.bse.requirement.Requirement;
 import org.bse.requirement.operators.logical.VariadicAndReq;
 import org.bse.requirement.operators.matching.MatchingRequirementIf;
 

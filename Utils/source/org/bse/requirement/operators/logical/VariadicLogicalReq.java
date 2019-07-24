@@ -21,7 +21,7 @@ abstract class VariadicLogicalReq<T> implements Requirement<T> {
         this.children = Collections.unmodifiableSet(children);
     }
 
-    final Set<Requirement<T>> getChildren() {
+    protected final Set<Requirement<T>> getChildren() {
         return children;
     }
 

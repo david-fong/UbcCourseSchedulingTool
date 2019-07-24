@@ -3,9 +3,11 @@ package org.bse.requirement;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
 
 /**
- * Implementations of this class should be immutable, and provide no access to any
- * of their fields. Objects passed to their constructors should not be externally
- * mutated after being passed to the constructor.
+ * All implementations of this class MUST BE IMMUTABLE. They must not provide any
+ * public access to any of their fields. Objects passed to their constructors should
+ * not be externally mutated after being passed to the constructor (allows constructor
+ * arguments that are collections to be wrapped with an immutable collection view, as
+ * opposed to being required to defensively copy the contents of the passed collection).
  *
  * @param <T> The type of element that will be tested against this requirement.
  */
@@ -37,7 +39,8 @@ public interface Requirement<T> {
      * Returns a Requirement that has the exact same behaviour as [this] one for the
      * [requireOf] and [requireOfVerbose] methods when reused with [givens] as the
      * test subject. Any terms that currently pass for [givens] can be excluded from
-     * the returned [Requirement].
+     * the returned [Requirement]. Passing a [given] that is known to fail [this]
+     * [Requirement] is allowed.
      *
      * Using this method can improve performance for repeated tests against an object
      * that may change in its ability to meet this requirement, but is guaranteed not
@@ -45,11 +48,12 @@ public interface Requirement<T> {
      * meeting.
      *
      * @param givens A specific object to test against a requirement.
-     * @return A [RequireOpResult] holding a [scope][Requirement] with identical
-     *     behaviour as [this] one when specifically used against the parameter
-     *     [givens]. Must not be null.
+     * @return A [Requirement] with identical behaviour as [this] one when specifically
+     *     used against the parameter [givens]. Returns [NULL] if enough terms pass for
+     *     [this] whole [Requirement] to pass. Since [Requirement] implementations must
+     *     be immutable (see spec), this method is allowed to return [this][Requirement].
      */
-    RequireOpResult<T> excludingPassingTermsFor(T givens);
+    Requirement<T> excludingPassingTermsFor(T givens);
 
 
 
@@ -79,12 +83,8 @@ public interface Requirement<T> {
         }
 
         @Override
-        public final RequireOpResult<T> excludingPassingTermsFor(T givens) {
-            return new RequireOpResult<>(
-                    copy(),
-                    1.0,
-                    RequireOpResultStatus.PASSED_REQ
-            );
+        public Requirement<T> excludingPassingTermsFor(final T givens) {
+            return null;
         }
     }
 
@@ -113,12 +113,8 @@ public interface Requirement<T> {
         }
 
         @Override
-        public final RequireOpResult<T> excludingPassingTermsFor(T givens) {
-            return new RequireOpResult<>(
-                    copy(),
-                    1.0,
-                    RequireOpResultStatus.FAILED_REQ
-            );
+        public Requirement<T> excludingPassingTermsFor(T givens) {
+            return this;
         }
     }
 

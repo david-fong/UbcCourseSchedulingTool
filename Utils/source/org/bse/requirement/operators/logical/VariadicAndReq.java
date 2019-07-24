@@ -4,6 +4,7 @@ import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
 import org.bse.requirement.Requirement;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,8 +46,12 @@ public class VariadicAndReq<T> extends VariadicLogicalReq<T> {
     }
 
     @Override
-    public final RequireOpResult<T> excludingPassingTermsFor(final T givens) {
-        return null; // TODO:
+    public final Requirement<T> excludingPassingTermsFor(final T givens) {
+        Set<Requirement<T>> nonPassingTerms = getChildren().stream()
+                .map(term -> term.excludingPassingTermsFor(givens))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        return nonPassingTerms.isEmpty() ? null : new VariadicAndReq<>(nonPassingTerms);
     }
 
 }

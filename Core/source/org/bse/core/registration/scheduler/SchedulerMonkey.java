@@ -29,9 +29,9 @@ import java.util.Set;
      * 0.2. [filter]
      * Create a version of the program's co-requisites that excludes all unusable
      * courses. The produced requirement should be valid based on the test in the
-     * previous step. (it is possible to produce invalid requirements. Ex. a
+     * previous step. (it is possible to construct invalid requirements. Ex. a
      * [CountMatchThresholdReq] with one candidate and a threshold of two). This
-     * step has the potential to significantly reduce later workload, especially in
+     * step may significantly reduce later computational workload, especially in
      * the case of elective lists written for multiple specializations like is the
      * case for ECE (unfortunately).
      * >>> See [Requirement.excludingPassingTermsFor]

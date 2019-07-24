@@ -57,6 +57,11 @@ public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
         public StrictlyPassingMatchThreshReq<T> copy() {
             return new StrictlyPassingMatchThreshReq<>();
         }
+
+        @Override
+        public MatchingRequirementIf<T> excludingPassingTermsFor(final Set<T> givens) {
+            return null;
+        }
     }
 
     /**
@@ -79,6 +84,11 @@ public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
         @Override
         public StrictlyFailingMatchThreshReq<T> copy() {
             return new StrictlyFailingMatchThreshReq<>();
+        }
+
+        @Override
+        public MatchingRequirementIf<T> excludingPassingTermsFor(final Set<T> givens) {
+            return this;
         }
     }
 }

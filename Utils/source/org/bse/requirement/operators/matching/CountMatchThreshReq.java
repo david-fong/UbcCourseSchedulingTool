@@ -2,6 +2,7 @@ package org.bse.requirement.operators.matching;
 
 import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
+import org.bse.requirement.Requirement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,8 +50,8 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
     }
 
     @Override
-    public RequireOpResult<Set<T>> excludingPassingTermsFor(Set<T> givens) {
-        return null;
+    public Requirement<Set<T>> excludingPassingTermsFor(Set<T> givens) {
+        return null; // TODO:
     }
 
     @Override

@@ -45,7 +45,7 @@ public class VariadicOrReq<T> extends VariadicLogicalReq<T> {
     }
 
     @Override
-    public final RequireOpResult<T> excludingPassingTermsFor(final T givens) {
+    public final Requirement<T> excludingPassingTermsFor(final T givens) {
         return null; // TODO
     }
 

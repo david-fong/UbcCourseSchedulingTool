@@ -2,6 +2,7 @@ package org.bse.requirement.operators.matching;
 
 import org.bse.requirement.RequireOpResult;
 import org.bse.requirement.RequireOpResult.RequireOpResultStatus;
+import org.bse.requirement.Requirement;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,8 +60,8 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
     }
 
     @Override
-    public RequireOpResult<Set<T>> excludingPassingTermsFor(final Set<T> givens) {
-        return null;
+    public Requirement<Set<T>> excludingPassingTermsFor(final Set<T> givens) {
+        return null; // TODO:
     }
 
     @Override
