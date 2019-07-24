@@ -46,7 +46,11 @@ public class VariadicOrReq<T> extends VariadicLogicalReq<T> {
 
     @Override
     public final Requirement<T> excludingPassingTermsFor(final T givens) {
-        return null; // TODO
+        final boolean anyMatch = getChildren().stream()
+                .anyMatch(childReq -> {
+                    return childReq.excludingPassingTermsFor(givens) == null;
+                });
+        return anyMatch ? null : this;
     }
 
 }
