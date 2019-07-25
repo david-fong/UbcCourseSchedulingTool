@@ -2,12 +2,14 @@ package org.bse.core.registration;
 
 import org.bse.core.registration.CourseUtils.UbcCampus;
 import org.bse.core.registration.CourseUtils.YearOfStudy;
+import org.bse.core.registration.course.Course;
 import org.bse.core.registration.scheduler.CourseSchedule;
 import org.bse.core.registration.scheduler.Worklist;
 
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * TODO: write documentation.
@@ -44,6 +46,10 @@ public final class Student {
     }
     public HashSet<Worklist> getWorklists() {
         return worklists;
+    }
+
+    public Set<Course> getCompletedCourses() {
+        return null; // TODO:
     }
 
 }

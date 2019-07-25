@@ -58,8 +58,9 @@ import java.util.Set;
  * with most the most restrictive entries first.
      * *
      * 1.0. [filter]
+     * TODO: update for new [PickyBuilder] interface and [PickyBuildGenerator] class.
      * Take the narrowed [Requirement] from [@STEP 0] and traverse it, collecting its
-     * items ([Course]s) to a map from those [Course]s to their available sections.
+     * items ([Course]s) to a map from those [Course]s' to their available sections.
      * Exclude [CourseSection]s that the user cannot register for and report their
      * reasons. Sort entries of this map first by the depth they were found during the
      * traversal, breaking ties by how many usable sections are available. The reasoning

@@ -1,13 +1,11 @@
 package org.bse.core.registration.course;
 
-import org.bse.core.registration.scheduler.CourseSchedule;
 import org.bse.core.registration.CourseUtils;
-import org.bse.utils.requirement.operators.matching.CreditValued;
 import org.bse.core.registration.FacultyTreeNodeIf;
+import org.bse.core.registration.scheduler.CourseSchedule;
 import org.bse.core.utils.HyperlinkBookIf;
-import org.bse.utils.requirement.Requirement;
-
-import java.util.Set;
+import org.bse.utils.requirement.operators.matching.CreditValued;
+import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
 
 /**
  * An interface that can only be used by extension (mwahaha).
@@ -30,7 +28,7 @@ public abstract class Course implements CreditValued, CodeStringRegistered {
      *
      * @return These may return null if they impose no requirements.
      */
-    abstract Requirement<Set<CourseSchedule>> getPreRequisites();
-    abstract Requirement<CourseSchedule> getCoRequisites();
+    abstract MatchingRequirementIf<CourseSchedule> getPreRequisites();
+    abstract MatchingRequirementIf<CourseSchedule> getCoRequisites();
 
 }
