@@ -16,15 +16,14 @@ public final class CourseUtils {
         }
     }
 
-    public enum CourseType {
-        PROGRAM  ("Program"),
+    public enum CourseSectionType {
         LECTURE  ("Lecture"),
         LAB      ("Lab"),
         TUTORIAL ("Tutorial"),
         ;
         public final String label;
 
-        CourseType(String label) {
+        CourseSectionType(String label) {
             this.label = label;
         }
 

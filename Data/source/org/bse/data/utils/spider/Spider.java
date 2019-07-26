@@ -1,7 +1,6 @@
 package org.bse.data.utils.spider;
 
 import org.bse.data.DataMain;
-import org.bse.data.courses.vancouver.VancouverCoursesPackageMarker;
 import org.bse.data.faculties.vancouver.VancouverFaculties;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,7 +16,6 @@ import java.net.URI;
 public abstract class Spider {
 
     public static final File VAN_FACULTIES_DIR = getSourceDir(VancouverFaculties.class);
-    public static final File VAN_COURSES_DIR = getSourceDir(VancouverCoursesPackageMarker.class);
 
     protected final Document fetchDocument(URI uri) throws IOException {
         return Jsoup.connect(uri.toASCIIString()).get();
@@ -30,6 +28,7 @@ public abstract class Spider {
      * @return The [File] (directory) object containing [classObject]'s source file.
      */
     protected static File getSourceDir(final Class<?> classObject) {
+        // TODO: change this to use what I read on stack overflow.
         final File file = new File(DataMain.MODULE_SOURCES_DIR,
                 classObject.getPackageName().replace(".", File.separator)
         );

@@ -1,4 +1,4 @@
-package org.bse.core.utils;
+package org.bse.data.buildings;
 
 public class Building {
 

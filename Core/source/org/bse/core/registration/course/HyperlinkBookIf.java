@@ -1,4 +1,4 @@
-package org.bse.core.utils;
+package org.bse.core.registration.course;
 
 public interface HyperlinkBookIf {
 

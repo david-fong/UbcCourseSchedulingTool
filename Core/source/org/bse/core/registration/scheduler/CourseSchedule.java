@@ -14,8 +14,7 @@ import java.util.function.Supplier;
 
 public final class CourseSchedule implements PickyBuild<CourseSection> {
 
-    public static final Supplier<CourseSchedule> EMPTY_COURSE_SCHEDULE_SUPPLIER
-            = CourseSchedule::new;
+    public static final Supplier<CourseSchedule> EMPTY_COURSE_SCHEDULE_SUPPLIER = CourseSchedule::new;
 
     private final HashSet<CourseSection> courseSections;
     private final EnumMap<Semester, EnumMap<DayOfWeek, Set<CourseSectionBlock>>> timetables;

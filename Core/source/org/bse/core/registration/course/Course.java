@@ -1,9 +1,9 @@
 package org.bse.core.registration.course;
 
 import org.bse.core.registration.CourseUtils;
+import org.bse.core.registration.CourseUtils.CourseSectionType;
 import org.bse.core.registration.FacultyTreeNodeIf;
 import org.bse.core.registration.scheduler.CourseSchedule;
-import org.bse.core.utils.HyperlinkBookIf;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
 
@@ -19,7 +19,7 @@ import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
 public abstract class Course implements CreditValued, CodeStringRegistered {
 
     abstract FacultyTreeNodeIf getFacultyTreeNode();
-    abstract CourseUtils.CourseType getCourseType();
+    abstract CourseSectionType getCourseType();
 
     abstract String getCourseDescription();
     abstract HyperlinkBookIf getHyperlinkBook();

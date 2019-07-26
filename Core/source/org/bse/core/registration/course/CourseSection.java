@@ -1,9 +1,9 @@
 package org.bse.core.registration.course;
 
+import org.bse.core.registration.CourseUtils.CourseSectionType;
 import org.bse.core.registration.CourseUtils.Semester;
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -15,19 +15,33 @@ import java.util.Set;
  */
 public class CourseSection implements CodeStringRegistered {
 
+    private final CourseSectionType sectionType;
     private final Course parentCourse;
     private final String sectionCode;
-    private final Semester semester;
-    private final HashSet<CourseSectionBlock> blocks;
 
-    public CourseSection(Course parentCourse, String sectionCode,
-                         Semester semester, Collection<CourseSectionBlock> blocks) {
+    private final Semester semester;
+    private final Set<CourseSectionBlock> blocks;
+
+    /**
+     *
+     * @param sectionType One of {LECTURE, LAB, or TUTORIAL}.
+     * @param parentCourse Ex. "APSC 160", or "ENGL 112".
+     * @param sectionCode Ex. "101", or "T2A", or "L1B".
+     * @param semester One of four options.
+     * @param blocks Should not be modified externally after being passed in.
+     */
+    public CourseSection(CourseSectionType sectionType, Course parentCourse, String sectionCode,
+                         Semester semester, Set<CourseSectionBlock> blocks) {
+        this.sectionType  = sectionType;
         this.parentCourse = parentCourse;
-        this.sectionCode = String.format("%s %s", parentCourse.getCodeString(), sectionCode);
-        this.semester = semester;
-        this.blocks = new HashSet<>(blocks);
+        this.sectionCode  = String.format("%s %s", parentCourse.getCodeString(), sectionCode);
+        this.semester     = semester;
+        this.blocks       = Collections.unmodifiableSet(blocks);
     }
 
+    public CourseSectionType getSectionType() {
+        return sectionType;
+    }
     public Course getParentCourse() {
         return parentCourse;
     }
@@ -37,11 +51,6 @@ public class CourseSection implements CodeStringRegistered {
     public Semester getSemester() {
         return semester;
     }
-
-    /**
-     * Users of this method should not modify the return value.
-     * @return A list of CourseSectionBlock items part of this CourseSection.
-     */
     public Set<CourseSectionBlock> getBlocks() {
         return blocks;
     }
