@@ -62,7 +62,18 @@ import java.util.Set;
      * Take the narrowed [Requirement] from [@STEP 0] and traverse it, collecting its
      * items ([Course]s) to a map from those [Course]s' to their available sections.
      * Exclude [CourseSection]s that the user cannot register for and report their
-     * reasons. Sort entries of this map first by the depth they were found during the
+     * reasons. Note: this still has nothing to do with lectures, labs, and tutorials,
+     * and definitely not to do with [CourseSectionBlock]s. This only has to do with
+     * [Course]s, which has prerequisites and co-requisites, and some other year and
+     * faculty related constraints.
+     *
+     * 1.1. [control]
+     * If there are a lot of usable course combinations, ask the user to select ones
+     * they are interested to try first. We can come back to ones they were less
+     * interested in if the ones they were interested in first didn't work out.
+     *
+     * 1.2. [sort]
+     * Sort entries of this map first by the depth they were found during the
      * traversal, breaking ties by how many usable sections are available. The reasoning
      * behind this is that depth closely relates to how 'optional' those courses are,
      * and that the number of sections translates to how non-restrictive the collection
