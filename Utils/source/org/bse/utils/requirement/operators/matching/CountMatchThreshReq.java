@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * TODO: write documentation.
@@ -66,7 +68,30 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
     @Override
     public Requirement<Set<T>> excludingPassingTermsFor(Set<T> givens) {
-        return null; // TODO:
+        Set<T> candidates = getCandidates();
+        Map<Boolean, Set<T>> partition = givens.stream()
+                .collect(Collectors.partitioningBy(
+                        candidates::contains, Collectors.toSet()
+                ));
+        if (partition.get(true).size() >= threshold) {
+            // Enough terms matched to pass completely.
+            return null;
+
+        } else if (partition.get(false).size() == threshold) {
+            // No terms matched at all.
+            return this;
+
+        } else {
+            // Some terms matched, but not enough.
+            try {
+                return new CountMatchThreshReq<>(
+                        threshold - partition.get(true).size(),
+                        partition.get(false));
+            } catch (InsatiableReqException e) {
+                throw new InsatiableReqException.UnexpectedInsatiableReqException(e);
+                // return this;
+            }
+        }
     }
 
     @Override

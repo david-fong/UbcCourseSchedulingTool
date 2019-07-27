@@ -51,7 +51,7 @@ public interface Requirement<T> {
      * @return A [Requirement] with identical behaviour as [this] one when specifically
      *     used against the parameter [givens]. Returns [NULL] if enough terms pass for
      *     [this] whole [Requirement] to pass. Since [Requirement] implementations must
-     *     be immutable (see spec), this method is allowed to return [this][Requirement].
+     *     be immutable (see spec), this method is allowed to return [this] (Ie. itself).
      */
     Requirement<T> excludingPassingTermsFor(T givens);
 

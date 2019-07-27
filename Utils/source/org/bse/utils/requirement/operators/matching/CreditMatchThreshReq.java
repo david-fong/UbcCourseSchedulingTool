@@ -8,7 +8,9 @@ import org.bse.utils.requirement.Requirement;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -76,7 +78,35 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
 
     @Override
     public Requirement<Set<T>> excludingPassingTermsFor(final Set<T> givens) {
-        return null; // TODO:
+        Set<T> candidates = getCandidates();
+        Map<Boolean, Set<T>> partition = givens.stream()
+                .collect(Collectors.partitioningBy(
+                        candidates::contains, Collectors.toSet()
+                ));
+        final int matchedValue = partition.get(true).stream()
+                .mapToInt(CreditValued::getCreditValue).sum();
+        final int unMatchedValue = partition.get(false).stream()
+                .mapToInt(CreditValued::getCreditValue).sum();
+
+        if (matchedValue >= threshold) {
+            // Enough terms matched to pass completely.
+            return null;
+
+        } else if (unMatchedValue == threshold) {
+            // No terms matched at all.
+            return this;
+
+        } else {
+            // Some terms matched, but not enough.
+            try {
+                return new CountMatchThreshReq<>(
+                        threshold - matchedValue,
+                        partition.get(false));
+            } catch (InsatiableReqException e) {
+                throw new InsatiableReqException.UnexpectedInsatiableReqException(e);
+                // return this;
+            }
+        }
     }
 
     @Override
