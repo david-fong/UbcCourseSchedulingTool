@@ -1,7 +1,6 @@
-package org.bse.data.utils.spider;
+package org.bse.data.spider;
 
 import org.bse.data.DataMain;
-import org.bse.data.faculties.vancouver.VancouverFaculties;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -15,24 +14,29 @@ import java.net.URI;
  */
 public abstract class Spider {
 
-    public static final File VAN_FACULTIES_DIR = getSourceDir(VancouverFaculties.class);
-
     protected final Document fetchDocument(URI uri) throws IOException {
         return Jsoup.connect(uri.toASCIIString()).get();
     }
 
     /**
+     * TODO: move this. the spider won't use this. Whoever is parsing xml into
+     *     objects like courses and requirements will use this.
+     *
      * This should not have any package name conflicts since all the packages are
      * anchored with the module name as an included token.
      * @param classObject The class to get the package for. Must be in this module.
      * @return The [File] (directory) object containing [classObject]'s source file.
      */
     protected static File getSourceDir(final Class<?> classObject) {
-        // TODO: change this to use what I read on stack overflow.
-        final File file = new File(DataMain.MODULE_SOURCES_DIR,
+        final File file = new File(DataMain.RUNTIME_PATH_OF_DATA_MODULE,
                 classObject.getPackageName().replace(".", File.separator)
         );
-        assert file.isDirectory() : "package directory not found";
+        if (!file.isDirectory()) {
+            new ClassNotFoundException(String.format(
+                    "package for class %s not found",
+                    classObject.getName()
+            )).printStackTrace();
+        }
         return file;
     }
 

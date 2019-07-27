@@ -1,8 +1,8 @@
 package org.bse.data.faculties.vancouver;
 
-import org.bse.core.registration.FacultyTreeNodeIf;
+import org.bse.data.faculties.FacultyTreeNodeIf;
 
-import static org.bse.core.registration.FacultyTreeNodeIf.FacultyTreeNodeType.DEPARTMENT;
+import static org.bse.data.faculties.FacultyTreeNodeIf.FacultyTreeNodeType.DEPARTMENT;
 
 public enum ScienceFaculties implements FacultyTreeNodeIf {
     // TODO: add entries as needed. prefer alphabetical order.

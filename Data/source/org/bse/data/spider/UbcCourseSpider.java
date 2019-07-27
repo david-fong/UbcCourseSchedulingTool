@@ -1,4 +1,4 @@
-package org.bse.data.utils.spider;
+package org.bse.data.spider;
 
 public class UbcCourseSpider extends Spider {
 }

@@ -1,6 +1,6 @@
 package org.bse.data.faculties.vancouver;
 
-import org.bse.core.registration.FacultyTreeNodeIf;
+import org.bse.data.faculties.FacultyTreeNodeIf;
 
 public enum AppliedScienceFaculties implements FacultyTreeNodeIf {
     BMEG("Biomedical"),

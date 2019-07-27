@@ -1,6 +1,7 @@
 package org.bse.data;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
 /**
  * Runs the spiders to fetch courses data from UBC's registration pages.
@@ -12,20 +13,24 @@ import java.io.File;
  */
 public final class DataMain {
 
-    private static final String PROJECT_NAME = "UbcCourseSchedulingTool";
-    private static final String SOURCE_FOLDER_NAME = "source";
-    private static final String MODULE_NAME = "Data";
-    public static final File MODULE_SOURCES_DIR;
+    public static final File RUNTIME_PATH_OF_DATA_MODULE;
+    public static final String SOURCE_FOLDER_NAME = "source";
     static {
-        final File userDir = new File(System.getProperty("user.dir"));
-        assert userDir.getName().equals(DataMain.MODULE_NAME)
-                && userDir.getParentFile().getName().equals(PROJECT_NAME)
-                : "@Run Configuration: Working Directory should be \"$MODULE_WORKING_DIR$\"";
-        MODULE_SOURCES_DIR = new File(userDir, SOURCE_FOLDER_NAME);
-        assert MODULE_SOURCES_DIR.isDirectory();
+        File runtimePathOfDataModule = null;
+        try {
+            runtimePathOfDataModule = new File(DataMain.class
+                    .getProtectionDomain().getCodeSource().getLocation().toURI()
+            );
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            System.exit(1); // Goodbye.
+        }
+        RUNTIME_PATH_OF_DATA_MODULE = runtimePathOfDataModule;
     }
 
+
     public static void main(String[] args) {
+        System.out.println(RUNTIME_PATH_OF_DATA_MODULE);
     }
 
 }

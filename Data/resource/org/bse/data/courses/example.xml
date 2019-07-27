@@ -1,1 +1,40 @@
-<
+<Course faculty="CPEN" code="221">
+    <Description>
+        ...
+    </Description>
+    <Prerequisites>
+        <MatchReqRoot contentType="COURSE">
+            <CountMTR threshold="1">
+                <Candidate>APSC 160</Candidate>
+            </CountMTR>
+        </MatchReqRoot>
+    </Prerequisites>
+    <Corequisites>
+        <MatchReqRoot contentType="COURSE">
+            <LogicAndMR>
+                <Child>
+                    <CreditMTR threshold="5">
+                        <Candidate>CPEN 211</Candidate>
+                    </CreditMTR>
+                </Child>
+            </LogicAndMR>
+        </MatchReqRoot>
+    </Corequisites>
+    <Sections>
+        <Lectures creditval="3">
+            <Section code="101">
+                ...
+            </Section>
+        </Lectures>
+        <Labs creditval="1">
+            <Section code="L1A">
+                ...
+            </Section>
+        </Labs>
+        <Tutorials creditval="1">
+            <Section code="T1A">
+                ...
+            </Section>
+        </Tutorials>
+    </Sections>
+</Course>

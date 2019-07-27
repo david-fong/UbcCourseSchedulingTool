@@ -1,8 +1,8 @@
 package org.bse.data.faculties.vancouver;
 
-import org.bse.core.registration.FacultyTreeNodeIf;
+import org.bse.data.faculties.FacultyTreeNodeIf;
 
-import static org.bse.core.registration.FacultyTreeNodeIf.FacultyTreeNodeType.*;
+import static org.bse.data.faculties.FacultyTreeNodeIf.FacultyTreeNodeType.*;
 
 /**
  * We will go by the hierarchy specified in the second link.

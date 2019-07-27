@@ -1,5 +1,6 @@
 package org.bse.utils.requirement.operators.matching;
 
+import org.bse.utils.requirement.InsatiableReqException;
 import org.bse.utils.requirement.RequireOpResult;
 import org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus;
 import org.bse.utils.requirement.Requirement;
@@ -19,13 +20,20 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
 
     private final Integer[] candidateCreditValues; // Do not modify or reassign entries.
 
-    public CreditMatchThreshReq(int threshold, Set<T> candidates) {
+    public CreditMatchThreshReq(int threshold, Set<T> candidates) throws InsatiableReqException {
         super(threshold, candidates);
-        Stream<Integer> creditValueStream = Stream.of(getCandidates())
+        final Stream<Integer> creditValueStream = Stream.of(getCandidates())
                 .map(candidate -> ((CreditValued)candidate).getCreditValue());
 
-        assert creditValueStream.reduce(0, (x, y) -> x + y) > threshold
-                : "threshold > sum of all credits of provided candidates";
+        // Check validity of the arguments:
+        final int creditTotal = creditValueStream.reduce(0, (x, y) -> x + y);
+        if (creditTotal < threshold) {
+            throw new InsatiableReqException(String.format("The provided threshold"
+                    + " (%s) is greater than the sum of all the credit values of"
+                    + " the provided candidates (%d).", threshold, creditTotal
+            ));
+        }
+
         candidateCreditValues = creditValueStream.toArray(Integer[]::new);
         Arrays.sort(candidateCreditValues, Collections.reverseOrder());
     }
@@ -54,9 +62,16 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
 
     @Override
     public CreditMatchThreshReq<T> copy() {
-        return new CreditMatchThreshReq<>(
-                threshold, new HashSet<>(getCandidates())
-        );
+        try {
+            return new CreditMatchThreshReq<>(
+                    threshold, new HashSet<>(getCandidates())
+            );
+        } catch (InsatiableReqException e) {
+            // Should never reach here: All [Requirement] implementations must be
+            // immutable (See [Requirement] spec), and validity is enforced in the
+            // constructor.
+            throw new InsatiableReqException.UnexpectedInsatiableReqException(e);
+        }
     }
 
     @Override
@@ -87,7 +102,7 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
 
     @Override
     public Set<Set<T>> getAllBarelyPassingCombinations() {
-        return null;
+        return null; // TODO:
     }
 
 }

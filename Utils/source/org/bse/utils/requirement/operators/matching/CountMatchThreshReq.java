@@ -1,5 +1,6 @@
 package org.bse.utils.requirement.operators.matching;
 
+import org.bse.utils.requirement.InsatiableReqException;
 import org.bse.utils.requirement.RequireOpResult;
 import org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus;
 import org.bse.utils.requirement.Requirement;
@@ -16,9 +17,16 @@ import java.util.Set;
  */
 public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
-    public CountMatchThreshReq(int threshold, Set<T> candidates) {
+    public CountMatchThreshReq(int threshold, Set<T> candidates) throws InsatiableReqException {
         super(threshold, candidates);
-        assert threshold > candidates.size() : "threshold > num provided candidates";
+
+        // Check validity of the arguments:
+        if (candidates.size() < threshold) {
+            throw new InsatiableReqException(String.format("The provided threshold"
+                    + " (%s) is greater than the number of provided candidates (%s).",
+                    threshold, candidates.size()
+            ));
+        }
     }
 
     /**
@@ -44,9 +52,16 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
     @Override
     public CountMatchThreshReq<T> copy() {
-        return new CountMatchThreshReq<>(
-                threshold, new HashSet<>(getCandidates())
-        );
+        try {
+            return new CountMatchThreshReq<>(
+                    threshold, new HashSet<>(getCandidates())
+            );
+        } catch (InsatiableReqException e) {
+            // Should never reach here: All [Requirement] implementations must be
+            // immutable (See [Requirement] spec), and validity is enforced in the
+            // constructor.
+            throw new InsatiableReqException.UnexpectedInsatiableReqException(e);
+        }
     }
 
     @Override
@@ -64,6 +79,7 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 //            numCombinations = numCombinations.divide(BigInteger.valueOf(i + i));
 //        }
 //        return numCombinations.intValue();
+        // I am unreasonably proud of this.
         long numCombinations = 1;
         for (int i = 0; i < n - threshold; i++) {
             numCombinations *= n - i;
@@ -104,12 +120,19 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
     /**
      *
-     * @param candidate
-     * @param <T>
-     * @return
+     * @param candidate An object that, if found in a test subject, will cause this
+     *     [Requirement] to return with a passing status.
+     * @param <T> The type of items contained in a test subject collection.
+     * @return A [MatchingReqIf] that requires a test subject to contain [candidate].
      */
     public static <T> CountMatchThreshReq<T> ONLY(T candidate) {
-        return new CountMatchThreshReq<>(1, Collections.singleton(candidate));
+        try {
+            return new CountMatchThreshReq<>(1, Collections.singleton(candidate));
+        } catch (InsatiableReqException e) {
+            // Should never reach here: the primitive value 1 is always less than or equal to
+            // the size of a singleton collection (Ie. 1).
+            throw new InsatiableReqException.UnexpectedInsatiableReqException(e);
+        }
     }
 
 }

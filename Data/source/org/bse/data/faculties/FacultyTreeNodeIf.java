@@ -1,4 +1,4 @@
-package org.bse.core.registration;
+package org.bse.data.faculties;
 
 /**
  * A property of a course. This is not the same as a program.
