@@ -16,16 +16,13 @@ public final class DataMain {
     public static final File RUNTIME_PATH_OF_DATA_MODULE;
     public static final String SOURCE_FOLDER_NAME = "source";
     static {
-        File runtimePathOfDataModule = null;
         try {
-            runtimePathOfDataModule = new File(DataMain.class
+            RUNTIME_PATH_OF_DATA_MODULE = new File(DataMain.class
                     .getProtectionDomain().getCodeSource().getLocation().toURI()
             );
         } catch (URISyntaxException e) {
-            e.printStackTrace();
-            System.exit(1); // Goodbye.
+            throw new RuntimeException("Could not get runtime path to jar", e);
         }
-        RUNTIME_PATH_OF_DATA_MODULE = runtimePathOfDataModule;
     }
 
 

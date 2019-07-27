@@ -2,6 +2,7 @@
     <Description>
         ...
     </Description>
+
     <Prerequisites>
         <MatchReqRoot contentType="COURSE">
             <CountMTR threshold="1">
@@ -9,6 +10,7 @@
             </CountMTR>
         </MatchReqRoot>
     </Prerequisites>
+
     <Corequisites>
         <MatchReqRoot contentType="COURSE">
             <LogicAndMR>
@@ -20,17 +22,20 @@
             </LogicAndMR>
         </MatchReqRoot>
     </Corequisites>
+
     <Sections>
         <Lectures creditval="3">
             <Section code="101">
                 ...
             </Section>
         </Lectures>
+
         <Labs creditval="1">
             <Section code="L1A">
                 ...
             </Section>
         </Labs>
+
         <Tutorials creditval="1">
             <Section code="T1A">
                 ...
