@@ -28,7 +28,7 @@ public abstract class Spider {
      * @return The [File] (directory) object containing [classObject]'s source file.
      */
     protected static File getSourceDir(final Class<?> classObject) {
-        final File file = new File(DataMain.RUNTIME_PATH_OF_DATA_MODULE,
+        final File file = new File(DataMain.RUNTIME_PATH_OF_COMPILED_DATA_MODULE,
                 classObject.getPackageName().replace(".", File.separator)
         );
         if (!file.isDirectory()) {

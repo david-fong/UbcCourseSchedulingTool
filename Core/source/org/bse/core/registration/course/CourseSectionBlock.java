@@ -10,21 +10,19 @@ import java.time.DayOfWeek;
  * specific meeting places and times for a [CourseSection].
  * Has no notion of semester context.
  */
-public class CourseSectionBlock implements CodeStringRegistered {
+public class CourseSectionBlock {
 
     private final CourseSection parentSection;
-    private final String blockCode;
     private final boolean isWaitlist;
 
     private final DayOfWeek dayOfWeek;
     private final BlockRepetition repetitionType;
     private final BlockTimeEnclosure timeEnclosure;
 
-    public CourseSectionBlock(CourseSection parentSection, String blockCode, boolean isWaitlist,
+    public CourseSectionBlock(CourseSection parentSection, boolean isWaitlist,
                               DayOfWeek dayOfWeek, BlockRepetition repetitionType,
                               BlockTimeEnclosure timeEnclosure) {
         this.parentSection = parentSection;
-        this.blockCode = blockCode;
         this.isWaitlist = isWaitlist;
         this.dayOfWeek = dayOfWeek;
         this.repetitionType = repetitionType;
@@ -59,10 +57,6 @@ public class CourseSectionBlock implements CodeStringRegistered {
         return timeEnclosure;
     }
 
-    @Override
-    public String getCodeString() {
-        return blockCode;
-    }
 
 
     /**

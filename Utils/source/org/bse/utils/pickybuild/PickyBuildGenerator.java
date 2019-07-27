@@ -1,6 +1,10 @@
 package org.bse.utils.pickybuild;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -39,17 +43,25 @@ public final class PickyBuildGenerator<T> {
     }
 
     public Set<PickyBuild<T>> generateAllFullPickyBuilds() {
-        Set<PickyBuild<T>> soFar = new HashSet<>();
+        Set<PickyBuild<T>> soFar = new HashSet<>(guessNumResults());
         for (T option : clauses.get(0)) {
             PickyBuild<T> buildSeedOption = emptyBuildSupplier.get();
             if (buildSeedOption.addIfNoConflicts(option)) {
                 soFar.add(buildSeedOption);
             }
         }
-        return recursiveGenerateBuilds(0, soFar);
+        return (clauses.size() == 1) ? soFar : recursiveGenerateBuilds(1, soFar);
     }
 
-    // TODO: test.
+    /**
+     * TODO: test this.
+     * @param clauseIdx The index of the clause in [this].[clauses] to add options
+     *     from to all [PickyBuild]s collected so far in [soFar].
+     * @param soFar All [PickyBuild]s containing one option from each clause in [this]
+     *     .[clauses] from index zero to index [clauseIdx] exclusive.
+     * @return All [PickyBuild]s containing one option from each clause in [this]
+     *     .[clauses] from index zero to index [clauseIdx] inclusive.
+     */
     private Set<PickyBuild<T>> recursiveGenerateBuilds
             (final int clauseIdx, final Set<PickyBuild<T>> soFar) {
         if (soFar.size() == 0 || clauseIdx == numClauses) {
@@ -57,14 +69,12 @@ public final class PickyBuildGenerator<T> {
         }
         final Set<PickyBuild<T>> newSoFar = new HashSet<>();
         for (PickyBuild<T> buildInProgress : soFar) {
-            Set<PickyBuild<T>> subSoFar = new HashSet<>();
-            for (T nextClauseOption : clauses.get(clauseIdx + 1)) {
+            for (T optionFromNextClause : clauses.get(clauseIdx + 1)) {
                 PickyBuild<T> optionCopy = buildInProgress.copy();
-                if (optionCopy.addIfNoConflicts(nextClauseOption)) {
-                    subSoFar.add(optionCopy);
+                if (optionCopy.addIfNoConflicts(optionFromNextClause)) {
+                    newSoFar.add(optionCopy);
                 }
             }
-            newSoFar.addAll(subSoFar);
         }
         return recursiveGenerateBuilds(clauseIdx + 1, newSoFar);
     }

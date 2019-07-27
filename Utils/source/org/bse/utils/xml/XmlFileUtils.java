@@ -1,4 +1,4 @@
-package org.bse.data.xml;
+package org.bse.utils.xml;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -20,6 +20,8 @@ import java.io.IOException;
  * Convenience methods whose their bodies generally just make a single call to an
  * external library's method for the same purpose. They are more to us to remember
  * how things are done, and to reuse background objects (saved in static constants).
+ * Reduces the interface for reading and writing xml files to using [Document]s and
+ * [File]s.
  */
 public final class XmlFileUtils {
 
