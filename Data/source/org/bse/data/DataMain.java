@@ -1,7 +1,13 @@
 package org.bse.data;
 
+import org.bse.utils.requirement.InsatiableReqException;
+import org.bse.utils.requirement.RequireOpResult;
+import org.bse.utils.requirement.operators.matching.CreditMatchThreshReq;
+import org.bse.utils.requirement.operators.matching.CreditValued;
+
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.Set;
 
 /**
  * Runs the spiders to fetch courses data from UBC's registration pages.
@@ -55,9 +61,57 @@ public final class DataMain {
         }
     }
 
+    public static class CreditValuedImpl implements CreditValued {
+
+        private final String str;
+        private final int creditValue;
+
+        public CreditValuedImpl(String str, int creditValue) {
+            this.str = str;
+            this.creditValue = creditValue;
+        }
+
+        public String getStr() {
+            return str;
+        }
+
+        @Override
+        public int getCreditValue() {
+            return creditValue;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other instanceof CreditValuedImpl) {
+                return str.equals(((CreditValuedImpl)other).getStr());
+            } else {
+                return false;
+            }
+        }
+    }
+
 
     public static void main(String[] args) {
-        System.out.println(RUNTIME_PATH_OF_COMPILED_DATA_MODULE);
+        //System.out.println(RUNTIME_PATH_OF_COMPILED_DATA_MODULE);
+
+        CreditValuedImpl c0 = new CreditValuedImpl("a", 2);
+        CreditValuedImpl c1 = new CreditValuedImpl("b", 3);
+        CreditValuedImpl c2 = new CreditValuedImpl("c", 4);
+
+        try {
+            CreditMatchThreshReq<CreditValuedImpl> creditMatcher0
+                    = new CreditMatchThreshReq<>(5, Set.of(c0, c1, c2));
+
+            Set<CreditValuedImpl> testSubject0 = Set.of(c0, c1);
+
+            RequireOpResult.RequireOpResultStatus status = creditMatcher0.requireOf(testSubject0);
+            System.out.println((status == RequireOpResult.RequireOpResultStatus.PASSED_REQ)
+                    ? "we passed like we expected!"
+                    : "we didn't pass when we expected to >:0"
+            );
+        } catch (InsatiableReqException e) {
+            e.printStackTrace();
+        }
     }
 
 }

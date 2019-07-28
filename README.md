@@ -4,6 +4,8 @@
 ### :mortar_board: The goal:
 Create a program where a user can input their program of study, the year, and their previously taken courses, along with optional preferences (more on this later), and courses they want to take or are required to take. The program outputs an ordered collection of valid schedules meeting all their credit requirements, sorted by favorability according to any provided user preferences.
 
+Ex. [Electives for CPEN](https://www.ece.ubc.ca/sites/default/files/CPEN%20-%202018%20May.pdf)
+
 ### :file_folder: Google Drive Folder:
 [link](https://drive.google.com/drive/folders/1BmgHv7Mdu5VeI8_ZaramyXntM39VEjx8 "open for collaborators")
 

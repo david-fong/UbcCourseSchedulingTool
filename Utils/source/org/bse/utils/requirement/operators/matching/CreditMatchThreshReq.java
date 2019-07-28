@@ -1,17 +1,16 @@
 package org.bse.utils.requirement.operators.matching;
 
 import org.bse.utils.requirement.InsatiableReqException;
+import org.bse.utils.requirement.InsatiableReqException.UnexpectedInsatiableReqException;
 import org.bse.utils.requirement.RequireOpResult;
 import org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus;
 import org.bse.utils.requirement.Requirement;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Requires the sum of the credit values of items matching against certain
@@ -20,24 +19,26 @@ import java.util.stream.Stream;
  */
 public final class CreditMatchThreshReq<T extends CreditValued> extends AbstractMatchThreshReq<T> {
 
-    private final Integer[] candidateCreditValues; // Do not modify or reassign entries.
+    private final int[] candidateCreditValues; // Do not modify or reassign entries.
 
     public CreditMatchThreshReq(int threshold, Set<T> candidates) throws InsatiableReqException {
         super(threshold, candidates);
-        final Stream<Integer> creditValueStream = Stream.of(getCandidates())
-                .map(candidate -> ((CreditValued)candidate).getCreditValue());
+
+        candidateCreditValues = getCandidates().stream()
+                .mapToInt(CreditValued::getCreditValue)
+                .toArray();
+        Arrays.sort(candidateCreditValues); // ascending order
 
         // Check validity of the arguments:
-        final int creditTotal = creditValueStream.reduce(0, (x, y) -> x + y);
+        final int creditTotal = getCandidates().stream()
+                .mapToInt(CreditValued::getCreditValue)
+                .sum();
         if (creditTotal < threshold) {
             throw new InsatiableReqException(String.format("The provided threshold"
                     + " (%s) is greater than the sum of all the credit values of"
                     + " the provided candidates (%d).", threshold, creditTotal
             ));
         }
-
-        candidateCreditValues = creditValueStream.toArray(Integer[]::new);
-        Arrays.sort(candidateCreditValues, Collections.reverseOrder());
     }
 
     /**
@@ -47,7 +48,7 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
      */
     @Override
     public RequireOpResultStatus requireOf(final Set<T> testSubject) {
-        final int creditsOfMatching = this.getCandidates().stream()
+        final int creditsOfMatching = getCandidates().stream()
                 .filter(testSubject::contains)
                 .mapToInt(CreditValued::getCreditValue)
                 .sum();
@@ -72,7 +73,7 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
             // Should never reach here: All [Requirement] implementations must be
             // immutable (See [Requirement] spec), and validity is enforced in the
             // constructor.
-            throw new InsatiableReqException.UnexpectedInsatiableReqException(e);
+            throw new UnexpectedInsatiableReqException(e);
         }
     }
 
@@ -103,7 +104,7 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
                         threshold - matchedValue,
                         partition.get(false));
             } catch (InsatiableReqException e) {
-                throw new InsatiableReqException.UnexpectedInsatiableReqException(e);
+                throw new UnexpectedInsatiableReqException(e);
                 // return this;
             }
         }
@@ -122,7 +123,8 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
         } else {
             for (int next = startIdx + 1; next < candidateCreditValues.length; next++) {
                 numPassing += recursiveCountCombos(
-                        threshold - candidateCreditValues[startIdx], next
+                        threshold - candidateCreditValues[startIdx],
+                        next
                 );
             }
         }
