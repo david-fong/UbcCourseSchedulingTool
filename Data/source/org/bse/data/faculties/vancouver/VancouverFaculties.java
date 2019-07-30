@@ -1,6 +1,10 @@
 package org.bse.data.faculties.vancouver;
 
+import org.bse.data.courseutils.Course;
 import org.bse.data.faculties.FacultyTreeNodeIf;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.bse.data.faculties.FacultyTreeNodeIf.FacultyTreeNodeType.*;
 
@@ -19,12 +23,14 @@ public enum VancouverFaculties implements FacultyTreeNodeIf {
     private final FacultyTreeNodeType type;
     private final String name;
     private final Class<? extends FacultyTreeNodeIf> childrenClass;
+    private final Map<String, Course> courseCodeMap;
 
     <T extends Enum & FacultyTreeNodeIf> VancouverFaculties
             (FacultyTreeNodeType type, String name, Class<T> childrenClass) {
         this.type = type;
         this.name = name;
         this.childrenClass = childrenClass;
+        this.courseCodeMap = new HashMap<>();
     }
 
     @Override
@@ -51,4 +57,10 @@ public enum VancouverFaculties implements FacultyTreeNodeIf {
     public FacultyTreeNodeIf[] getChildren() {
         return childrenClass.getEnumConstants();
     }
+
+    @Override
+    public Map<String, Course> getCodeStringToCourseMap() {
+        return courseCodeMap;
+    }
+
 }

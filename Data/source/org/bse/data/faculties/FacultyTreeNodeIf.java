@@ -1,5 +1,9 @@
 package org.bse.data.faculties;
 
+import org.bse.data.courseutils.Course;
+
+import java.util.Map;
+
 /**
  * A property of a course. This is not the same as a program.
  * A program is represented as a [CourseIf] with type [PROGRAM],
@@ -9,6 +13,10 @@ package org.bse.data.faculties;
 public interface FacultyTreeNodeIf {
 
     String getNameNoTitle();
+
+    default String getNameWithTitle() {
+        return getType().title + getNameNoTitle();
+    }
 
     String getAbbreviation();
 
@@ -25,6 +33,30 @@ public interface FacultyTreeNodeIf {
         if (getParentNode() == null) return this;
         else return getParentNode().recursiveGetParentNode();
     }
+
+    private Course initCourseOfCodeString(String codeString) throws FacultyCourseNotFoundException {
+        if (false) {
+            throw new FacultyCourseNotFoundException(codeString, this);
+        }
+        return null; // TODO:
+    }
+    default Course getCourseByCodeString(String codeString) throws FacultyCourseNotFoundException {
+        Course course = getCodeStringToCourseMap().get(codeString);
+        if (course != null) {
+            return course;
+        } else {
+            course = initCourseOfCodeString(codeString);
+            getCodeStringToCourseMap().put(codeString, course);
+            return course;
+        }
+    }
+    /**
+     *
+     * @return A map from course code strings to [Course]s. Must not be null
+     */
+    Map<String, Course> getCodeStringToCourseMap();
+
+
 
     /**
      * I've never understood what the deal was with

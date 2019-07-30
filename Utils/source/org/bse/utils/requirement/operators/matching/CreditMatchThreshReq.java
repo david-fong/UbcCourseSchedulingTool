@@ -6,8 +6,11 @@ import org.bse.utils.requirement.RequireOpResult;
 import org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus;
 import org.bse.utils.requirement.Requirement;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -134,7 +137,31 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
 
     @Override
     public Set<Set<T>> getAllBarelyPassingCombinations() {
-        return null; // TODO:
+        return recursiveGetPassingCombinations(
+                threshold, 0, new ArrayList<>(getCandidates())
+        );
+    }
+    private Set<Set<T>> recursiveGetPassingCombinations
+            (final int threshold, final int startIdx, final List<T> children) {
+        if (threshold <= candidateCreditValues[startIdx]) {
+            return Collections.singleton(Collections.singleton(
+                    children.get(startIdx)
+            ));
+        }
+
+        final int remainingCreditRequired = threshold - candidateCreditValues[startIdx];
+        final Set<Set<T>> accumulator = new HashSet<>();
+        for (int i = startIdx + 1; i <= children.size() - threshold; i++) {
+            final Set<Set<T>> subRoot = recursiveGetPassingCombinations(
+                    remainingCreditRequired, i, children
+            );
+            for (Set<T> subCombo : subRoot) {
+                final Set<T> combined = new HashSet<>(subCombo);
+                combined.add(children.get(startIdx));
+                accumulator.add(combined);
+            }
+        }
+        return accumulator;
     }
 
 }

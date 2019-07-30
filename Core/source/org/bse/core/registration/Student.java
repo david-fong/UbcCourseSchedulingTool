@@ -1,10 +1,10 @@
 package org.bse.core.registration;
 
-import org.bse.core.registration.CourseUtils.UbcCampus;
-import org.bse.core.registration.CourseUtils.YearOfStudy;
-import org.bse.core.registration.course.Course;
-import org.bse.core.registration.scheduler.CourseSchedule;
-import org.bse.core.registration.scheduler.Worklist;
+import org.bse.data.courseutils.CourseUtils.UbcCampus;
+import org.bse.data.courseutils.CourseUtils.YearOfStudy;
+import org.bse.data.courseutils.Course;
+import org.bse.data.courseutils.CourseSchedule;
+import org.bse.data.courseutils.Worklist;
 
 import java.util.EnumMap;
 import java.util.HashSet;

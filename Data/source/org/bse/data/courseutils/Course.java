@@ -1,7 +1,6 @@
-package org.bse.core.registration.course;
+package org.bse.data.courseutils;
 
 import org.bse.data.faculties.FacultyTreeNodeIf;
-import org.bse.core.registration.scheduler.CourseSchedule;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
 

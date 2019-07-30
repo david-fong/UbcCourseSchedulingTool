@@ -1,4 +1,4 @@
-package org.bse.core.registration.scheduler;
+package org.bse.data.courseutils;
 
 /**
  * Wrapper for a [CourseSchedule] object.

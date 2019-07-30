@@ -120,6 +120,7 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
         );
     }
     private Set<Set<T>> recursiveGetPassingCombinations
+            // TODO: find out how to turn children into an array.
             (final int threshold, final int startIdx, final List<T> children) {
         // Check break condition:
         if (threshold == 1) {
@@ -131,7 +132,7 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
         final Set<Set<T>> accumulator = new HashSet<>();
         for (int i = startIdx + 1; i <= children.size() - threshold; i++) {
             final Set<Set<T>> subRoot = recursiveGetPassingCombinations(
-                    threshold - 1, startIdx + 1, children
+                    threshold - 1, i, children
             );
             for (Set<T> subCombo : subRoot) {
                 final Set<T> combined = new HashSet<>(subCombo);

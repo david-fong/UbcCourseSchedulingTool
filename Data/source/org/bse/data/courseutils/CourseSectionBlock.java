@@ -1,7 +1,7 @@
-package org.bse.core.registration.course;
+package org.bse.data.courseutils;
 
-import org.bse.core.registration.CourseUtils.BlockRepetition;
-import org.bse.core.registration.CourseUtils.BlockTime;
+import org.bse.data.courseutils.CourseUtils.BlockRepetition;
+import org.bse.data.courseutils.CourseUtils.BlockTime;
 
 import java.time.DayOfWeek;
 

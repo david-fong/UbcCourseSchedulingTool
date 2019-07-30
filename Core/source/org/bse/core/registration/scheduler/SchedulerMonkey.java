@@ -1,7 +1,7 @@
 package org.bse.core.registration.scheduler;
 
-import org.bse.core.registration.course.Course;
-import org.bse.core.registration.course.CourseSection;
+import org.bse.data.courseutils.Course;
+import org.bse.data.courseutils.CourseSection;
 import org.bse.utils.requirement.Requirement;
 
 import java.util.Collection;

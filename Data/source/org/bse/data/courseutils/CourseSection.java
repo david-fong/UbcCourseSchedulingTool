@@ -1,7 +1,7 @@
-package org.bse.core.registration.course;
+package org.bse.data.courseutils;
 
-import org.bse.core.registration.CourseUtils.CourseSectionType;
-import org.bse.core.registration.CourseUtils.Semester;
+import org.bse.data.courseutils.CourseUtils.CourseSectionType;
+import org.bse.data.courseutils.CourseUtils.Semester;
 
 import java.util.Collections;
 import java.util.Set;

@@ -1,8 +1,6 @@
-package org.bse.core.registration.scheduler;
+package org.bse.data.courseutils;
 
-import org.bse.core.registration.CourseUtils.Semester;
-import org.bse.core.registration.course.CourseSection;
-import org.bse.core.registration.course.CourseSectionBlock;
+import org.bse.data.courseutils.CourseUtils.Semester;
 import org.bse.utils.pickybuild.PickyBuild;
 
 import java.time.DayOfWeek;

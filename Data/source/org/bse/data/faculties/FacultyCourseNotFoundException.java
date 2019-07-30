@@ -1,0 +1,15 @@
+package org.bse.data.faculties;
+
+/**
+ * Thrown when a [Course] is attempted to be found under a [FacultyTreeNodeIf], and
+ * the [Course] cannot be found.
+ */
+public final class FacultyCourseNotFoundException extends Exception {
+
+    public FacultyCourseNotFoundException(String suppliedSearchCode, FacultyTreeNodeIf facultyNode) {
+        super(String.format("A course by the code \"%s\" could not be found under"
+                + " the %s", suppliedSearchCode, facultyNode.getNameWithTitle()
+        ));
+    }
+
+}

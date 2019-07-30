@@ -1,4 +1,4 @@
-package org.bse.core.registration;
+package org.bse.data.courseutils;
 
 /**
  * TODO: write documentation.

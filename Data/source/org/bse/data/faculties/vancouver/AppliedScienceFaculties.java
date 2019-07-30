@@ -1,6 +1,10 @@
 package org.bse.data.faculties.vancouver;
 
+import org.bse.data.courseutils.Course;
 import org.bse.data.faculties.FacultyTreeNodeIf;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public enum AppliedScienceFaculties implements FacultyTreeNodeIf {
     BMEG("Biomedical"),
@@ -17,12 +21,15 @@ public enum AppliedScienceFaculties implements FacultyTreeNodeIf {
     MTRL("Materials"),
     ;
     private final String name;
+    private final Map<String, Course> courseCodeMap;
 
     AppliedScienceFaculties(String name) {
         this.name = name + " Engineering";
+        this.courseCodeMap = new HashMap<>();
     }
     AppliedScienceFaculties(String name, String s) {
         this.name = name;
+        this.courseCodeMap = new HashMap<>();
     }
 
     @Override
@@ -49,4 +56,10 @@ public enum AppliedScienceFaculties implements FacultyTreeNodeIf {
     public FacultyTreeNodeIf[] getChildren() {
         return null;
     }
+
+    @Override
+    public Map<String, Course> getCodeStringToCourseMap() {
+        return courseCodeMap;
+    }
+
 }
