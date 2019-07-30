@@ -1,6 +1,6 @@
 package org.bse.utils.requirement;
 
-import org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus;
+import org.bse.utils.requirement.RequireOpResult.ReqOpOutcome;
 
 /**
  * All implementations of this class MUST BE IMMUTABLE. They must not provide any
@@ -16,19 +16,9 @@ public interface Requirement<T> {
     /**
      *
      * @param testSubject An item to be checked against complex requirements.
-     * @return A [RequireOpResultStatus] indicating the result status of the operation.
+     * @return A [ReqOpOutcome] indicating the result status of the operation.
      */
-    RequireOpResultStatus requireOf(final T testSubject);
-
-    /**
-     *
-     * @param testSubject An item to be checked against complex requirements.
-     * @return A RequireOpResult encapsulating a Requirement object containing all
-     *     Requirement objects that [testSubject] failed against. The behaviour of
-     *     this [Requirement] object must follow exactly that of this requirement
-     *     when used against [testSubject].
-     */
-    RequireOpResult<T> requireOfVerbose(final T testSubject);
+    ReqOpOutcome requireOf(final T testSubject);
 
     /**
      * @return A deep copy of this [Requirement] object.
@@ -37,10 +27,9 @@ public interface Requirement<T> {
 
     /**
      * Returns a Requirement that has the exact same behaviour as [this] one for the
-     * [requireOf] and [requireOfVerbose] methods when reused with [givens] as the
-     * test subject. Any terms that currently pass for [givens] can be excluded from
-     * the returned [Requirement]. Passing a [given] that is known to fail [this]
-     * [Requirement] is allowed.
+     * [requireOf] and methods when reused with [givens] as the test subject. Any terms
+     * that currently pass for [givens] can be excluded from the returned [Requirement].
+     * Passing a [given] that is known to fail [this] [Requirement] is allowed.
      *
      * Using this method can improve performance for repeated tests against an object
      * that may change in its ability to meet this requirement, but is guaranteed not
@@ -64,17 +53,8 @@ public interface Requirement<T> {
     class StrictlyPassingReq<T> implements Requirement<T> {
 
         @Override
-        public final RequireOpResultStatus requireOf(T testSubject) {
-            return RequireOpResultStatus.PASSED_REQ;
-        }
-
-        @Override
-        public final RequireOpResult<T> requireOfVerbose(T testSubject) {
-            return new RequireOpResult<>(
-                    null,
-                    1.0,
-                    RequireOpResultStatus.PASSED_REQ
-            );
+        public final ReqOpOutcome requireOf(T testSubject) {
+            return ReqOpOutcome.PASSED_REQ;
         }
 
         @Override
@@ -94,17 +74,8 @@ public interface Requirement<T> {
     class StrictlyFailingReq<T> implements Requirement<T> {
 
         @Override
-        public final RequireOpResultStatus requireOf(T testSubject) {
-            return RequireOpResultStatus.FAILED_REQ;
-        }
-
-        @Override
-        public final RequireOpResult<T> requireOfVerbose(T testSubject) {
-            return new RequireOpResult<>(
-                    copy(),
-                    1.0,
-                    RequireOpResultStatus.FAILED_REQ
-            );
+        public final ReqOpOutcome requireOf(T testSubject) {
+            return ReqOpOutcome.FAILED_REQ;
         }
 
         @Override

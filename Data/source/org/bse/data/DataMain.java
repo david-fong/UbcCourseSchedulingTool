@@ -104,8 +104,8 @@ public final class DataMain {
 
             Set<CreditValuedImpl> testSubject0 = Set.of(c0, c1);
 
-            RequireOpResult.RequireOpResultStatus status = creditMatcher0.requireOf(testSubject0);
-            System.out.println((status == RequireOpResult.RequireOpResultStatus.PASSED_REQ)
+            RequireOpResult.ReqOpOutcome status = creditMatcher0.requireOf(testSubject0);
+            System.out.println((status == RequireOpResult.ReqOpOutcome.PASSED_REQ)
                     ? "we passed like we expected!"
                     : "we didn't pass when we expected to >:0"
             );

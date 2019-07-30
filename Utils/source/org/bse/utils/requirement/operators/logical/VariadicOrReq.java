@@ -1,14 +1,13 @@
 package org.bse.utils.requirement.operators.logical;
 
-import org.bse.utils.requirement.RequireOpResult;
-import org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus;
+import org.bse.utils.requirement.RequireOpResult.ReqOpOutcome;
 import org.bse.utils.requirement.Requirement;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus.FAILED_REQ;
-import static org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus.PASSED_REQ;
+import static org.bse.utils.requirement.RequireOpResult.ReqOpOutcome.FAILED_REQ;
+import static org.bse.utils.requirement.RequireOpResult.ReqOpOutcome.PASSED_REQ;
 
 /**
  * Requires only one candidate requirement to pass against a test subject in
@@ -24,16 +23,10 @@ public class VariadicOrReq<T> extends VariadicLogicalReq<T> {
 
     // TODO: make this account for the possibility of an [INDETERMINATE] result status.
     @Override
-    public final RequireOpResultStatus requireOf(final T testSubject) {
+    public final ReqOpOutcome requireOf(final T testSubject) {
         boolean success = this.getChildren().stream()
                 .anyMatch(childReq -> childReq.requireOf(testSubject) == PASSED_REQ);
         return success ? PASSED_REQ : FAILED_REQ;
-    }
-
-    // TODO:
-    @Override
-    public final RequireOpResult<T> requireOfVerbose(final T testSubject) {
-        return null;
     }
 
     @Override
@@ -47,9 +40,7 @@ public class VariadicOrReq<T> extends VariadicLogicalReq<T> {
     @Override
     public final Requirement<T> excludingPassingTermsFor(final T givens) {
         final boolean anyMatch = getChildren().stream()
-                .anyMatch(childReq -> {
-                    return childReq.excludingPassingTermsFor(givens) == null;
-                });
+                .anyMatch(childReq -> childReq.excludingPassingTermsFor(givens) == null);
         return anyMatch ? null : this;
     }
 

@@ -1,8 +1,7 @@
 package org.bse.utils.requirement.operators.matching;
 
 import org.bse.utils.requirement.InsatiableReqException;
-import org.bse.utils.requirement.RequireOpResult;
-import org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus;
+import org.bse.utils.requirement.RequireOpResult.ReqOpOutcome;
 import org.bse.utils.requirement.Requirement;
 
 import java.util.ArrayList;
@@ -37,19 +36,13 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
      * @return
      */
     @Override
-    public RequireOpResultStatus requireOf(Set<T> testSubject) {
+    public ReqOpOutcome requireOf(Set<T> testSubject) {
         final long countOfMatches = this.getCandidates().stream()
                 .filter(testSubject::contains)
                 .count();
         return countOfMatches >= this.threshold
-                ? RequireOpResultStatus.PASSED_REQ
-                : RequireOpResultStatus.FAILED_REQ;
-    }
-
-    // TODO:
-    @Override
-    public RequireOpResult<Set<T>> requireOfVerbose(Set<T> testSubject) {
-        return null;
+                ? ReqOpOutcome.PASSED_REQ
+                : ReqOpOutcome.FAILED_REQ;
     }
 
     @Override

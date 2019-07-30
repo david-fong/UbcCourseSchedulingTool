@@ -36,7 +36,7 @@ Ex. [Electives for CPEN](https://www.ece.ubc.ca/sites/default/files/CPEN%20-%202
   - Matching requirements that require a test subject to contain matches of candidates
 
 ### :spider: Data Data Data:
-- Please see [Spider.java](Data/source/bse/data/utils/Spider.java).
+- Please see [Spider.java](Data/source/org/bse/data/spider/Spider.java).
 
 ---
 

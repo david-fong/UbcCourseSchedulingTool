@@ -3,7 +3,6 @@ package org.bse.utils.requirement.operators.matching;
 import org.bse.utils.requirement.InsatiableReqException;
 import org.bse.utils.requirement.InsatiableReqException.UnexpectedInsatiableReqException;
 import org.bse.utils.requirement.RequireOpResult;
-import org.bse.utils.requirement.RequireOpResult.RequireOpResultStatus;
 import org.bse.utils.requirement.Requirement;
 
 import java.util.ArrayList;
@@ -50,20 +49,14 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
      * @return
      */
     @Override
-    public RequireOpResultStatus requireOf(final Set<T> testSubject) {
+    public RequireOpResult.ReqOpOutcome requireOf(final Set<T> testSubject) {
         final int creditsOfMatching = getCandidates().stream()
                 .filter(testSubject::contains)
                 .mapToInt(CreditValued::getCreditValue)
                 .sum();
         return creditsOfMatching >= this.threshold
-                ? RequireOpResultStatus.PASSED_REQ
-                : RequireOpResultStatus.FAILED_REQ;
-    }
-
-    // TODO:
-    @Override
-    public RequireOpResult<Set<T>> requireOfVerbose(final Set<T> testSubject) {
-        return null;
+                ? RequireOpResult.ReqOpOutcome.PASSED_REQ
+                : RequireOpResult.ReqOpOutcome.FAILED_REQ;
     }
 
     @Override
