@@ -136,22 +136,26 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
     }
     private Set<Set<T>> recursiveGetPassingCombinations
             (final int threshold, final int startIdx, final List<T> children) {
-        if (threshold <= candidateCreditValues[startIdx]) {
+        if (startIdx >= children.size()) return null;
+
+        final int remainingCreditRequired = threshold - children.get(startIdx).getCreditValue();
+        if (remainingCreditRequired <= 0) {
             return Collections.singleton(Collections.singleton(
                     children.get(startIdx)
             ));
         }
 
-        final int remainingCreditRequired = threshold - candidateCreditValues[startIdx];
         final Set<Set<T>> accumulator = new HashSet<>();
-        for (int i = startIdx + 1; i <= children.size() - threshold; i++) {
-            final Set<Set<T>> subRoot = recursiveGetPassingCombinations(
-                    remainingCreditRequired, i, children
+        for (int subStartIdx = startIdx + 1; subStartIdx < children.size(); subStartIdx++) {
+            final Set<Set<T>> subPassingCombos = recursiveGetPassingCombinations(
+                    remainingCreditRequired, subStartIdx, children
             );
-            for (Set<T> subCombo : subRoot) {
-                final Set<T> combined = new HashSet<>(subCombo);
-                combined.add(children.get(startIdx));
-                accumulator.add(combined);
+            if (subPassingCombos != null && !subPassingCombos.isEmpty()) {
+                for (Set<T> subCombo : subPassingCombos) {
+                    final Set<T> combined = new HashSet<>(subCombo);
+                    combined.add(children.get(startIdx));
+                    accumulator.add(combined);
+                }
             }
         }
         return accumulator;

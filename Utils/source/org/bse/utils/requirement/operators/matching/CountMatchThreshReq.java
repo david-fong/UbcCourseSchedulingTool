@@ -108,13 +108,25 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
     @Override
     public Set<Set<T>> getAllBarelyPassingCombinations() {
-        return recursiveGetPassingCombinations(
-                threshold, 0, new ArrayList<>(getCandidates())
-        );
+        final Set<Set<T>> accumulator = new HashSet<>(getNumBarelyPassingCombinations());
+        final List<T> children = new ArrayList<>(getCandidates());
+
+        for (int startIdx = 0; startIdx <= children.size() - threshold; startIdx++) {
+            accumulator.addAll(
+                    recursiveGetPassingCombinations(threshold, startIdx, children)
+            );
+        }
+        return accumulator;
     }
+    /* A helper for [getAllBarelyPassingCombinations].
+     * [children] must not be modified externally or internally.
+     * Only gets combinations that include [children.get(startId)]
+     *   and no children whose indices in [children] are less than
+     *   [startIdx].
+     */
     private Set<Set<T>> recursiveGetPassingCombinations
-            // TODO: find out how to turn children into an array.
             (final int threshold, final int startIdx, final List<T> children) {
+
         // Check break condition:
         if (threshold == 1) {
             return Collections.singleton(Collections.singleton(
@@ -123,11 +135,11 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
         }
 
         final Set<Set<T>> accumulator = new HashSet<>();
-        for (int i = startIdx + 1; i <= children.size() - threshold; i++) {
-            final Set<Set<T>> subRoot = recursiveGetPassingCombinations(
-                    threshold - 1, i, children
+        for (int subStartIdx = startIdx + 1; subStartIdx <= children.size() - threshold; subStartIdx++) {
+            final Set<Set<T>> subPassingCombos = recursiveGetPassingCombinations(
+                    threshold - 1, subStartIdx, children
             );
-            for (Set<T> subCombo : subRoot) {
+            for (Set<T> subCombo : subPassingCombos) {
                 final Set<T> combined = new HashSet<>(subCombo);
                 combined.add(children.get(startIdx));
                 accumulator.add(combined);
