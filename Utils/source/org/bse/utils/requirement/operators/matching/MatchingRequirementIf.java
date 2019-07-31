@@ -16,10 +16,10 @@ import java.util.Set;
 public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
 
     /**
-     * @return The expected size of the collection that should be returned from the
-     *     [getAllBarelyPassingCombinations] method.
+     * @return The estimated expected size of the collection that should be
+     *     returned from the [getAllBarelyPassingCombinations] method.
      */
-    int getNumBarelyPassingCombinations();
+    long estimateNumBarelyPassingCombinations();
 
     /**
      * This method has nothing to do with whether a test subject can pass
@@ -37,14 +37,15 @@ public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
 
 
     /**
-     * TODO:
+     * A utility class for a [MatchingRequirementIf]
+     * that always returns with a passing status.
      */
     final class StrictlyPassingMatchThreshReq<T>
             extends StrictlyPassingReq<Set<T>>
             implements MatchingRequirementIf<T> {
 
         @Override
-        public int getNumBarelyPassingCombinations() {
+        public long estimateNumBarelyPassingCombinations() {
             return Integer.MAX_VALUE;
         }
 
@@ -65,14 +66,15 @@ public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
     }
 
     /**
-     * TODO:
+     * A utility class for a [MatchingRequirementIf]
+     * that always returns with a failing status.
      */
     final class StrictlyFailingMatchThreshReq<T>
             extends StrictlyFailingReq<Set<T>>
             implements MatchingRequirementIf<T> {
 
         @Override
-        public int getNumBarelyPassingCombinations() {
+        public long estimateNumBarelyPassingCombinations() {
             return 0;
         }
 

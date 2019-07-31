@@ -25,9 +25,9 @@ public final class LogicOrMatchReq<T> extends VariadicOrReq<Set<T>> implements M
     }
 
     @Override
-    public int getNumBarelyPassingCombinations() {
+    public long estimateNumBarelyPassingCombinations() {
         return children.stream()
-                .mapToInt(MatchingRequirementIf::getNumBarelyPassingCombinations)
+                .mapToLong(MatchingRequirementIf::estimateNumBarelyPassingCombinations)
                 .sum();
     }
 

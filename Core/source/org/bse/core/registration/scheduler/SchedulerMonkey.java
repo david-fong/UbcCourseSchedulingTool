@@ -41,7 +41,7 @@ import java.util.Set;
      * considerably large after the previous step (such as elective option lists),
      * ask the user to supply further restrictions based on their own preferences,
      * and then go back to the previous step.
-     * >>> See [MatchingRequirementIf.getNumBarelyPassingCombinations]
+     * >>> See [MatchingRequirementIf.estimateNumBarelyPassingCombinations]
      *
      * 0.4. [filter]
      * Use the narrowed program [Requirement] to generate a collection of all

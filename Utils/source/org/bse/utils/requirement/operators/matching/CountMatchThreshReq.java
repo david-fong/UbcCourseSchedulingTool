@@ -13,7 +13,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * TODO: write documentation.
+ * Requires a certain number of entries in a test subject to match
+ * candidates provided in the constructor.
  * @param <T>
  */
 public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
@@ -88,7 +89,7 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
     }
 
     @Override
-    public int getNumBarelyPassingCombinations() {
+    public long estimateNumBarelyPassingCombinations() {
         // constructor assertions ensure this calculation is correct.
         final int n = getCandidates().size();
 //        BigInteger numCombinations = BigInteger.ONE;
@@ -108,7 +109,7 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
     @Override
     public Set<Set<T>> getAllBarelyPassingCombinations() {
-        final Set<Set<T>> accumulator = new HashSet<>(getNumBarelyPassingCombinations());
+        final Set<Set<T>> accumulator = new HashSet<>((int)estimateNumBarelyPassingCombinations());
         final List<T> children = new ArrayList<>(getCandidates());
 
         for (int startIdx = 0; startIdx <= children.size() - threshold; startIdx++) {

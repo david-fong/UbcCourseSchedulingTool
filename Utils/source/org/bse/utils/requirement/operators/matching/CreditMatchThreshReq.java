@@ -107,10 +107,10 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
     }
 
     @Override
-    public int getNumBarelyPassingCombinations() {
+    public long estimateNumBarelyPassingCombinations() {
+        // TODO: change this to use math with averages.
         return recursiveCountCombos(this.threshold, 0);
     }
-    // TODO: test.
     private int recursiveCountCombos(final int threshold, final int startIdx) {
         int numPassing = 0;
         // TODO: think about how to add another conditional to further avoid unnecessary work.
@@ -130,10 +130,23 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
 
     @Override
     public Set<Set<T>> getAllBarelyPassingCombinations() {
-        return recursiveGetPassingCombinations(
-                threshold, 0, new ArrayList<>(getCandidates())
-        );
+        final Set<Set<T>> accumulator = new HashSet<>();
+        final List<T> children = new ArrayList<>(getCandidates());
+
+        for (int startIdx = 0; startIdx < children.size(); startIdx++) {
+            final Set<Set<T>> subAccumulator = recursiveGetPassingCombinations(
+                    threshold, startIdx, children
+            );
+            if (subAccumulator != null) {
+                accumulator.addAll(subAccumulator);
+            }
+        }
+        return accumulator;
     }
+    /* Returns null if no passing combinations can be built using candidates from
+     * [children] including [candidates.get(startIdx] and any candidates from
+     * [children] after the index [startIdx].
+     */
     private Set<Set<T>> recursiveGetPassingCombinations
             (final int threshold, final int startIdx, final List<T> children) {
         if (startIdx >= children.size()) return null;
@@ -158,7 +171,7 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
                 }
             }
         }
-        return accumulator;
+        return accumulator.isEmpty() ? null : accumulator;
     }
 
 }

@@ -47,7 +47,8 @@ public interface Requirement<T> {
 
 
     /**
-     * A Class for a [Requirement] that always returns with a passing status.
+     * A utility lass for a [Requirement] that
+     * always returns with a passing status.
      * @param <T>
      */
     class StrictlyPassingReq<T> implements Requirement<T> {
@@ -69,7 +70,8 @@ public interface Requirement<T> {
     }
 
     /**
-     * A Class for a [Requirement] that always returns with a failing status.
+     * A utility lass for a [Requirement] that
+     * always returns with a failing status.
      */
     class StrictlyFailingReq<T> implements Requirement<T> {
 
