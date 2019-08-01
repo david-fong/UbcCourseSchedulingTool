@@ -5,6 +5,5 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="dom-2.3.0-jaxb-1.0.6" level="application" />
   </component>
 </module>

@@ -38,27 +38,18 @@ public final class DataMain {
         }
     }
 
-    private static final String GENERATED_RESOURCE_FOLDER_NAME = "genresource";
     /**
      * This will be used when generating xml data representing courses.
      * The path to a class' source code package can be obtained using its
      * class' [getPackage] method, and replacing the package separator with
      * [File.separator].
      */
-    public static final File DEVELOPMENT_PATH_TO_GENERATED_RESOURCES;
+    static final File DEVELOPMENT_PATH_TO_GENERATED_RESOURCES;
     static {
-        final File userDir = new File(System.getProperty("user.dir"));
-        if (userDir.getName().equals(RUNTIME_PATH_OF_COMPILED_DATA_MODULE.getName())) {
-            DEVELOPMENT_PATH_TO_GENERATED_RESOURCES = new File(
-                    RUNTIME_PATH_OF_COMPILED_DATA_MODULE,
-                    GENERATED_RESOURCE_FOLDER_NAME
-            );
-        } else {
-            throw new RuntimeException(String.format(
-                    "%s must be run from the local path of the module containing its source code",
-                    DataMain.class.getName())
-            );
-        }
+        DEVELOPMENT_PATH_TO_GENERATED_RESOURCES = new File(
+                RUNTIME_PATH_OF_COMPILED_DATA_MODULE,
+                "genresource"
+        );
     }
 
     public static class CreditValuedImpl implements CreditValued {

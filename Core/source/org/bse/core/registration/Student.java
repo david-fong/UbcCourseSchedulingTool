@@ -48,6 +48,13 @@ public final class Student {
         return worklists;
     }
 
+    public void setCurrentYear(YearOfStudy yearOfStudy) {
+        this.currentYear = yearOfStudy;
+    }
+    public void setCampus(UbcCampus campus) {
+        this.campus = campus;
+    }
+
     public Set<Course> getCompletedCourses() {
         return null; // TODO:
     }

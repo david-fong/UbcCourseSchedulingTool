@@ -13,7 +13,7 @@ import java.util.Set;
  *
  * TODO: add representation of seating.
  */
-public class CourseSection implements CodeStringRegistered {
+public class CourseSection implements CodeStringPath {
 
     private final CourseSectionType sectionType;
     private final Course parentCourse;
@@ -34,7 +34,7 @@ public class CourseSection implements CodeStringRegistered {
                          Semester semester, Set<CourseSectionBlock> blocks) {
         this.sectionType  = sectionType;
         this.parentCourse = parentCourse;
-        this.sectionCode  = String.format("%s %s", parentCourse.getCodeString(), sectionCode);
+        this.sectionCode  = String.format("%s %s", parentCourse.getFullCodeString(), sectionCode);
         this.semester     = semester;
         this.blocks       = Collections.unmodifiableSet(blocks);
     }
@@ -45,7 +45,7 @@ public class CourseSection implements CodeStringRegistered {
     public Course getParentCourse() {
         return parentCourse;
     }
-    public String getCodeString() {
+    public String getFullCodeString() {
         return sectionCode;
     }
     public Semester getSemester() {
@@ -58,7 +58,7 @@ public class CourseSection implements CodeStringRegistered {
     @Override
     public boolean equals(Object other) {
         return (other instanceof CourseSection) &&
-                getCodeString().equals(((CourseSection) other).getCodeString());
+                getFullCodeString().equals(((CourseSection) other).getFullCodeString());
     }
 
 }

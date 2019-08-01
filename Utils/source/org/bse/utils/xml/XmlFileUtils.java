@@ -43,15 +43,14 @@ public final class XmlFileUtils {
     /**
      * Reads a file that is assumed to contain valid xml, and
      * returns a [Document] view of the contents of that file,
-     * or null if the file did not exist or was not valid XML.
+     * or null if the file did not contain not valid XML.
      *
-     * @param filePath The path to the file to read from.
+     * @param filePath The path to the file to read from. Must not be null.
      * @return [null] if the file could not be read into a [Document].
-     * @throws FileNotFoundException If [filePath] did not lead to an existing file.
+     * @throws FileNotFoundException If the specified file did not contain valid XML.
      */
     public static Document readXmlFromFile(File filePath) throws FileNotFoundException {
-        // TODO: perform some checks on file? (exists, isFile, ...)
-        if (!filePath.exists()) {
+        if (!filePath.isFile()) {
             throw new FileNotFoundException();
         }
         try {
@@ -59,9 +58,8 @@ public final class XmlFileUtils {
             // TODO: throw an exception if the document was not valid XML.
             return document;
         } catch (SAXException | IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     /**

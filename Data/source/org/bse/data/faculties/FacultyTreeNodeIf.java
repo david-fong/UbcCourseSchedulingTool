@@ -1,14 +1,16 @@
 package org.bse.data.faculties;
 
 import org.bse.data.courseutils.Course;
+import org.bse.utils.xml.XmlFileUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Map;
 
+import static org.bse.data.DataMain.RUNTIME_PATH_OF_COMPILED_DATA_MODULE;
+
 /**
- * A property of a course. This is not the same as a program.
- * A program is represented as a [CourseIf] with type [PROGRAM],
- * and a non-empty set of co-requisites, which may require courses
- * belonging to several different faculties.
+ * A property of a [Course].
  */
 public interface FacultyTreeNodeIf {
 
@@ -29,18 +31,26 @@ public interface FacultyTreeNodeIf {
     FacultyTreeNodeIf getParentNode();
     FacultyTreeNodeIf[] getChildren();
 
-    default FacultyTreeNodeIf recursiveGetParentNode() {
-        if (getParentNode() == null) return this;
-        else return getParentNode().recursiveGetParentNode();
+    default FacultyTreeRootNodeIf getRootFacultyNode() {
+        return getParentNode() == null
+                ? (FacultyTreeRootNodeIf)this
+                : getParentNode().getRootFacultyNode()
+                ;
     }
 
-    private Course initCourseOfCodeString(String codeString) throws FacultyCourseNotFoundException {
-        if (false) {
-            throw new FacultyCourseNotFoundException(codeString, this);
-        }
-        return null; // TODO:
-    }
+    /**
+     *
+     * @param codeString must not be null. Ex "101"
+     * @return The course registered by the code [codeString].
+     * @throws FacultyCourseNotFoundException If a file could not be located under
+     *     [this][FacultyTreeNodeIf] following the path spec during lazy initialization
+     *     of the [Course] registered by the code [codeString].
+     */
     default Course getCourseByCodeString(String codeString) throws FacultyCourseNotFoundException {
+        if (!getCodeStringToCourseMap().containsKey(codeString)) {
+            final String message = "code string not registered in faculty tree node";
+            throw new FacultyCourseNotFoundException(message, this);
+        }
         Course course = getCodeStringToCourseMap().get(codeString);
         if (course != null) {
             return course;
@@ -50,9 +60,32 @@ public interface FacultyTreeNodeIf {
             return course;
         }
     }
+    private Course initCourseOfCodeString(String courseCodeStringToken) throws FacultyCourseNotFoundException {
+        File filePath = new File(
+                RUNTIME_PATH_OF_COMPILED_DATA_MODULE,
+                String.join(File.separator,
+                        getRootFacultyNode().getCampusFolderName(),
+                        getAbbreviation(),
+                        courseCodeStringToken
+                )
+                // It is the [Spider]'s responsibility to create xml files in the
+                // IDE's resource folder following the above folder structure.
+        );
+        try {
+            return Course.fromXml(
+                    XmlFileUtils.readXmlFromFile(filePath)
+            );
+        } catch (FileNotFoundException e) {
+            throw new FacultyCourseNotFoundException(courseCodeStringToken, this, e);
+        }
+    }
+
     /**
      *
-     * @return A map from course code strings to [Course]s. Must not be null
+     * @return A map from course code strings to [Course]s. Must not be null.
+     *     All existing [Course]s under the implementing [FacultyTreeNodeIf]
+     *     must have their code string as a key from initialization. Keys in
+     *     the returned set must never change once initialized.
      */
     Map<String, Course> getCodeStringToCourseMap();
 
