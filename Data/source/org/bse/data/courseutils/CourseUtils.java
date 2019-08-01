@@ -16,23 +16,6 @@ public final class CourseUtils {
         }
     }
 
-    public enum CourseSectionType {
-        LECTURE  ("Lecture"),
-        LAB      ("Lab"),
-        TUTORIAL ("Tutorial"),
-        ;
-        public final String label;
-
-        CourseSectionType(String label) {
-            this.label = label;
-        }
-
-        @Override
-        public String toString() {
-            return label;
-        }
-    }
-
     public enum YearOfStudy {
         FIRST_YEAR  ("First year"),
         SECOND_YEAR ("Second year"),

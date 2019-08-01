@@ -31,8 +31,10 @@
         </Lectures>
 
         <Labs creditval="1">
-            <Section code="L1A">
-                ...
+            <Section code="L1A" semester="W1">
+                <Instructor>Paul Carter</Instructor>
+                <Instructor>Farshid</Instructor>
+                <Block start="08:00" end="09:30"/>
             </Section>
         </Labs>
 

@@ -1,5 +1,6 @@
 package org.bse.data.courseutils;
 
+import org.bse.data.courseutils.CourseSectionCategory.CourseSection;
 import org.bse.data.courseutils.CourseUtils.BlockRepetition;
 import org.bse.data.courseutils.CourseUtils.BlockTime;
 
