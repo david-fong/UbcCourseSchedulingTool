@@ -8,13 +8,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * An interface that can only be used by extension (mwahaha).
- *
- * To enforce the lazy singleton pattern, final (non-abstract) implementations
- * should be public with private constructors, and define a public static method
- * called "[getInstance]" that returns a singleton instance of itself, and creates
- * one if it doesn't already exist. The singleton instance should be stored in a
- * private static field.
+ * An interface that can only be used by extension or by anonymous construction.
  */
 public abstract class Course implements CreditValued, CodeStringPath {
 
@@ -37,6 +31,7 @@ public abstract class Course implements CreditValued, CodeStringPath {
     public static Course fromXml(Document xmlDocument) {
         final Element courseElement; {
             NodeList nodeList = xmlDocument.getElementsByTagName(Xml.COURSE_TAG.value);
+            courseElement = (Element)nodeList.item(0);
         }
 
         // TODO:

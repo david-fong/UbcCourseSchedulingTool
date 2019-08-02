@@ -1,9 +1,10 @@
 package org.bse.data.courseutils;
 
 import org.bse.data.courseutils.CourseUtils.Semester;
+import org.bse.utils.requirement.operators.matching.CreditValued;
+import org.w3c.dom.Element;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -15,17 +16,18 @@ public final class CourseSectionCategory {
     private final int creditValue;
     private final Set<CourseSection> childSections;
 
-    public CourseSectionCategory (Course parentCourse, int creditValue) {
-        this.parentCourse = parentCourse;
-        this.creditValue = creditValue;
-        this.childSections = new HashSet<>(); // TODO:
+    public static CourseSectionCategory fromXml(final Element courseSectionCategoryElement) {
+        return null; // TODO:
     }
 
-    public Course getParentCourse() {
-        return parentCourse;
+    protected static CourseSection createSectionFromXml(final Element courseSectionElement) {
+        return null; // TODO:
     }
-    public int getCreditValue() {
-        return creditValue;
+
+    private CourseSectionCategory (Course parentCourse, int creditValue, Set<CourseSection> childSections) {
+        this.parentCourse = parentCourse;
+        this.creditValue = creditValue;
+        this.childSections = Collections.unmodifiableSet(childSections);
     }
 
 
@@ -37,36 +39,47 @@ public final class CourseSectionCategory {
      *
      * TODO: add representation of seating.
      */
-    public class CourseSection implements CodeStringPath {
+    public class CourseSection implements CodeStringPath, CreditValued {
 
-        private final String sectionCode;
-        private final Semester semester;
-        private final String lecturer = ""; // TODO:
-        private final Set<CourseSectionBlock> blocks;
+        protected final String sectionCode;
+        protected final Semester semester;
+        protected final String lecturer = ""; // TODO:
+        protected final Set<CourseSectionBlock> blocks;
 
         /**
-         *
          * @param sectionCode Ex. "101", or "T2A", or "L1B".
          * @param semester One of four options.
          * @param blocks Should not be modified externally after being passed in.
          */
-        public CourseSection(String sectionCode,
-                             Semester semester, Set<CourseSectionBlock> blocks) {
+        protected CourseSection(String sectionCode, Semester semester, Set<CourseSectionBlock> blocks) {
             this.sectionCode  = String.format("%s %s", getParentCourse().getFullCodeString(), sectionCode);
             this.semester     = semester;
             this.blocks       = Collections.unmodifiableSet(blocks);
         }
 
-        public String getFullCodeString() {
-            return sectionCode;
+        public final boolean overlapsWith(CourseSection other) {
+            return semester == other.semester && blocks.stream().anyMatch(block ->
+                    other.blocks.stream().anyMatch(block::overlapsWith)
+            );
         }
-        public Semester getSemester() {
+
+        public final Course getParentCourse() {
+            return parentCourse;
+        }
+        public final String getFullCodeString() {
+            return parentCourse.getFullCodeString() + sectionCode;
+        }
+        public final Semester getSemester() {
             return semester;
         }
-        public Set<CourseSectionBlock> getBlocks() {
+        public final Set<CourseSectionBlock> getBlocks() {
             return blocks;
         }
 
+        @Override
+        public final int getCreditValue() {
+            return creditValue;
+        }
     }
 
 }

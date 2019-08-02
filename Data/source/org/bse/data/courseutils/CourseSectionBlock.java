@@ -3,6 +3,7 @@ package org.bse.data.courseutils;
 import org.bse.data.courseutils.CourseSectionCategory.CourseSection;
 import org.bse.data.courseutils.CourseUtils.BlockRepetition;
 import org.bse.data.courseutils.CourseUtils.BlockTime;
+import org.w3c.dom.Element;
 
 import java.time.DayOfWeek;
 
@@ -11,7 +12,7 @@ import java.time.DayOfWeek;
  * specific meeting places and times for a [CourseSection].
  * Has no notion of semester context.
  */
-public class CourseSectionBlock {
+public final class CourseSectionBlock {
 
     private final CourseSection parentSection;
     private final boolean isWaitlist;
@@ -20,7 +21,11 @@ public class CourseSectionBlock {
     private final BlockRepetition repetitionType;
     private final BlockTimeEnclosure timeEnclosure;
 
-    public CourseSectionBlock(CourseSection parentSection, boolean isWaitlist,
+    public static CourseSectionBlock fromXml(Element blockElement) {
+        return null; // TODO:
+    }
+
+    private CourseSectionBlock(CourseSection parentSection, boolean isWaitlist,
                               DayOfWeek dayOfWeek, BlockRepetition repetitionType,
                               BlockTimeEnclosure timeEnclosure) {
         this.parentSection = parentSection;
@@ -29,8 +34,6 @@ public class CourseSectionBlock {
         this.repetitionType = repetitionType;
         this.timeEnclosure = timeEnclosure;
     }
-
-    // TODO: Add JSON constructor:
 
     public boolean overlapsWith(CourseSectionBlock other) {
         if (dayOfWeek != other.dayOfWeek) {
@@ -42,10 +45,7 @@ public class CourseSectionBlock {
         }
     }
 
-    public CourseSection getParentSection() {
-        return parentSection;
-    }
-    public boolean getIsWaitlist() {
+    public boolean isWaitlist() {
         return isWaitlist;
     }
     public DayOfWeek getDayOfWeek() {
