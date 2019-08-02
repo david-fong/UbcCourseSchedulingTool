@@ -4,21 +4,19 @@
     </Description>
 
     <Prerequisites>
-        <MatchReqRoot contentType="COURSE">
+        <MatchReqRoot testSubjectType="CourseRef">
             <CountMTR threshold="1">
-                <Candidate>APSC 160</Candidate>
+                <CourseRef value="APSC 160"/>
             </CountMTR>
         </MatchReqRoot>
     </Prerequisites>
 
     <Corequisites>
-        <MatchReqRoot contentType="COURSE">
+        <MatchReqRoot testSubjectType="CourseRef">
             <LogicAndMR>
-                <Child>
-                    <CreditMTR threshold="5">
-                        <Candidate>CPEN 211</Candidate>
-                    </CreditMTR>
-                </Child>
+                <CreditMTR threshold="5">
+                    <CourseRef value="CPEN 211"/>
+                </CreditMTR>
             </LogicAndMR>
         </MatchReqRoot>
     </Corequisites>
@@ -34,7 +32,7 @@
             <Section code="L1A" semester="W1">
                 <Instructor>Paul Carter</Instructor>
                 <Instructor>Farshid</Instructor>
-                <Block start="08:00" end="09:30"/>
+                <Block start="08:00" end="09:30" repeat="EVERY_WEEK"/>
             </Section>
         </Labs>
 

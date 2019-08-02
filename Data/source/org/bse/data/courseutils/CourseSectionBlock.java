@@ -1,7 +1,6 @@
 package org.bse.data.courseutils;
 
 import org.bse.data.courseutils.CourseSectionCategory.CourseSection;
-import org.bse.data.courseutils.CourseUtils.BlockRepetition;
 import org.bse.data.courseutils.CourseUtils.BlockTime;
 import org.w3c.dom.Element;
 
@@ -22,6 +21,7 @@ public final class CourseSectionBlock {
     private final BlockTimeEnclosure timeEnclosure;
 
     public static CourseSectionBlock fromXml(Element blockElement) {
+        // note: for parsing enumConstant.name(), use enumClass.valueOf(String name).
         return null; // TODO:
     }
 
@@ -75,6 +75,17 @@ public final class CourseSectionBlock {
 
         public boolean overlapsWith(BlockTimeEnclosure other) {
             return begin.isBefore(other.end) && end.isAfter(other.begin);
+        }
+    }
+
+    public enum BlockRepetition {
+        EVERY_WEEK,
+        ALTERNATING_FIRST,
+        ALTERNATING_SECOND,
+        ;
+
+        public boolean mayOverlapWith(BlockRepetition other) {
+            return this == other || (this == EVERY_WEEK || other == EVERY_WEEK);
         }
     }
 

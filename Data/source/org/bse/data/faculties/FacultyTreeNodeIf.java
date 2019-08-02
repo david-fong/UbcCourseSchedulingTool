@@ -5,6 +5,7 @@ import org.bse.utils.xml.XmlFileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.util.Map;
 
 import static org.bse.data.DataMain.RUNTIME_PATH_OF_COMPILED_DATA_MODULE;
@@ -66,10 +67,8 @@ public interface FacultyTreeNodeIf {
         }
     }
     private Course initCourseOfCodeString(String courseCodeStringToken) throws FacultyCourseNotFoundException {
-        File filePath = new File(
-                RUNTIME_PATH_OF_COMPILED_DATA_MODULE,
-                String.join(File.separator,
-                        getRootFacultyNode().getCampusFolderName(),
+        Path filePath = RUNTIME_PATH_OF_COMPILED_DATA_MODULE.resolve(
+                Path.of(getRootFacultyNode().getCampusFolderName(),
                         getAbbreviation(),
                         courseCodeStringToken
                 )

@@ -5,8 +5,8 @@ import org.bse.utils.requirement.RequireOpResult;
 import org.bse.utils.requirement.operators.matching.CreditMatchThreshReq;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 
-import java.io.File;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.Set;
 
 /**
@@ -27,16 +27,7 @@ public final class DataMain {
      * separator].
      * TODO: move this closer to where it will be used (which is not here).
      */
-    public static final File RUNTIME_PATH_OF_COMPILED_DATA_MODULE;
-    static {
-        try {
-            RUNTIME_PATH_OF_COMPILED_DATA_MODULE = new File(DataMain.class
-                    .getProtectionDomain().getCodeSource().getLocation().toURI()
-            );
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Could not get runtime path to module jar", e);
-        }
-    }
+    public static final Path RUNTIME_PATH_OF_COMPILED_DATA_MODULE;
 
     /**
      * This will be used when generating xml data representing courses.
@@ -44,12 +35,18 @@ public final class DataMain {
      * class' [getPackage] method, and replacing the package separator with
      * [File.separator].
      */
-    static final File DEVELOPMENT_PATH_TO_GENERATED_RESOURCES;
+    public static final Path DEVELOPMENT_PATH_TO_GENERATED_RESOURCES;
+
     static {
-        DEVELOPMENT_PATH_TO_GENERATED_RESOURCES = new File(
-                RUNTIME_PATH_OF_COMPILED_DATA_MODULE,
-                "genresource"
-        );
+        try {
+            RUNTIME_PATH_OF_COMPILED_DATA_MODULE = Path.of(DataMain.class
+                    .getProtectionDomain().getCodeSource().getLocation().toURI()
+            );
+            DEVELOPMENT_PATH_TO_GENERATED_RESOURCES
+                    = RUNTIME_PATH_OF_COMPILED_DATA_MODULE.resolve("genresource");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Could not get runtime path to module jar", e);
+        }
     }
 
     public static class CreditValuedImpl implements CreditValued {
@@ -83,7 +80,8 @@ public final class DataMain {
 
 
     public static void main(String[] args) {
-        //System.out.println(RUNTIME_PATH_OF_COMPILED_DATA_MODULE);
+        System.out.println(RUNTIME_PATH_OF_COMPILED_DATA_MODULE);
+        System.out.println(DEVELOPMENT_PATH_TO_GENERATED_RESOURCES);
 
         CreditValuedImpl c0 = new CreditValuedImpl("a", 2);
         CreditValuedImpl c1 = new CreditValuedImpl("b", 3);

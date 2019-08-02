@@ -15,6 +15,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Convenience methods whose their bodies generally just make a single call to an
@@ -49,12 +51,12 @@ public final class XmlFileUtils {
      * @return [null] if the file could not be read into a [Document].
      * @throws FileNotFoundException If the specified file did not contain valid XML.
      */
-    public static Document readXmlFromFile(File filePath) throws FileNotFoundException {
-        if (!filePath.isFile()) {
+    public static Document readXmlFromFile(Path filePath) throws FileNotFoundException {
+        if (!Files.isRegularFile(filePath)) {
             throw new FileNotFoundException();
         }
         try {
-            final Document document = DOC_BUILDER.parse(filePath);
+            final Document document = DOC_BUILDER.parse(filePath.toFile());
             // TODO: throw an exception if the document was not valid XML.
             return document;
         } catch (SAXException | IOException e) {

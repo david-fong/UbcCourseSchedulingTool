@@ -113,17 +113,6 @@ public final class CourseUtils {
         }
     }
 
-    public enum BlockRepetition {
-        EVERY_WEEK,
-        ALTERNATING_FIRST,
-        ALTERNATING_SECOND,
-        ;
-
-        public boolean mayOverlapWith(BlockRepetition other) {
-            return this == other || (this == EVERY_WEEK || other == EVERY_WEEK);
-        }
-    }
-
     private static final int EARLIEST_BLOCK_HOUR = 7;
 
     public enum BlockTime {
