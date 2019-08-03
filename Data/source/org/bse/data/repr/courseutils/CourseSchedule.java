@@ -1,6 +1,6 @@
-package org.bse.data.courseutils;
+package org.bse.data.repr.courseutils;
 
-import org.bse.data.courseutils.CourseSectionCategory.CourseSection;
+import org.bse.data.repr.courseutils.CourseSectionCategory.CourseSection;
 import org.bse.utils.pickybuild.PickyBuild;
 
 import java.util.HashSet;

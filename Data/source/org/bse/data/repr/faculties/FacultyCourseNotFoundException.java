@@ -1,4 +1,4 @@
-package org.bse.data.faculties;
+package org.bse.data.repr.faculties;
 
 /**
  * Thrown when a [Course] is attempted to be found under a [FacultyTreeNodeIf], and

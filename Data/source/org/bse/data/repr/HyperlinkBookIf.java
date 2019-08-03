@@ -1,4 +1,4 @@
-package org.bse.data.courseutils;
+package org.bse.data.repr;
 
 public interface HyperlinkBookIf {
 

@@ -1,4 +1,6 @@
-package org.bse.data.courseutils;
+package org.bse.data.repr;
+
+import org.bse.data.repr.courseutils.CourseSchedule;
 
 /**
  * Wrapper for a [CourseSchedule] object.

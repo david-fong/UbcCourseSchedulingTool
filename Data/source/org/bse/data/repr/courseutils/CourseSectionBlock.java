@@ -1,7 +1,7 @@
-package org.bse.data.courseutils;
+package org.bse.data.repr.courseutils;
 
-import org.bse.data.courseutils.CourseSectionCategory.CourseSection;
-import org.bse.data.courseutils.CourseUtils.BlockTime;
+import org.bse.data.repr.courseutils.CourseSectionCategory.CourseSection;
+import org.bse.data.repr.courseutils.CourseUtils.BlockTime;
 import org.w3c.dom.Element;
 
 import java.time.DayOfWeek;

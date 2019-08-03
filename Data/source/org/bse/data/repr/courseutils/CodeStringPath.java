@@ -1,4 +1,4 @@
-package org.bse.data.courseutils;
+package org.bse.data.repr.courseutils;
 
 /**
  * TODO: if these methods end up being called very often, change implementations to save

@@ -1,7 +1,7 @@
-package org.bse.data.faculties;
+package org.bse.data.repr.faculties;
 
 import org.bse.data.coursedata.CourseDataLocator;
-import org.bse.data.courseutils.Course;
+import org.bse.data.repr.courseutils.Course;
 import org.bse.utils.xml.XmlFileUtils;
 
 import java.io.IOException;
@@ -25,10 +25,14 @@ public interface FacultyTreeNodeIf {
 
     FacultyTreeNodeType getType();
 
+    default FacultyTreeRootNodeIf getRootFacultyNode() {
+        return getParentNode().getRootFacultyNode();
+    }
+
     /**
      * @return The [FacultyTreeNodeIf] containing [this] in the
-     *     collection returned by its [getChildren] method. May
-     *     only return null if [this] is an instance of [FacultyTreeRootNodeIf].
+     *     collection returned by its [getChildren] method. Must
+     *     not return null if [this] is an instance of [FacultyTreeRootNodeIf].
      */
     FacultyTreeNodeIf getParentNode();
 
@@ -47,12 +51,6 @@ public interface FacultyTreeNodeIf {
      *     [getParentNode] methods return [this]
      */
     FacultyTreeNodeIf[] getChildren();
-
-    default FacultyTreeRootNodeIf getRootFacultyNode() {
-        return (this instanceof FacultyTreeRootNodeIf)
-                ? (FacultyTreeRootNodeIf)this
-                : getParentNode().getRootFacultyNode();
-    }
 
     /**
      *

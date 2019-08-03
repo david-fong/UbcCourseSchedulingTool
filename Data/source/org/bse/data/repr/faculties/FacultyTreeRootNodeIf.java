@@ -1,7 +1,7 @@
-package org.bse.data.faculties;
+package org.bse.data.repr.faculties;
 
-import org.bse.data.courseutils.Course;
-import org.bse.data.faculties.vancouver.VancouverFaculties;
+import org.bse.data.repr.courseutils.Course;
+import org.bse.data.repr.faculties.vancouver.VancouverFaculties;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +14,11 @@ import java.util.Map;
 public interface FacultyTreeRootNodeIf extends FacultyTreeNodeIf {
 
     Map<String, Course> EMPTY_COURSE_CODE_MAP = Map.of();
+
+    @Override
+    default FacultyTreeRootNodeIf getRootFacultyNode() {
+        return this;
+    }
 
     @Override
     default FacultyTreeNodeIf getParentNode() {

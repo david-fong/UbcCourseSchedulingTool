@@ -1,6 +1,6 @@
-package org.bse.data.courseutils;
+package org.bse.data.repr.courseutils;
 
-import org.bse.data.courseutils.CourseUtils.Semester;
+import org.bse.data.repr.courseutils.CourseUtils.Semester;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 import org.w3c.dom.Element;
 
@@ -8,13 +8,14 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- *
+ * A [Course] object will have three [CourseSectionCategory] fields: one each
+ * for all existing lecture sections, lab sections, and tutorial sections.
  */
-public final class CourseSectionCategory {
+public class CourseSectionCategory implements CreditValued {
 
     private final Course parentCourse;
     private final int creditValue;
-    private final Set<CourseSection> childSections;
+    private final Set<? extends CourseSection> childSections;
 
     public static CourseSectionCategory fromXml(final Element courseSectionCategoryElement) {
         return null; // TODO:
@@ -24,12 +25,20 @@ public final class CourseSectionCategory {
         return null; // TODO:
     }
 
-    private CourseSectionCategory (Course parentCourse, int creditValue, Set<CourseSection> childSections) {
+    CourseSectionCategory (Course parentCourse, int creditValue, Set<? extends CourseSection> childSections) {
         this.parentCourse = parentCourse;
         this.creditValue = creditValue;
         this.childSections = Collections.unmodifiableSet(childSections);
     }
 
+    @Override
+    public final int getCreditValue() {
+        return creditValue;
+    }
+
+    public Set<? extends CourseSection> getChildSections() {
+        return childSections;
+    }
 
 
     /**
@@ -66,12 +75,15 @@ public final class CourseSectionCategory {
         public final Course getParentCourse() {
             return parentCourse;
         }
+
         public final String getFullCodeString() {
             return parentCourse.getFullCodeString() + sectionCode;
         }
+
         public final Semester getSemester() {
             return semester;
         }
+
         public final Set<CourseSectionBlock> getBlocks() {
             return blocks;
         }
