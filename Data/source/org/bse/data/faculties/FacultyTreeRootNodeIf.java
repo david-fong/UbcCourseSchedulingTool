@@ -5,6 +5,7 @@ import org.bse.data.faculties.vancouver.VancouverFaculties;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -21,7 +22,7 @@ public interface FacultyTreeRootNodeIf extends FacultyTreeNodeIf {
 
     @Override
     default Path getPathToData() {
-        return Path.of(getAbbreviation().toLowerCase());
+        return Paths.get(getAbbreviation().toLowerCase());
     }
 
     @Override

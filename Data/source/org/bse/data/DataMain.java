@@ -8,6 +8,7 @@ import org.bse.utils.requirement.operators.matching.CreditValued;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 
 /**
@@ -39,7 +40,7 @@ public final class DataMain {
 
     static {
         try {
-            RUNTIME_PATH_OF_COMPILED_DATA_MODULE = Path.of(DataMain.class
+            RUNTIME_PATH_OF_COMPILED_DATA_MODULE = Paths.get(DataMain.class
                     .getProtectionDomain().getCodeSource().getLocation().toURI()
             );
             DEVELOPMENT_PATH_TO_GENERATED_RESOURCES = RUNTIME_PATH_OF_COMPILED_DATA_MODULE
