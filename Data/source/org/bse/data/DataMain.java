@@ -1,14 +1,12 @@
 package org.bse.data;
 
+import org.bse.data.coursedata.CourseDataLocator;
 import org.bse.utils.requirement.InsatiableReqException;
 import org.bse.utils.requirement.RequireOpResult;
 import org.bse.utils.requirement.operators.matching.CreditMatchThreshReq;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 
-import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 
 /**
@@ -21,40 +19,7 @@ import java.util.Set;
  */
 public final class DataMain {
 
-    /**
-     * This will be used to locate course info saved in generated xml files,
-     * so they can be read at runtime and converted into useful objects.
-     * The path to a compiled class' package can be obtained using its class'
-     * [getPackage] method, and replacing the package separator with [File.
-     * separator].
-     */
-    public static final Path RUNTIME_PATH_OF_COMPILED_DATA_MODULE;
 
-    /**
-     * This will be used when generating xml data representing courses.
-     * The path to a class' source code package can be obtained using its
-     * class' [getPackage] method, and replacing the package separator with
-     * [File.separator]. This only needs to be valid when run from [DataMain]
-     */
-    public static final Path DEVELOPMENT_PATH_TO_GENERATED_RESOURCES;
-
-    static {
-        try {
-            RUNTIME_PATH_OF_COMPILED_DATA_MODULE = Paths.get(DataMain.class
-                    .getProtectionDomain().getCodeSource().getLocation().toURI()
-            );
-            DEVELOPMENT_PATH_TO_GENERATED_RESOURCES = RUNTIME_PATH_OF_COMPILED_DATA_MODULE
-                    // TODO: make this more robust.
-                    .getParent() // .../UbcCourseSchedulingTool/out/production/
-                    .getParent() // .../UbcCourseSchedulingTool/out/
-                    .getParent() // .../UbcCourseSchedulingTool/
-                    .resolve("genresource")
-                    .resolve(RUNTIME_PATH_OF_COMPILED_DATA_MODULE.getFileName().toString())
-            ;
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Could not get runtime path to module jar", e);
-        }
-    }
 
     public static class CreditValuedImpl implements CreditValued {
 
@@ -87,11 +52,11 @@ public final class DataMain {
 
 
     public static void main(String[] args) {
-        if (!Files.isDirectory(DEVELOPMENT_PATH_TO_GENERATED_RESOURCES)) {
+        if (!Files.isDirectory(CourseDataLocator.GENERATED_CAMPUS_DIR)) {
             throw new RuntimeException("could not get development path to generated resources");
         }
-        System.out.println(RUNTIME_PATH_OF_COMPILED_DATA_MODULE);
-        System.out.println(DEVELOPMENT_PATH_TO_GENERATED_RESOURCES);
+        System.out.println(CourseDataLocator.RUNTIME_CAMPUS_DIR);
+        System.out.println(CourseDataLocator.GENERATED_CAMPUS_DIR);
 
         CreditValuedImpl c0 = new CreditValuedImpl("a", 2);
         CreditValuedImpl c1 = new CreditValuedImpl("b", 3);

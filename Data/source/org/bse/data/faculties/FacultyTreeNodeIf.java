@@ -79,7 +79,7 @@ public interface FacultyTreeNodeIf {
         }
     }
     default Path getRuntimeFullPathToData() {
-        return CourseDataLocator.RUNTIME_CAMPUS_JUMP_DIR_PATH.resolve(getPathToData());
+        return CourseDataLocator.RUNTIME_CAMPUS_DIR.resolve(getPathToData());
     }
 
     /**
