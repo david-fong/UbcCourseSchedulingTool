@@ -1,7 +1,5 @@
 package org.bse.utils.requirement.operators.matching;
 
-import org.bse.utils.requirement.InsatiableReqException;
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -22,13 +20,10 @@ public abstract class AbstractMatchThreshReq<T> implements MatchingRequirementIf
         return threshold;
     }
 
-    public AbstractMatchThreshReq(int threshold, Set<T> candidates) throws InsatiableReqException {
+    public AbstractMatchThreshReq(int threshold, Set<T> candidates) {
+        assert threshold > 0 : "threshold must be greater than zero";
         this.threshold  = threshold;
         this.candidates = Collections.unmodifiableSet(candidates);
-
-        if (threshold <= 0) {
-            throw new InsatiableReqException("threshold must be greater than zero");
-        }
     }
 
     protected final Set<T> getCandidates() {

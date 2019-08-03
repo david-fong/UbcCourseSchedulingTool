@@ -1,6 +1,5 @@
 package org.bse.utils.requirement.operators.matching;
 
-import org.bse.utils.requirement.InsatiableReqException;
 import org.bse.utils.requirement.RequireOpResult.ReqOpOutcome;
 import org.bse.utils.requirement.Requirement;
 
@@ -19,16 +18,12 @@ import java.util.stream.Collectors;
  */
 public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
-    public CountMatchThreshReq(int threshold, Set<T> candidates) throws InsatiableReqException {
+    public CountMatchThreshReq(int threshold, Set<T> candidates) {
         super(threshold, candidates);
-
-        // Check validity of the arguments:
-        if (candidates.size() < threshold) {
-            throw new InsatiableReqException(String.format("The provided threshold"
-                    + " (%s) is greater than the number of provided candidates (%s).",
-                    threshold, candidates.size()
-            ));
-        }
+        assert candidates.size() >= threshold : String.format("The provided"
+                + " threshold (%s) is greater than the number of provided"
+                + " candidates (%s).", threshold, candidates.size()
+        );
     }
 
     @Override
@@ -43,16 +38,9 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
     @Override
     public CountMatchThreshReq<T> copy() {
-        try {
-            return new CountMatchThreshReq<>(
-                    threshold, new HashSet<>(getCandidates())
-            );
-        } catch (InsatiableReqException e) {
-            // Should never reach here: All [Requirement] implementations must be
-            // immutable (See [Requirement] spec), and validity is enforced in the
-            // constructor.
-            throw new InsatiableReqException.UnexpectedInsatiableReqException(e);
-        }
+        return new CountMatchThreshReq<>(
+                threshold, new HashSet<>(getCandidates())
+        );
     }
 
     @Override
@@ -72,14 +60,9 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
         } else {
             // Some terms matched, but not enough.
-            try {
-                return new CountMatchThreshReq<>(
-                        threshold - partition.get(true).size(),
-                        partition.get(false));
-            } catch (InsatiableReqException e) {
-                throw new InsatiableReqException.UnexpectedInsatiableReqException(e);
-                // return this;
-            }
+            return new CountMatchThreshReq<>(
+                    threshold - partition.get(true).size(),
+                    partition.get(false));
         }
     }
 
@@ -153,13 +136,7 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
      * @return A [MatchingReqIf] that requires a test subject to contain [candidate].
      */
     public static <T> CountMatchThreshReq<T> ONLY(T candidate) {
-        try {
-            return new CountMatchThreshReq<>(1, Collections.singleton(candidate));
-        } catch (InsatiableReqException e) {
-            // Should never reach here: the primitive value 1 is always less than or equal to
-            // the size of a singleton collection (Ie. 1).
-            throw new InsatiableReqException.UnexpectedInsatiableReqException(e);
-        }
+        return new CountMatchThreshReq<>(1, Collections.singleton(candidate));
     }
 
 }

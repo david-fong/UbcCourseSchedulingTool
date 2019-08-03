@@ -132,7 +132,6 @@ public final class SchedulerMonkey {
     private List<Set<Set<CourseSection>>> AllPUPUSectionCombos; // Initialized during 1.1.
 
     static void STEP_0() {
-        return;
     }
 
 }
