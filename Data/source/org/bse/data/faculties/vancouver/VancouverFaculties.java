@@ -1,7 +1,10 @@
 package org.bse.data.faculties.vancouver;
 
+import org.bse.data.courseutils.Course;
 import org.bse.data.faculties.FacultyTreeNodeIf;
 import org.bse.data.faculties.FacultyTreeRootNodeIf;
+
+import java.util.Map;
 
 import static org.bse.data.faculties.FacultyTreeNodeIf.FacultyTreeNodeType.FACULTY;
 
@@ -10,7 +13,7 @@ import static org.bse.data.faculties.FacultyTreeNodeIf.FacultyTreeNodeType.FACUL
  * https://www.ubc.ca/our-campuses/vancouver/directories/faculties-schools.html
  * https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments
  */
-public enum VancouverFaculties implements FacultyTreeRootNodeIf {
+public enum VancouverFaculties implements FacultyTreeNodeIf {
     // TODO: add entries as needed. prefer alphabetical order.
     APSC (FACULTY, "Applied Science", AppliedScienceFaculties.class),
     // ...
@@ -44,13 +47,18 @@ public enum VancouverFaculties implements FacultyTreeRootNodeIf {
     }
 
     @Override
+    public FacultyTreeNodeIf getParentNode() {
+        return FacultyTreeRootNodeIf.UbcCampuses.VANCOUVER;
+    }
+
+    @Override
     public FacultyTreeNodeIf[] getChildren() {
         return childrenClass.getEnumConstants();
     }
 
     @Override
-    public String getCampusFolderName() {
-        return "vancouver";
+    public Map<String, Course> getCodeStringToCourseMap() {
+        return null;
     }
 
 }

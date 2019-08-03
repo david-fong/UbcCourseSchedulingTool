@@ -43,22 +43,17 @@ public final class XmlFileUtils {
     }
 
     /**
-     * Reads a file that is assumed to contain valid xml, and
-     * returns a [Document] view of the contents of that file,
-     * or null if the file did not contain not valid XML.
+     * Reads a file that is assumed to contain valid xml, and returns a [Document]
+     * view of the contents of that file, or null if the file did not contain not
+     * valid XML. Does not check if the file at [filePath] exists and is a file.
+     * Such checking should be performed externally.
      *
      * @param filePath The path to the file to read from. Must not be null.
      * @return [null] if the file could not be read into a [Document].
-     * @throws FileNotFoundException If the specified file did not contain valid XML.
      */
-    public static Document readXmlFromFile(Path filePath) throws FileNotFoundException {
-        if (!Files.isRegularFile(filePath)) {
-            throw new FileNotFoundException();
-        }
+    public static Document readXmlFromFile(Path filePath) {
         try {
-            final Document document = DOC_BUILDER.parse(filePath.toFile());
-            // TODO: throw an exception if the document was not valid XML.
-            return document;
+            return DOC_BUILDER.parse(filePath.toFile());
         } catch (SAXException | IOException e) {
             throw new RuntimeException(e);
         }

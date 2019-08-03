@@ -31,11 +31,6 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
         }
     }
 
-    /**
-     * TODO: make this account for the possibility of an [INDETERMINATE] result status.
-     * @param testSubject Items to be checked against one or more complex requirements.
-     * @return
-     */
     @Override
     public ReqOpOutcome requireOf(Set<T> testSubject) {
         final long countOfMatches = this.getCandidates().stream()

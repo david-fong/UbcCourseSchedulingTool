@@ -6,6 +6,7 @@ import org.bse.utils.requirement.operators.matching.CreditMatchThreshReq;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -25,7 +26,6 @@ public final class DataMain {
      * The path to a compiled class' package can be obtained using its class'
      * [getPackage] method, and replacing the package separator with [File.
      * separator].
-     * TODO: move this closer to where it will be used (which is not here).
      */
     public static final Path RUNTIME_PATH_OF_COMPILED_DATA_MODULE;
 
@@ -33,7 +33,7 @@ public final class DataMain {
      * This will be used when generating xml data representing courses.
      * The path to a class' source code package can be obtained using its
      * class' [getPackage] method, and replacing the package separator with
-     * [File.separator].
+     * [File.separator]. This only needs to be valid when run from [DataMain]
      */
     public static final Path DEVELOPMENT_PATH_TO_GENERATED_RESOURCES;
 
@@ -42,8 +42,14 @@ public final class DataMain {
             RUNTIME_PATH_OF_COMPILED_DATA_MODULE = Path.of(DataMain.class
                     .getProtectionDomain().getCodeSource().getLocation().toURI()
             );
-            DEVELOPMENT_PATH_TO_GENERATED_RESOURCES
-                    = RUNTIME_PATH_OF_COMPILED_DATA_MODULE.resolve("genresource");
+            DEVELOPMENT_PATH_TO_GENERATED_RESOURCES = RUNTIME_PATH_OF_COMPILED_DATA_MODULE
+                    // TODO: make this more robust.
+                    .getParent() // .../UbcCourseSchedulingTool/out/production/
+                    .getParent() // .../UbcCourseSchedulingTool/out/
+                    .getParent() // .../UbcCourseSchedulingTool/
+                    .resolve("genresource")
+                    .resolve(RUNTIME_PATH_OF_COMPILED_DATA_MODULE.getFileName().toString())
+            ;
         } catch (URISyntaxException e) {
             throw new RuntimeException("Could not get runtime path to module jar", e);
         }
@@ -80,6 +86,9 @@ public final class DataMain {
 
 
     public static void main(String[] args) {
+        if (!Files.isDirectory(DEVELOPMENT_PATH_TO_GENERATED_RESOURCES)) {
+            throw new RuntimeException("could not get development path to generated resources");
+        }
         System.out.println(RUNTIME_PATH_OF_COMPILED_DATA_MODULE);
         System.out.println(DEVELOPMENT_PATH_TO_GENERATED_RESOURCES);
 

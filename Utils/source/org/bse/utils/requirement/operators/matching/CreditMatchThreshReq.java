@@ -43,11 +43,6 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
         }
     }
 
-    /**
-     * TODO: make this account for possibility of an [INDETERMINATE] result status.
-     * @param testSubject Items to be checked against one or more complex requirements.
-     * @return
-     */
     @Override
     public RequireOpResult.ReqOpOutcome requireOf(final Set<T> testSubject) {
         final int creditsOfMatching = getCandidates().stream()

@@ -4,7 +4,7 @@ public class Building {
 
 
 
-    public class BuildingRoom {
+    public static final class BuildingRoom {
 
         // private final int code; // TODO: check if any rooms have letters.
 
