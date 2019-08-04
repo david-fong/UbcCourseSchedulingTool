@@ -1,7 +1,8 @@
 package org.bse.data.repr.courseutils;
 
+import org.bse.data.repr.CourseSchedule;
 import org.bse.data.repr.Student;
-import org.bse.data.repr.faculties.FacultyTreeNodeIf;
+import org.bse.data.repr.faculties.FacultyTreeNode;
 import org.bse.data.repr.HyperlinkBookIf;
 import org.bse.utils.requirement.Requirement;
 import org.bse.utils.requirement.operators.matching.CreditValued;
@@ -15,7 +16,7 @@ import org.w3c.dom.NodeList;
  */
 public interface Course extends CreditValued, CodeStringPath {
 
-    FacultyTreeNodeIf getFacultyTreeNode();
+    FacultyTreeNode getFacultyTreeNode();
     String getCourseDescription();
     HyperlinkBookIf getHyperlinkBook();
 
@@ -55,7 +56,7 @@ public interface Course extends CreditValued, CodeStringPath {
             }
 
             @Override
-            public FacultyTreeNodeIf getFacultyTreeNode() {
+            public FacultyTreeNode getFacultyTreeNode() {
                 return null;
             }
 

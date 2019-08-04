@@ -1,14 +1,14 @@
 package org.bse.data.repr.faculties.vancouver;
 
 import org.bse.data.repr.courseutils.Course;
-import org.bse.data.repr.faculties.FacultyTreeNodeIf;
+import org.bse.data.repr.faculties.FacultyTreeNode;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.bse.data.repr.faculties.FacultyTreeNodeIf.FacultyTreeNodeType.DEPARTMENT;
+import static org.bse.data.repr.faculties.FacultyTreeNode.FacultyTreeNodeType.DEPARTMENT;
 
-public enum ScienceFaculties implements FacultyTreeNodeIf {
+public enum ScienceFaculties implements FacultyTreeNode {
     // TODO: add entries as needed. prefer alphabetical order.
     // ...
     CPSC (DEPARTMENT, "Computer Science"),
@@ -20,10 +20,10 @@ public enum ScienceFaculties implements FacultyTreeNodeIf {
     ;
     private final FacultyTreeNodeType type;
     private final String name;
-    private final Class<? extends FacultyTreeNodeIf> childrenClass;
+    private final Class<? extends FacultyTreeNode> childrenClass;
     private final Map<String, Course> courseCodeMap;
 
-    <T extends Enum & FacultyTreeNodeIf> ScienceFaculties
+    <T extends Enum & FacultyTreeNode> ScienceFaculties
             (FacultyTreeNodeType type, String name, Class<T> childrenClass) {
         this.type = type;
         this.name = name;
@@ -51,12 +51,12 @@ public enum ScienceFaculties implements FacultyTreeNodeIf {
     }
 
     @Override
-    public FacultyTreeNodeIf getParentNode() {
+    public FacultyTreeNode getParentNode() {
         return VancouverFaculties.SCIE;
     }
 
     @Override
-    public FacultyTreeNodeIf[] getChildren() {
+    public FacultyTreeNode[] getChildren() {
         return childrenClass == null ? null : childrenClass.getEnumConstants();
     }
 

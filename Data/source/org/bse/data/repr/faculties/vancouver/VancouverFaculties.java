@@ -1,19 +1,19 @@
 package org.bse.data.repr.faculties.vancouver;
 
 import org.bse.data.repr.courseutils.Course;
-import org.bse.data.repr.faculties.FacultyTreeNodeIf;
-import org.bse.data.repr.faculties.FacultyTreeRootNodeIf;
+import org.bse.data.repr.faculties.FacultyTreeNode;
+import org.bse.data.repr.faculties.FacultyTreeRootCampus;
 
 import java.util.Map;
 
-import static org.bse.data.repr.faculties.FacultyTreeNodeIf.FacultyTreeNodeType.FACULTY;
+import static org.bse.data.repr.faculties.FacultyTreeNode.FacultyTreeNodeType.FACULTY;
 
 /**
  * We will go by the hierarchy specified in the second link.
  * https://www.ubc.ca/our-campuses/vancouver/directories/faculties-schools.html
  * https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments
  */
-public enum VancouverFaculties implements FacultyTreeNodeIf {
+public enum VancouverFaculties implements FacultyTreeNode {
     // TODO: add entries as needed. prefer alphabetical order.
     APSC (FACULTY, "Applied Science", AppliedScienceFaculties.class),
     // ...
@@ -22,9 +22,9 @@ public enum VancouverFaculties implements FacultyTreeNodeIf {
     ;
     private final FacultyTreeNodeType type;
     private final String name;
-    private final Class<? extends FacultyTreeNodeIf> childrenClass;
+    private final Class<? extends FacultyTreeNode> childrenClass;
 
-    <T extends Enum & FacultyTreeNodeIf> VancouverFaculties
+    <T extends Enum & FacultyTreeNode> VancouverFaculties
             (FacultyTreeNodeType type, String name, Class<T> childrenClass) {
         this.type = type;
         this.name = name;
@@ -47,12 +47,12 @@ public enum VancouverFaculties implements FacultyTreeNodeIf {
     }
 
     @Override
-    public FacultyTreeNodeIf getParentNode() {
-        return FacultyTreeRootNodeIf.UbcCampuses.VANCOUVER;
+    public FacultyTreeNode getParentNode() {
+        return FacultyTreeRootCampus.UbcCampuses.VANCOUVER;
     }
 
     @Override
-    public FacultyTreeNodeIf[] getChildren() {
+    public FacultyTreeNode[] getChildren() {
         return childrenClass.getEnumConstants();
     }
 

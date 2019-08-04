@@ -13,9 +13,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -27,6 +25,7 @@ import java.nio.file.Path;
  */
 public final class XmlFileUtils {
 
+    public static final String XML_EXTENSION_STRING = ".xml";
     private static final DocumentBuilder DOC_BUILDER;
     private static final Transformer TRANSFORMER;
     static {

@@ -1,9 +1,8 @@
 package org.bse.data.repr;
 
-import org.bse.data.repr.courseutils.CourseUtils.UbcCampus;
 import org.bse.data.repr.courseutils.CourseUtils.YearOfStudy;
 import org.bse.data.repr.courseutils.Course;
-import org.bse.data.repr.courseutils.CourseSchedule;
+import org.bse.data.repr.faculties.FacultyTreeRootCampus;
 
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -17,13 +16,13 @@ public final class Student {
 
     private final String name;
     private YearOfStudy currentYear;
-    private UbcCampus campus;
+    private FacultyTreeRootCampus.UbcCampuses campus;
 
     // TODO: discuss alternative of a set, and giving the CourseSchedule class a YearOfStudy field.
-    private final EnumMap<YearOfStudy, CourseSchedule> previousSchedules;
+    private final EnumMap<YearOfStudy, CourseScheduleBuild> previousSchedules;
     private final HashSet<Worklist> worklists; // Worklists must not have the same name.
 
-    public Student(String name, YearOfStudy yearOfStudy, UbcCampus campus) {
+    public Student(String name, YearOfStudy yearOfStudy, FacultyTreeRootCampus.UbcCampuses campus) {
         this.name = name;
         this.currentYear = yearOfStudy;
         this.campus = campus;
@@ -37,10 +36,10 @@ public final class Student {
     public YearOfStudy getCurrentYear() {
         return currentYear;
     }
-    public UbcCampus getCampus() {
+    public FacultyTreeRootCampus.UbcCampuses getCampus() {
         return campus;
     }
-    public Map<YearOfStudy, CourseSchedule> getPreviousSchedules() {
+    public Map<YearOfStudy, CourseScheduleBuild> getPreviousSchedules() {
         return previousSchedules;
     }
     public HashSet<Worklist> getWorklists() {
@@ -50,7 +49,7 @@ public final class Student {
     public void setCurrentYear(YearOfStudy yearOfStudy) {
         this.currentYear = yearOfStudy;
     }
-    public void setCampus(UbcCampus campus) {
+    public void setCampus(FacultyTreeRootCampus.UbcCampuses campus) {
         this.campus = campus;
     }
 

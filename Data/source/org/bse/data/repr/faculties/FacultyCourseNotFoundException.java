@@ -6,12 +6,12 @@ package org.bse.data.repr.faculties;
  */
 public final class FacultyCourseNotFoundException extends Exception {
 
-    public FacultyCourseNotFoundException(String suppliedSearchCode, FacultyTreeNodeIf facultyNode) {
+    public FacultyCourseNotFoundException(String suppliedSearchCode, FacultyTreeNode facultyNode) {
         this(suppliedSearchCode, facultyNode, null);
     }
 
     public FacultyCourseNotFoundException(
-            String suppliedSearchCode, FacultyTreeNodeIf facultyNode, Exception rootCause) {
+            String suppliedSearchCode, FacultyTreeNode facultyNode, Exception rootCause) {
         super(String.format("A course by the code \"%s\" could not be found under"
                 + " the %s", suppliedSearchCode, facultyNode.getNameWithTitle()
         ), rootCause);

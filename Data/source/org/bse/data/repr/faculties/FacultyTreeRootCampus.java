@@ -11,17 +11,17 @@ import java.util.Map;
 /**
  * At the top level, everything is first partitioned by campus.
  */
-public interface FacultyTreeRootNodeIf extends FacultyTreeNodeIf {
+public interface FacultyTreeRootCampus extends FacultyTreeNode {
 
     Map<String, Course> EMPTY_COURSE_CODE_MAP = Map.of();
 
     @Override
-    default FacultyTreeRootNodeIf getRootFacultyNode() {
+    default FacultyTreeRootCampus getRootCampus() {
         return this;
     }
 
     @Override
-    default FacultyTreeNodeIf getParentNode() {
+    default FacultyTreeNode getParentNode() {
         return null;
     }
 
@@ -30,6 +30,10 @@ public interface FacultyTreeRootNodeIf extends FacultyTreeNodeIf {
         return Paths.get(getAbbreviation().toLowerCase());
     }
 
+    /**
+     *
+     * @return An empty map because a campus does not have courses directly under it.
+     */
     @Override
     default Map<String, Course> getCodeStringToCourseMap() {
         return EMPTY_COURSE_CODE_MAP;
@@ -37,13 +41,13 @@ public interface FacultyTreeRootNodeIf extends FacultyTreeNodeIf {
 
 
 
-    enum UbcCampuses implements FacultyTreeRootNodeIf {
+    enum UbcCampuses implements FacultyTreeRootCampus {
         VANCOUVER (VancouverFaculties.class),
         //OKANAGAN  (null),
         ;
-        private final Class<? extends FacultyTreeNodeIf> childrenClass;
+        private final Class<? extends FacultyTreeNode> childrenClass;
 
-        <T extends Enum & FacultyTreeNodeIf> UbcCampuses(Class<T> childrenClass) {
+        <T extends Enum & FacultyTreeNode> UbcCampuses(Class<T> childrenClass) {
             this.childrenClass = childrenClass;
             if (!Files.isDirectory(getRuntimeFullPathToData())) {
                 throw new RuntimeException("Campus folder does not exist at runtime");
@@ -62,11 +66,11 @@ public interface FacultyTreeRootNodeIf extends FacultyTreeNodeIf {
 
         @Override
         public FacultyTreeNodeType getType() {
-            return null;
+            return FacultyTreeNodeType.CAMPUS;
         }
 
         @Override
-        public FacultyTreeNodeIf[] getChildren() {
+        public FacultyTreeNode[] getChildren() {
             return childrenClass.getEnumConstants();
         }
     }

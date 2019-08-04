@@ -1,31 +1,38 @@
-package org.bse.data.repr.courseutils;
+package org.bse.data.repr;
 
 import org.bse.data.repr.courseutils.CourseSectionCategory.CourseSection;
 import org.bse.utils.pickybuild.PickyBuild;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- *
+ * A mutable container for [CourseSection]s.
  */
-public final class CourseSchedule implements PickyBuild<CourseSection> {
+class CourseScheduleBuild extends CourseSchedule implements PickyBuild<CourseSection> {
 
-    public static final Supplier<CourseSchedule> EMPTY_COURSE_SCHEDULE_SUPPLIER = CourseSchedule::new;
+    public static final Supplier<CourseScheduleBuild> EMPTY_COURSE_SCHEDULE_SUPPLIER = CourseScheduleBuild::new;
 
     private final HashSet<CourseSection> courseSections;
 
-    public CourseSchedule() {
+    CourseScheduleBuild() {
         this.courseSections = new HashSet<>();
     }
 
-    private CourseSchedule(CourseSchedule other) {
+    CourseScheduleBuild(CourseScheduleBuild other) {
         this.courseSections = new HashSet<>(other.courseSections);
     }
 
     @Override
-    public CourseSchedule copy() {
-        return new CourseSchedule(this);
+    public Set<CourseSection> getCourseSections() {
+        return Collections.unmodifiableSet(courseSections);
+    }
+
+    @Override
+    public CourseScheduleBuild copy() {
+        return new CourseScheduleBuild(this);
     }
 
     /**
@@ -36,7 +43,7 @@ public final class CourseSchedule implements PickyBuild<CourseSection> {
      * @return true if the operation was successful.
      */
     @Override
-    public boolean checkForConflictsWith(CourseSection section) {
+    public boolean conflictsWith(CourseSection section) {
         return courseSections.stream().noneMatch(section::overlapsWith);
     }
 
@@ -49,9 +56,13 @@ public final class CourseSchedule implements PickyBuild<CourseSection> {
      */
     @Override
     public boolean addIfNoConflicts(CourseSection section) {
-        final boolean canAdd = checkForConflictsWith(section);
+        final boolean canAdd = conflictsWith(section);
         if (canAdd) courseSections.add(section);
         return canAdd;
+    }
+
+    public boolean removeSection(CourseSection section) {
+        return courseSections.remove(section);
     }
 
 }

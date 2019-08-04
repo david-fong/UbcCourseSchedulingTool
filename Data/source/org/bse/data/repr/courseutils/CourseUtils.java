@@ -5,17 +5,6 @@ package org.bse.data.repr.courseutils;
  */
 public final class CourseUtils {
 
-    public enum UbcCampus {
-        VANCOUVER ("Vancouver"),
-        OKANAGAN  ("Okanagan"),
-        ;
-        public final String name;
-
-        UbcCampus(String name) {
-            this.name = name;
-        }
-    }
-
     public enum YearOfStudy {
         FIRST_YEAR  ("First year"),
         SECOND_YEAR ("Second year"),

@@ -2,8 +2,7 @@ package org.bse.data.repr;
 
 public interface HyperlinkBookIf {
 
-    String REGISTRATION_HOME = "https://courses.students.ubc.ca/cs/courseschedule";
-    String YOU_UBC_HOME      = "https://you.ubc.ca/ubc_programs/";
+    String REGISTRATION_HOME = "https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea";
 
     // Can be null?
     String getRegistrationLink();

@@ -1,12 +1,12 @@
 package org.bse.data.repr.faculties.vancouver;
 
 import org.bse.data.repr.courseutils.Course;
-import org.bse.data.repr.faculties.FacultyTreeNodeIf;
+import org.bse.data.repr.faculties.FacultyTreeNode;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public enum AppliedScienceFaculties implements FacultyTreeNodeIf {
+public enum AppliedScienceFaculties implements FacultyTreeNode {
     BMEG("Biomedical"),
     CHML("Chemical and Biological"),
     CIVL("Civil"),
@@ -48,12 +48,12 @@ public enum AppliedScienceFaculties implements FacultyTreeNodeIf {
     }
 
     @Override
-    public FacultyTreeNodeIf getParentNode() {
+    public FacultyTreeNode getParentNode() {
         return VancouverFaculties.APSC;
     }
 
     @Override
-    public FacultyTreeNodeIf[] getChildren() {
+    public FacultyTreeNode[] getChildren() {
         return null;
     }
 

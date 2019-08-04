@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * A property of a [Course].
  */
-public interface FacultyTreeNodeIf {
+public interface FacultyTreeNode {
 
     String getNameNoTitle();
 
@@ -25,21 +25,21 @@ public interface FacultyTreeNodeIf {
 
     FacultyTreeNodeType getType();
 
-    default FacultyTreeRootNodeIf getRootFacultyNode() {
-        return getParentNode().getRootFacultyNode();
+    default FacultyTreeRootCampus getRootCampus() {
+        return getParentNode().getRootCampus();
     }
 
     /**
-     * @return The [FacultyTreeNodeIf] containing [this] in the
+     * @return The [FacultyTreeNode] containing [this] in the
      *     collection returned by its [getChildren] method. Must
-     *     not return null if [this] is an instance of [FacultyTreeRootNodeIf].
+     *     not return null if [this] is an instance of [FacultyTreeRootCampus].
      */
-    FacultyTreeNodeIf getParentNode();
+    FacultyTreeNode getParentNode();
 
     /**
      * @return A [Path] to the directory containing xml files representing course data
      *     for courses under [this] faculty, and sub-directories whose [Path]s are for
-     *     [FacultyTreeNodeIf]s under this faculty. [FacultyTreeRootNodeIf]s must return
+     *     [FacultyTreeNode]s under this faculty. [FacultyTreeRootCampus]s must return
      *     a single-token [Path].
      */
     default Path getPathToData() {
@@ -47,17 +47,17 @@ public interface FacultyTreeNodeIf {
     }
 
     /**
-     * @return An array of [FacultyTreeNodeIf]s whose
+     * @return An array of [FacultyTreeNode]s whose
      *     [getParentNode] methods return [this]
      */
-    FacultyTreeNodeIf[] getChildren();
+    FacultyTreeNode[] getChildren();
 
     /**
      *
      * @param codeString must not be null. Ex "101". This operation will only succeed if
      * @return The course registered by the code [codeString].
      * @throws FacultyCourseNotFoundException If a file could not be located under
-     *     [this][FacultyTreeNodeIf] following the path spec during lazy initialization
+     *     [this][FacultyTreeNode] following the path spec during lazy initialization
      *     of the [Course] registered by the code [codeString].
      */
     default Course getCourseByCodeString(String codeString) throws FacultyCourseNotFoundException {
@@ -70,7 +70,7 @@ public interface FacultyTreeNodeIf {
             return course;
         } else {
             final Path coursePath = getRuntimeFullPathToData()
-                    .resolve(codeString + XML_EXTENSION_STRING);
+                    .resolve(codeString + XmlFileUtils.XML_EXTENSION_STRING);
             course = Course.fromXml(XmlFileUtils.readXmlFromFile(coursePath));
             getCodeStringToCourseMap().put(codeString, course);
             return course;
@@ -82,7 +82,7 @@ public interface FacultyTreeNodeIf {
 
     /**
      * @return A map from course code strings to [Course]s. Must not be null.
-     *     All existing [Course]s under the implementing [FacultyTreeNodeIf]
+     *     All existing [Course]s under the implementing [FacultyTreeNode]
      *     must have their code string as a key after an implementation's
      *     construction. Keys in the returned set must never change.
      */
@@ -109,17 +109,17 @@ public interface FacultyTreeNodeIf {
         ) {
             fileStream.forEach(file -> {
                 String fileName = file.getFileName().toString();
-                fileName = fileName.substring(0, fileName.length() - XML_EXTENSION_STRING.length());
+                fileName = fileName.substring(0, fileName.length() - XmlFileUtils.XML_EXTENSION_STRING.length());
                 getCodeStringToCourseMap().putIfAbsent(fileName, null);
             });
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    String XML_EXTENSION_STRING = ".xml";
+
     DirectoryStream.Filter<Path> XML_FILE_FILTER = entry -> {
         return Files.isDirectory(entry) && entry.getFileName()
-                .toString().endsWith(XML_EXTENSION_STRING);
+                .toString().endsWith(XmlFileUtils.XML_EXTENSION_STRING);
     };
 
 
@@ -129,6 +129,7 @@ public interface FacultyTreeNodeIf {
      * "school", "institute", and "centre". Sheesh.
      */
     enum FacultyTreeNodeType {
+        CAMPUS     ("Campus - "), // reserved for [FacultyTreeRootCampus]
         FACULTY    ("Faculty of "),
         SCHOOL     ("School of "),
         // INSTITUTE,

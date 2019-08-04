@@ -1,18 +1,24 @@
 package org.bse.data.repr;
 
-import org.bse.data.repr.courseutils.CourseSchedule;
-
 /**
- * Wrapper for a [CourseSchedule] object.
+ * A mutable wrapper for a [CourseSchedule] object.
  */
-public final class Worklist {
+public final class Worklist extends CourseScheduleBuild {
 
     private String name;
-    private final CourseSchedule schedule;
 
     public Worklist(String name) {
         this.name = name;
-        this.schedule = new CourseSchedule();
+    }
+
+    private Worklist(Worklist other) {
+        super(other);
+        name = other.name + "~";
+    }
+
+    @Override
+    public Worklist copy() {
+        return new Worklist(this);
     }
 
     public String getName() {
@@ -23,7 +29,4 @@ public final class Worklist {
         this.name = name;
     }
 
-    public CourseSchedule getSchedule() {
-        return schedule;
-    }
 }
