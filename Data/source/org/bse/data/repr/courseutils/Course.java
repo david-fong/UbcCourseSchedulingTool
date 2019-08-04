@@ -21,15 +21,15 @@ import java.util.Set;
 public final class Course implements CreditValued, CodeStringPath, HyperlinkBookIf {
 
     private final FacultyTreeNode facultyTreeNode;
-    private final String descriptionString;
     private final int creditValue;
     private final String courseCodeToken;
+    private final String descriptionString;
     private final String registrationUrlString;
 
     // non-null:
+    private final Requirement<Student> studentReqs;
     private final MatchingRequirementIf<CourseSchedule> prerequisites;
     private final MatchingRequirementIf<CourseSchedule> corequisites;
-    private final Requirement<Student> studentReqs;
 
     private final Set<CourseLectureSection> lectureSections;
     private final Set<CourseSection> labSections;
@@ -80,16 +80,16 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         return registrationUrlString;
     }
 
+    public final Requirement<Student> getStudentReqs() {
+        return studentReqs;
+    }
+
     public final MatchingRequirementIf<CourseSchedule> getPrerequisites() {
         return prerequisites;
     }
 
     public final MatchingRequirementIf<CourseSchedule> getCorequisites() {
         return corequisites;
-    }
-
-    public final Requirement<Student> getStudentReqs() {
-        return studentReqs;
     }
 
     public final Set<CourseLectureSection> getLectureSections() {
@@ -196,12 +196,37 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
 
 
 
-    enum Xml {
+    public enum Xml {
         COURSE_TAG ("Course"),
+        COURSE_FACULTY_ATTR ("faculty"),
+        COURSE_CODE_ATTR ("code"),
+        COURSE_CREDIT_ATTR ("credits"),
+        DESCRIPTION_TAG ("Description"),
+
+        STUDENT_REQS_TAG ("StudentReqs"),
+        PREREQS_TAG ("Prerequisites"),
+        COREQS_TAG ("Corequisites"),
+
+        LECTURES_TAG ("Lectures"),
+        LABS_TAG ("Labs"),
+        TUTORIALS_TAG ("Tutorials"),
         ;
         private final String value;
 
         Xml(String value) {
+            this.value = value;
+        }
+    }
+
+    public enum SecXml {
+        COURSE_SECTION_TAG ("Section"),
+        SECTION_CODE_ATTR ("code"),
+        SECTION_SEMESTER_ATTR ("semester"),
+        SECTION_PROFESSOR ("Instructor"),
+        ;
+        private final String value;
+
+        SecXml(String value) {
             this.value = value;
         }
     }

@@ -1,7 +1,11 @@
-<Course faculty="CPEN" code="221">
+<Course faculty="CPEN" code="221" credit="4">
     <Description>
         ...
     </Description>
+
+    <StudentReqs>
+        ...
+    </StudentReqs>
 
     <Prerequisites>
         <MatchReqRoot testSubjectType="CourseRef">
@@ -21,25 +25,23 @@
         </MatchReqRoot>
     </Corequisites>
 
-    <Sections>
-        <Lectures creditval="3">
-            <Section code="101">
-                ...
-            </Section>
-        </Lectures>
+    <Lectures>
+        <Section code="101">
+            ...
+        </Section>
+    </Lectures>
 
-        <Labs creditval="1">
-            <Section code="L1A" semester="W1">
-                <Instructor>Paul Carter</Instructor>
-                <Instructor>Farshid</Instructor>
-                <Block start="08:00" end="09:30" repeat="EVERY_WEEK"/>
-            </Section>
-        </Labs>
+    <Labs>
+        <Section code="L1A" semester="W1">
+            <Instructor>Paul Carter</Instructor>
+            <Instructor>Farshid</Instructor>
+            <Block day="mon" begin="08:00" end="09:30"/>
+        </Section>
+    </Labs>
 
-        <Tutorials creditval="1">
-            <Section code="T1A">
-                ...
-            </Section>
-        </Tutorials>
-    </Sections>
+    <Tutorials>
+        <Section code="T1A">
+            ...
+        </Section>
+    </Tutorials>
 </Course>

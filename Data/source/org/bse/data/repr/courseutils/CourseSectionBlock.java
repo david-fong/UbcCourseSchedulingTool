@@ -17,6 +17,7 @@ public final class CourseSectionBlock {
     private final BlockRepetition repetitionType;
     private final BlockTimeEnclosure timeEnclosure;
 
+    // TODO [xml:read][CourseSectionBlock]
     public static CourseSectionBlock fromXml(Element blockElement) {
         // note: for parsing enumConstant.name(), use enumClass.valueOf(String name).
         return null; // TODO:
@@ -60,12 +61,12 @@ public final class CourseSectionBlock {
     /**
      * TODO: write documentation.
      */
-    public static final class BlockTimeEnclosure {
+    private static final class BlockTimeEnclosure {
 
         private final BlockTime begin;
         private final BlockTime end;
 
-        public BlockTimeEnclosure(BlockTime begin, BlockTime end) {
+        private BlockTimeEnclosure(BlockTime begin, BlockTime end) {
             this.begin = begin;
             this.end = end;
         }
@@ -76,13 +77,41 @@ public final class CourseSectionBlock {
     }
 
     public enum BlockRepetition {
-        EVERY_WEEK,
-        ALTERNATING_FIRST,
-        ALTERNATING_SECOND,
+        EVERY_WEEK ("all"), // the default.
+        ALTERNATING_FIRST ("2:1"),
+        ALTERNATING_SECOND ("2:2"),
         ;
+        public final String value;
+
+        BlockRepetition(String value) {
+            this.value = value;
+        }
 
         public boolean mayOverlapWith(BlockRepetition other) {
             return this == other || (this == EVERY_WEEK || other == EVERY_WEEK);
+        }
+    }
+
+
+
+    public enum Xml {
+        BLOCK_TAG ("Block"),
+
+        DAY_OF_WEEK_ATTR ("day"),
+        BEGIN_TIME_ATTR ("begin"),
+        END_TIME_ATTR ("end"),
+
+        // if not present, assumed to be every week. See [BlockRepetition.value] for decode.
+        OPTIONAL_REPEAT_TYPE_ATTR ("repeat"),
+
+        // if not present, assumed to be false, otherwise to be true. value ignored.
+        OPTIONAL_WAITLIST_FLAG_ATTR ("waitlist"),
+
+        ;
+        public final String value;
+
+        Xml(String value) {
+            this.value = value;
         }
     }
 
