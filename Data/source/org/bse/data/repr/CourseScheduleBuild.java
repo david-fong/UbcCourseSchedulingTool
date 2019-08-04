@@ -1,6 +1,6 @@
 package org.bse.data.repr;
 
-import org.bse.data.repr.courseutils.CourseSectionCategory.CourseSection;
+import org.bse.data.repr.courseutils.Course;
 import org.bse.utils.pickybuild.PickyBuild;
 
 import java.util.Collections;
@@ -11,11 +11,11 @@ import java.util.function.Supplier;
 /**
  * A mutable container for [CourseSection]s.
  */
-class CourseScheduleBuild extends CourseSchedule implements PickyBuild<CourseSection> {
+class CourseScheduleBuild extends CourseSchedule implements PickyBuild<Course.CourseSection> {
 
     public static final Supplier<CourseScheduleBuild> EMPTY_COURSE_SCHEDULE_SUPPLIER = CourseScheduleBuild::new;
 
-    private final HashSet<CourseSection> courseSections;
+    private final HashSet<Course.CourseSection> courseSections;
 
     CourseScheduleBuild() {
         this.courseSections = new HashSet<>();
@@ -26,7 +26,7 @@ class CourseScheduleBuild extends CourseSchedule implements PickyBuild<CourseSec
     }
 
     @Override
-    public Set<CourseSection> getCourseSections() {
+    public Set<Course.CourseSection> getCourseSections() {
         return Collections.unmodifiableSet(courseSections);
     }
 
@@ -43,7 +43,7 @@ class CourseScheduleBuild extends CourseSchedule implements PickyBuild<CourseSec
      * @return true if the operation was successful.
      */
     @Override
-    public boolean conflictsWith(CourseSection section) {
+    public boolean conflictsWith(Course.CourseSection section) {
         return courseSections.stream().noneMatch(section::overlapsWith);
     }
 
@@ -55,13 +55,13 @@ class CourseScheduleBuild extends CourseSchedule implements PickyBuild<CourseSec
      * @return true if the operation was successful.
      */
     @Override
-    public boolean addIfNoConflicts(CourseSection section) {
+    public boolean addIfNoConflicts(Course.CourseSection section) {
         final boolean canAdd = conflictsWith(section);
         if (canAdd) courseSections.add(section);
         return canAdd;
     }
 
-    public boolean removeSection(CourseSection section) {
+    public boolean removeSection(Course.CourseSection section) {
         return courseSections.remove(section);
     }
 

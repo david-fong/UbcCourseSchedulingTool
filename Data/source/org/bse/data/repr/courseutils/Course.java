@@ -1,9 +1,10 @@
 package org.bse.data.repr.courseutils;
 
 import org.bse.data.repr.CourseSchedule;
+import org.bse.data.repr.HyperlinkBookIf;
+import org.bse.data.repr.Professor;
 import org.bse.data.repr.Student;
 import org.bse.data.repr.faculties.FacultyTreeNode;
-import org.bse.data.repr.HyperlinkBookIf;
 import org.bse.utils.requirement.Requirement;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
@@ -11,95 +12,186 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * An interface that can only be used by extension or by anonymous construction.
+ *
  */
-public interface Course extends CreditValued, CodeStringPath {
+public final class Course implements CreditValued, CodeStringPath, HyperlinkBookIf {
 
-    FacultyTreeNode getFacultyTreeNode();
-    String getCourseDescription();
-    HyperlinkBookIf getHyperlinkBook();
+    private final FacultyTreeNode facultyTreeNode;
+    private final String descriptionString;
+    private final int creditValue;
+    private final String courseCodeToken;
+    private final String registrationUrlString;
 
-    /**
-     *
-     * @return These may return null if they impose no requirements.
-     */
-    MatchingRequirementIf<CourseSchedule> getPrerequisites();
-    MatchingRequirementIf<CourseSchedule> getCorequisites();
-    Requirement<Student> getStudentReqs();
+    // non-null:
+    private final MatchingRequirementIf<CourseSchedule> prerequisites;
+    private final MatchingRequirementIf<CourseSchedule> corequisites;
+    private final Requirement<Student> studentReqs;
 
-    CourseSectionLectureCategory getLecturesDescriptor();
-    CourseSectionCategory getLabsDescriptor();
-    CourseSectionCategory getTutorialsDescriptor();
+    private final Set<CourseLectureSection> lectureSections;
+    private final Set<CourseSection> labSections;
+    private final Set<CourseSection> tutorialSections;
 
-    /**
-     *
-     * @param xmlDocument An XML [Document].
-     * @return An anonymous [Course]-classed instance.
-     */
-    static Course fromXml(Document xmlDocument) {
+    // TODO [xml:read][Course]
+    public Course(Document courseDocument) {
         final Element courseElement; {
-            NodeList nodeList = xmlDocument.getElementsByTagName(Xml.COURSE_TAG.value);
+            NodeList nodeList = courseDocument.getElementsByTagName(Xml.COURSE_TAG.value);
             courseElement = (Element)nodeList.item(0);
         }
 
-        // TODO:
-        return new Course() {
-            @Override
-            public int getCreditValue() {
-                return 0;
-            }
+        facultyTreeNode = null;
+        descriptionString = null;
+        creditValue = -1;
+        courseCodeToken = null;
+        registrationUrlString = null;
 
-            @Override
-            public String getFullCodeString() {
-                return null;
-            }
+        prerequisites = null;
+        corequisites = null;
+        studentReqs = null;
 
-            @Override
-            public FacultyTreeNode getFacultyTreeNode() {
-                return null;
-            }
+        lectureSections = null;
+        labSections = null;
+        tutorialSections = null;
+    }
 
-            @Override
-            public String getCourseDescription() {
-                return null;
-            }
+    public final FacultyTreeNode getFacultyTreeNode() {
+        return facultyTreeNode;
+    }
 
-            @Override
-            public HyperlinkBookIf getHyperlinkBook() {
-                return null;
-            }
+    public final String getCourseDescription() {
+        return descriptionString;
+    }
 
-            @Override
-            public MatchingRequirementIf<CourseSchedule> getPrerequisites() {
-                return null;
-            }
+    @Override
+    public int getCreditValue() {
+        return creditValue;
+    }
 
-            @Override
-            public MatchingRequirementIf<CourseSchedule> getCorequisites() {
-                return null;
-            }
+    @Override
+    public String getFullCodeString() {
+        return facultyTreeNode.getAbbreviation() + " " + courseCodeToken;
+    }
 
-            @Override
-            public Requirement<Student> getStudentReqs() {
-                return null;
-            }
+    @Override
+    public String getRegistrationLink() {
+        return registrationUrlString;
+    }
 
-            @Override
-            public CourseSectionLectureCategory getLecturesDescriptor() {
-                return null;
-            }
+    public final MatchingRequirementIf<CourseSchedule> getPrerequisites() {
+        return prerequisites;
+    }
 
-            @Override
-            public CourseSectionCategory getLabsDescriptor() {
-                return null;
-            }
+    public final MatchingRequirementIf<CourseSchedule> getCorequisites() {
+        return corequisites;
+    }
 
-            @Override
-            public CourseSectionCategory getTutorialsDescriptor() {
-                return null;
-            }
-        };
+    public final Requirement<Student> getStudentReqs() {
+        return studentReqs;
+    }
+
+    public final Set<CourseLectureSection> getLectureSections() {
+        return lectureSections;
+    }
+
+    public final Set<CourseSection> getLabSections() {
+        return labSections;
+    }
+
+    public final Set<CourseSection> getTutorialSections() {
+        return tutorialSections;
+    }
+
+
+    /**
+     * Represents a section of a [Course]. On top of the properties provided by a
+     * [Course], a [CourseSection] includes information on the lecturer, times and
+     * places of meetings, and seating availability and restrictions. Seating
+     * availability is not saved as part of state.
+     *
+     * All code tokens ([CodeStringPath]) for instances under a common [Course]
+     * should be unique.
+     *
+     * TODO: add representation of seating / methods to fetch seating state from web.
+     */
+    public class CourseSection implements CodeStringPath {
+
+        private final String sectionCode;
+        private final CourseUtils.Semester semester;
+        private final Professor professor;
+        private final Set<CourseSectionBlock> blocks;
+
+        // TODO [xml:read][CourseSection]
+        private CourseSection(Element sectionElement) {
+            sectionCode = null;
+            semester = null;
+            professor = null; // See [Professor.fromXml]
+            blocks = new HashSet<>(); // TODO: make unmodifiable
+        }
+
+        public final boolean overlapsWith(CourseSection other) {
+            return semester == other.semester && blocks.stream().anyMatch(block ->
+                    other.blocks.stream().anyMatch(block::overlapsWith)
+            );
+        }
+
+        public final Course getParentCourse() {
+            return Course.this;
+        }
+
+        public final String getFullCodeString() {
+            return Course.this.getFullCodeString() + sectionCode;
+        }
+
+        public final CourseUtils.Semester getSemester() {
+            return semester;
+        }
+
+        public final Professor getProfessor() {
+            return professor;
+        }
+
+        public final Set<CourseSectionBlock> getBlocks() {
+            return blocks;
+        }
+    }
+
+    /**
+     *
+     */
+    public final class CourseLectureSection extends CourseSection {
+
+        private final Set<CourseSection> requiredLabOptions;
+        private final Set<CourseSection> requiredTutorialOptions;
+
+        // TODO [xml:read][CourseLectureSection]
+        private CourseLectureSection(Element lectureElement) {
+            super(lectureElement);
+
+            // TODO: make unmodifiable
+            this.requiredLabOptions = new HashSet<>();
+            this.requiredTutorialOptions = new HashSet<>();
+        }
+
+        /**
+         * @return A non-empty set of [CourseSection]s for labs from which a student
+         *     must register for ONE to be considered taking the [Course] returned by
+         *     [getParentCourse], or null if that [Course] has no labs.
+         */
+        public Set<CourseSection> getRequiredLabOptions() {
+            return requiredLabOptions;
+        }
+
+        /**
+         * @return A non-empty set of [CourseSection]s for tutorials from which a student
+         *     must register for ONE to be considered taking the [Course] returned by
+         *     [getParentCourse], or null if that [Course] has no tutorials.
+         */
+        public Set<CourseSection> getRequiredTutorialOptions() {
+            return requiredTutorialOptions;
+        }
     }
 
 

@@ -1,7 +1,6 @@
 package org.bse.core.registration.scheduler;
 
 import org.bse.data.repr.courseutils.Course;
-import org.bse.data.repr.courseutils.CourseSectionCategory.CourseSection;
 import org.bse.utils.requirement.Requirement;
 
 import java.util.Collection;
@@ -123,13 +122,13 @@ public final class SchedulerMonkey {
 
     private Collection<Set<Course>> PUCourseCombos; // Initialized during 0.4.
 
-    private List<Map.Entry<Course, Set<CourseSection>>> PUCourseSections; // Initialized during 1.0.
+    private List<Map.Entry<Course, Set<Course.CourseSection>>> PUCourseSections; // Initialized during 1.0.
 
     // Used as a more direct representation of a List<VariadicAndRequirement<Set<CourseSection>>>
     // where the AND requirements children are all CountMatchThreshReq<Set<CourseSection>>> with
     // thresholds of one, and their respective candidates are all usable [CourseSection]s of the
     // same parent [Course].
-    private List<Set<Set<CourseSection>>> AllPUPUSectionCombos; // Initialized during 1.1.
+    private List<Set<Set<Course.CourseSection>>> AllPUPUSectionCombos; // Initialized during 1.1.
 
     static void STEP_0() {
     }

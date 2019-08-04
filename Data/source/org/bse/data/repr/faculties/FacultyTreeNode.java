@@ -37,6 +37,12 @@ public interface FacultyTreeNode {
     FacultyTreeNode getParentNode();
 
     /**
+     * @return An array of [FacultyTreeNode]s whose
+     *     [getParentNode] methods return [this]
+     */
+    FacultyTreeNode[] getChildren();
+
+    /**
      * @return A [Path] to the directory containing xml files representing course data
      *     for courses under [this] faculty, and sub-directories whose [Path]s are for
      *     [FacultyTreeNode]s under this faculty. [FacultyTreeRootCampus]s must return
@@ -45,12 +51,6 @@ public interface FacultyTreeNode {
     default Path getPathToData() {
         return getParentNode().getPathToData().resolve(getAbbreviation().toLowerCase());
     }
-
-    /**
-     * @return An array of [FacultyTreeNode]s whose
-     *     [getParentNode] methods return [this]
-     */
-    FacultyTreeNode[] getChildren();
 
     /**
      *
@@ -71,7 +71,7 @@ public interface FacultyTreeNode {
         } else {
             final Path coursePath = getRuntimeFullPathToData()
                     .resolve(codeString + XmlFileUtils.XML_EXTENSION_STRING);
-            course = Course.fromXml(XmlFileUtils.readXmlFromFile(coursePath));
+            course = new Course(XmlFileUtils.readXmlFromFile(coursePath));
             getCodeStringToCourseMap().put(codeString, course);
             return course;
         }
@@ -116,11 +116,9 @@ public interface FacultyTreeNode {
             e.printStackTrace();
         }
     }
-
-    DirectoryStream.Filter<Path> XML_FILE_FILTER = entry -> {
-        return Files.isDirectory(entry) && entry.getFileName()
-                .toString().endsWith(XmlFileUtils.XML_EXTENSION_STRING);
-    };
+    DirectoryStream.Filter<Path> XML_FILE_FILTER = entry ->
+            Files.isDirectory(entry) && entry.getFileName()
+                    .toString().endsWith(XmlFileUtils.XML_EXTENSION_STRING);
 
 
 

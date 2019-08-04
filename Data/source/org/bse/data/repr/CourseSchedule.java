@@ -1,6 +1,6 @@
 package org.bse.data.repr;
 
-import org.bse.data.repr.courseutils.CourseSectionCategory.CourseSection;
+import org.bse.data.repr.courseutils.Course;
 
 import java.util.Collections;
 import java.util.Set;
@@ -13,7 +13,7 @@ public abstract class CourseSchedule {
     /**
      * @return An unmodifiable set of sections contained in [this] [CourseSchedule]
      */
-    public abstract Set<CourseSection> getCourseSections();
+    public abstract Set<Course.CourseSection> getCourseSections();
 
     /**
      * @return An immutable copy of an implementing instance, with none of its
@@ -30,14 +30,14 @@ public abstract class CourseSchedule {
 
     class ImmutableCourseSchedule extends CourseSchedule {
 
-        private Set<CourseSection> courseSections;
+        private Set<Course.CourseSection> courseSections;
 
-        public ImmutableCourseSchedule(Set<CourseSection> courseSections) {
+        public ImmutableCourseSchedule(Set<Course.CourseSection> courseSections) {
             this.courseSections = Collections.unmodifiableSet(courseSections);
         }
 
         @Override
-        public Set<CourseSection> getCourseSections() {
+        public Set<Course.CourseSection> getCourseSections() {
             return courseSections;
         }
     }
