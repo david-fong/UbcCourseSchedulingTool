@@ -1,15 +1,28 @@
 package org.bse.utils.xml;
 
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+
 /**
  * Throw when xml data was not formatted as expected.
  */
-public class MalformedXmlDataException extends RuntimeException {
+public class MalformedXmlDataException extends Exception {
 
-    // TODO: add utility constructors for situations like "missing tag", or
-    //  "bad attr val"
-
-    public MalformedXmlDataException(String message) {
+    private MalformedXmlDataException(String message) {
         super(message);
+    }
+
+    public static MalformedXmlDataException missingAttr(Element host, String attrName) {
+        return new MalformedXmlDataException(""); // TODO:
+    }
+
+    public static MalformedXmlDataException invalidAttrVal(Attr attr) {
+        Element host = attr.getOwnerElement();
+        return new MalformedXmlDataException(String.format(""
+                + "Encountered unexpected value \"%s\" for"
+                + " attribute \"%s\" from element \"%s\"",
+                attr.getValue(), attr.getName(), host == null ? "null" : host.getTagName()
+        ));
     }
 
 }

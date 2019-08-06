@@ -1,5 +1,10 @@
 package org.bse.data.repr.courseutils;
 
+import org.bse.utils.xml.MalformedXmlDataException;
+import org.w3c.dom.Attr;
+
+import java.util.Arrays;
+
 /**
  * TODO: write documentation.
  */
@@ -33,25 +38,33 @@ public final class CourseUtils {
      * Has a [Session] and a [Term].
      */
     public enum Semester {
-        WINTER_S1 (Session.WINTER, Term.TERM_ONE),
-        WINTER_S2 (Session.WINTER, Term.TERM_TWO),
-        SUMMER_S1 (Session.SUMMER, Term.TERM_ONE),
-        SUMMER_S2 (Session.SUMMER, Term.TERM_TWO),
+        WINTER_S1 (Session.WINTER, Term.TERM_ONE, "W1"),
+        WINTER_S2 (Session.WINTER, Term.TERM_TWO, "W2"),
+        SUMMER_S1 (Session.SUMMER, Term.TERM_ONE, "S1"),
+        SUMMER_S2 (Session.SUMMER, Term.TERM_TWO, "S2"),
         ;
-        private final Session session;
-        private final Term term;
+        public final Session session;
+        public final Term term;
+        public final String xmlAttrVal;
 
-        Semester(Session session, Term term) {
+        Semester(Session session, Term term, String xmlAttrVal) {
             this.session = session;
             this.term = term;
+            this.xmlAttrVal = xmlAttrVal;
         }
 
-        public Session getSession() {
-            return session;
-        }
-
-        public Term getTerm() {
-            return term;
+        /**
+         * @param attr An Attr object. Must not be null.
+         * @return A [Semester] whose [xmlAttrVal] is equal to [attr.getValue].
+         * @throws MalformedXmlDataException if no such [Semester] can be found.
+         */
+        public static Semester decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
+            for (Semester semester : Semester.values()) {
+                if (semester.xmlAttrVal.equals(attr.getValue())) {
+                    return semester;
+                }
+            }
+            throw MalformedXmlDataException.invalidAttrVal(attr);
         }
     }
 
@@ -135,6 +148,20 @@ public final class CourseUtils {
 
         public boolean isAfter(BlockTime other) {
             return ordinal() > other.ordinal();
+        }
+
+        /**
+         * @param attr An Attr object. Must not be null.
+         * @return A [BlockTime] whose [xmlAttrVal] is equal to [attr.getValue].
+         * @throws MalformedXmlDataException if no such [BlockTime] can be found.
+         */
+        public static BlockTime decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
+            final String enumName = "T" + attr.getValue(); // TODO [xml:spec][BlockTime] decide on format.
+            try {
+                return BlockTime.valueOf(enumName);
+            } catch (IllegalArgumentException e) {
+                throw MalformedXmlDataException.invalidAttrVal(attr);
+            }
         }
 
         // TODO: Added string getter methods (and fields?)

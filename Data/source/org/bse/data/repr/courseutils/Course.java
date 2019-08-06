@@ -126,8 +126,8 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         // TODO [xml:read][CourseSection]
         private CourseSection(Element sectionElement) {
             sectionCode = null;
-            semester = null;
-            professor = null; // See [Professor.fromXml]
+            semester = null;    // See [utils.Semester.decodeXmlAttr]
+            professor = null;   // See [Professor.fromXml]
             blocks = new HashSet<>(); // TODO: make unmodifiable
         }
 
@@ -170,7 +170,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         private CourseLectureSection(Element lectureElement) {
             super(lectureElement);
 
-            // TODO: make unmodifiable
+            // TODO: make unmodifiable:
             this.requiredLabOptions = new HashSet<>();
             this.requiredTutorialOptions = new HashSet<>();
         }
@@ -221,7 +221,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
     public enum SecXml {
         COURSE_SECTION_TAG ("Section"),
         SECTION_CODE_ATTR ("code"),
-        SECTION_SEMESTER_ATTR ("semester"),
+        SECTION_SEMESTER_ATTR ("semester"), // See [CourseUtils.Semester
         SECTION_PROFESSOR ("Instructor"),
         ;
         private final String value;

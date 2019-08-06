@@ -1,6 +1,8 @@
 package org.bse.data.repr.courseutils;
 
 import org.bse.data.repr.courseutils.CourseUtils.BlockTime;
+import org.bse.utils.xml.MalformedXmlDataException;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
 import java.time.DayOfWeek;
@@ -19,8 +21,8 @@ public final class CourseSectionBlock {
 
     // TODO [xml:read][CourseSectionBlock]
     public static CourseSectionBlock fromXml(Element blockElement) {
-        // note: for parsing enumConstant.name(), use enumClass.valueOf(String name).
-        return null; // TODO:
+        // See [BlockRepetition.decodeXmlAttr] and [utils.BlockTime.decodeXmlAttr]
+        return null;
     }
 
     private CourseSectionBlock(boolean isWaitlist,
@@ -81,14 +83,27 @@ public final class CourseSectionBlock {
         ALTERNATING_FIRST ("2:1"),
         ALTERNATING_SECOND ("2:2"),
         ;
-        public final String value;
+        public final String xmlAttrVal;
 
-        BlockRepetition(String value) {
-            this.value = value;
+        BlockRepetition(String xmlAttrVal) {
+            this.xmlAttrVal = xmlAttrVal;
         }
 
         public boolean mayOverlapWith(BlockRepetition other) {
             return this == other || (this == EVERY_WEEK || other == EVERY_WEEK);
+        }
+
+        /**
+         * @param attr An Attr object. Must not be null.
+         * @return A [BlockRepetition] whose [xmlAttrVal] is equal to [attr.getValue].
+         * @throws MalformedXmlDataException if no such [BlockRepetition] can be found.
+         */
+        private static BlockRepetition decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
+            try {
+                return BlockRepetition.valueOf(attr.getValue());
+            } catch (IllegalArgumentException e) {
+                throw MalformedXmlDataException.invalidAttrVal(attr);
+            }
         }
     }
 
@@ -106,7 +121,6 @@ public final class CourseSectionBlock {
 
         // if not present, assumed to be false, otherwise to be true. value ignored.
         OPTIONAL_WAITLIST_FLAG_ATTR ("waitlist"),
-
         ;
         public final String value;
 
