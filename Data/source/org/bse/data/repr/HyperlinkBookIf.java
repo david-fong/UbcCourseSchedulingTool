@@ -10,4 +10,17 @@ public interface HyperlinkBookIf {
 
     //String getDedicatedSiteLink();
 
+
+
+    enum QueryTnameVal {
+        DEPT ("subj-department"),
+        COURSE ("subj-course"),
+        ;
+        public String value;
+
+        QueryTnameVal(String value) {
+            this.value = value;
+        }
+    }
+
 }

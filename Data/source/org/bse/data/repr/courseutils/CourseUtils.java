@@ -3,8 +3,6 @@ package org.bse.data.repr.courseutils;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.w3c.dom.Attr;
 
-import java.util.Arrays;
-
 /**
  * TODO: write documentation.
  */

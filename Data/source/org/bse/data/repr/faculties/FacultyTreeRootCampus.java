@@ -1,5 +1,6 @@
 package org.bse.data.repr.faculties;
 
+import org.bse.data.repr.HyperlinkBookIf;
 import org.bse.data.repr.courseutils.Course;
 import org.bse.data.repr.faculties.vancouver.VancouverFaculties;
 
@@ -30,6 +31,11 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
         return Paths.get(getAbbreviation().toLowerCase());
     }
 
+    @Override
+    default String getRegistrationSiteUrl() {
+        return HyperlinkBookIf.REGISTRATION_HOME + "&tname=subj-department" + "&campuscd=" + getAbbreviation();
+    }
+
     /**
      *
      * @return An empty map because a campus does not have courses directly under it.
@@ -40,15 +46,21 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
     }
 
 
-
+    /**
+     *
+     */
     enum UbcCampuses implements FacultyTreeRootCampus {
-        VANCOUVER (VancouverFaculties.class),
-        //OKANAGAN  (null),
+        VANCOUVER ("Vancouver", VancouverFaculties.class, "UBC"),
+        //OKANAGAN  ("Okanagan", OkanaganFaculties.class, "UBCO"),
         ;
+        private final String name;
         private final Class<? extends FacultyTreeNode> childrenClass;
+        private final String urlQueryTokenVal;
 
-        <T extends Enum & FacultyTreeNode> UbcCampuses(Class<T> childrenClass) {
+        <T extends Enum & FacultyTreeNode> UbcCampuses(String name, Class<T> childrenClass, String urlQueryTokenVal) {
+            this.name = name;
             this.childrenClass = childrenClass;
+            this.urlQueryTokenVal = urlQueryTokenVal;
             if (!Files.isDirectory(getRuntimeFullPathToData())) {
                 throw new RuntimeException("Campus folder does not exist at runtime");
             }
@@ -56,12 +68,12 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
 
         @Override
         public String getNameNoTitle() {
-            return null;
+            return name;
         }
 
         @Override
         public String getAbbreviation() {
-            return null;
+            return urlQueryTokenVal;
         }
 
         @Override

@@ -8,6 +8,7 @@ import org.bse.data.repr.faculties.FacultyTreeNode;
 import org.bse.utils.requirement.Requirement;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
+import org.bse.utils.xml.MalformedXmlDataException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -46,7 +47,9 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         descriptionString = null;
         creditValue = -1;
         courseCodeToken = null;
-        registrationUrlString = null;
+        registrationUrlString = facultyTreeNode.getRegistrationSiteUrl()
+                .replace(QueryTnameVal.DEPT.value, QueryTnameVal.COURSE.value)
+                + "&course=" + courseCodeToken;
 
         prerequisites = null;
         corequisites = null;
@@ -124,7 +127,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         private final Set<CourseSectionBlock> blocks;
 
         // TODO [xml:read][CourseSection]
-        private CourseSection(Element sectionElement) {
+        private CourseSection(Element sectionElement) throws MalformedXmlDataException {
             sectionCode = null;
             semester = null;    // See [utils.Semester.decodeXmlAttr]
             professor = null;   // See [Professor.fromXml]
@@ -167,7 +170,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         private final Set<CourseSection> requiredTutorialOptions;
 
         // TODO [xml:read][CourseLectureSection]
-        private CourseLectureSection(Element lectureElement) {
+        private CourseLectureSection(Element lectureElement) throws MalformedXmlDataException {
             super(lectureElement);
 
             // TODO: make unmodifiable:

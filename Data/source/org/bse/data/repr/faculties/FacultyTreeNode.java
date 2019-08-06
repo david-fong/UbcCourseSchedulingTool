@@ -52,6 +52,10 @@ public interface FacultyTreeNode {
         return getParentNode().getPathToData().resolve(getAbbreviation().toLowerCase());
     }
 
+    default String getRegistrationSiteUrl() {
+        return getRootCampus().getRegistrationSiteUrl() + "&dept=" + getAbbreviation();
+    }
+
     /**
      *
      * @param codeString must not be null. Ex "101". This operation will only succeed if
