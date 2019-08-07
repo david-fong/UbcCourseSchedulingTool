@@ -2,6 +2,7 @@ package org.bse.utils.requirement.operators.matching;
 
 import org.bse.utils.requirement.RequireOpResult;
 import org.bse.utils.requirement.Requirement;
+import org.bse.utils.xml.XmlParsingUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,8 +36,9 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
                 .mapToInt(CreditValued::getCreditValue)
                 .toArray();
         Arrays.sort(candidateCreditValues); // ascending order
-
     }
+
+    // TODO [xml:read]: Xml parsing constructor?
 
     @Override
     public RequireOpResult.ReqOpOutcome requireOf(final Set<T> testSubject) {
@@ -150,6 +152,23 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
             }
         }
         return accumulator.isEmpty() ? null : accumulator;
+    }
+
+
+
+    public enum Xml implements XmlParsingUtils.XmlConstant {
+        CREDIT_MTR_TAG ("CreditMtr"),
+        ;
+        private final String value;
+
+        Xml(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String value() {
+            return value;
+        }
     }
 
 }

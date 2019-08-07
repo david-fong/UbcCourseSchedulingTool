@@ -9,6 +9,7 @@ import org.bse.utils.requirement.Requirement;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
 import org.bse.utils.xml.MalformedXmlDataException;
+import org.bse.utils.xml.XmlParsingUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -37,19 +38,21 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
     private final Set<CourseSection> tutorialSections;
 
     // TODO [xml:read][Course]
-    public Course(Document courseDocument) {
+    public Course(Document courseDocument) throws MalformedXmlDataException {
         final Element courseElement; {
             NodeList nodeList = courseDocument.getElementsByTagName(Xml.COURSE_TAG.value);
             courseElement = (Element)nodeList.item(0);
         }
 
         facultyTreeNode = null;
-        descriptionString = null;
-        creditValue = -1;
-        courseCodeToken = null;
+        descriptionString = XmlParsingUtils.getMandatoryUniqueElementByTag(courseElement, Xml.DESCRIPTION_TAG).getTextContent();
+        creditValue = Integer.parseInt(XmlParsingUtils.getMandatoryAttr(courseElement, Xml.COURSE_CREDIT_ATTR).getValue());
+        courseCodeToken = XmlParsingUtils.getMandatoryAttr(courseElement, Xml.COURSE_CODE_ATTR).getValue();
         registrationUrlString = facultyTreeNode.getRegistrationSiteUrl()
                 .replace(QueryTnameVal.DEPT.value, QueryTnameVal.COURSE.value)
                 + "&course=" + courseCodeToken;
+
+        assert creditValue >= 0 : "credit value must be equal to or greater than zero";
 
         prerequisites = null;
         corequisites = null;
@@ -199,7 +202,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
 
 
 
-    public enum Xml {
+    public enum Xml implements XmlParsingUtils.XmlConstant {
         COURSE_TAG ("Course"),
         COURSE_FACULTY_ATTR ("faculty"),
         COURSE_CODE_ATTR ("code"),
@@ -219,9 +222,14 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         Xml(String value) {
             this.value = value;
         }
+
+        @Override
+        public String value() {
+            return value;
+        }
     }
 
-    public enum SecXml {
+    public enum SecXml implements XmlParsingUtils.XmlConstant {
         COURSE_SECTION_TAG ("Section"),
         SECTION_CODE_ATTR ("code"),
         SECTION_SEMESTER_ATTR ("semester"), // See [CourseUtils.Semester
@@ -231,6 +239,11 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
 
         SecXml(String value) {
             this.value = value;
+        }
+
+        @Override
+        public String value() {
+            return value;
         }
     }
 

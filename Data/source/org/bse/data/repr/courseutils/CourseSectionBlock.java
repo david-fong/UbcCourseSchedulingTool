@@ -30,10 +30,10 @@ public final class CourseSectionBlock {
         );
 
         final BlockTime start = BlockTime.decodeXmlAttr(
-                XmlParsingUtils.getMandatoryAttr(blockElement, Xml.BEGIN_TIME_ATTR.value)
+                XmlParsingUtils.getMandatoryAttr(blockElement, Xml.BEGIN_TIME_ATTR)
         );
         final BlockTime end = BlockTime.decodeXmlAttr(
-                XmlParsingUtils.getMandatoryAttr(blockElement, Xml.END_TIME_ATTR.value)
+                XmlParsingUtils.getMandatoryAttr(blockElement, Xml.END_TIME_ATTR)
         );
         this.timeEnclosure = new BlockTimeEnclosure(start, end);
     }
@@ -121,7 +121,7 @@ public final class CourseSectionBlock {
 
 
 
-    public enum Xml {
+    public enum Xml implements XmlParsingUtils.XmlConstant {
         BLOCK_TAG ("Block"),
 
         DAY_OF_WEEK_ATTR ("day"),
@@ -134,10 +134,15 @@ public final class CourseSectionBlock {
         // if not present, assumed to be false, otherwise to be true. value ignored.
         OPTIONAL_WAITLIST_FLAG_ATTR ("waitlist"),
         ;
-        public final String value;
+        private final String value;
 
         Xml(String value) {
             this.value = value;
+        }
+
+        @Override
+        public String value() {
+            return value;
         }
     }
 

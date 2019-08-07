@@ -2,6 +2,7 @@ package org.bse.utils.requirement.operators.matching;
 
 import org.bse.utils.requirement.RequireOpResult.ReqOpOutcome;
 import org.bse.utils.requirement.Requirement;
+import org.bse.utils.xml.XmlParsingUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +26,8 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
                 + " candidates (%s).", threshold, candidates.size()
         );
     }
+
+    // TODO [xml:read]: Xml parsing constructor?
 
     @Override
     public ReqOpOutcome requireOf(Set<T> testSubject) {
@@ -128,6 +131,7 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
     }
 
 
+
     /**
      *
      * @param candidate An object that, if found in a test subject, will cause this
@@ -137,6 +141,21 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
      */
     public static <T> CountMatchThreshReq<T> ONLY(T candidate) {
         return new CountMatchThreshReq<>(1, Collections.singleton(candidate));
+    }
+
+    public enum Xml implements XmlParsingUtils.XmlConstant {
+        COUNT_MTR_TAG ("CountMtr"),
+        ;
+        private final String value;
+
+        Xml(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String value() {
+            return value;
+        }
     }
 
 }

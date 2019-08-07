@@ -12,8 +12,12 @@ public class MalformedXmlDataException extends Exception {
         super(message);
     }
 
+    public static MalformedXmlDataException noSuchUniqueChildElement(Element host, String tagName) {
+        return new MalformedXmlDataException(""); // TODO [impl][noSuchUniqueChildElement]:
+    }
+
     public static MalformedXmlDataException missingAttr(Element host, String attrName) {
-        return new MalformedXmlDataException(""); // TODO:
+        return new MalformedXmlDataException(""); // TODO [impl][missingAttr]:
     }
 
     public static MalformedXmlDataException invalidAttrVal(Attr attr) {

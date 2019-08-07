@@ -1,5 +1,6 @@
 package org.bse.data.repr;
 
+import org.bse.utils.xml.XmlParsingUtils;
 import org.w3c.dom.Element;
 
 import java.util.HashMap;
@@ -37,8 +38,18 @@ public final class Professor {
     }
 
 
-    public enum Xml {
+    public enum Xml implements XmlParsingUtils.XmlConstant {
+        ;
+        private final String value;
 
+        Xml(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String value() {
+            return value;
+        }
     }
 
 }
