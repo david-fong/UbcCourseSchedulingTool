@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public final class Professor {
 
-    public static final Map<String, Professor> PROF_FULL_NAME_MAP;
+    private static final Map<String, Professor> PROF_FULL_NAME_MAP;
     static {
         final int initialCapacity = 30;
         PROF_FULL_NAME_MAP = new HashMap<>(initialCapacity);
@@ -19,19 +19,22 @@ public final class Professor {
     private final String firstName;
     private final String lastName;
 
-    public Professor fromXml(Element profElement) {
+    // TODO [xml:read]
+    public Professor(Element profElement) {
         // get first name and last name, and check if a prof by that full name
         // already exists in [PROF_FULL_NAME_MAP]. If so, return that prof, and
         // if not, create one, register it to the map, and return it.
-        return null; // TODO:
+        this.firstName = null;
+        this.lastName = null;
     }
 
-    // No public XML constructor because of the static registry.
-    private Professor(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public String getFirstName() {
+        return firstName;
     }
 
+    public String getLastName() {
+        return lastName;
+    }
 
 
     public enum Xml {

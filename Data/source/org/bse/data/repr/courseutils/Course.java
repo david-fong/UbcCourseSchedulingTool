@@ -117,7 +117,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
      * All code tokens ([CodeStringPath]) for instances under a common [Course]
      * should be unique.
      *
-     * TODO: add representation of seating / methods to fetch seating state from web.
+     * TODO [rep]: add representation of seating / methods to fetch seating state from web.
      */
     public class CourseSection implements CodeStringPath {
 
@@ -131,7 +131,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
             sectionCode = null;
             semester = null;    // See [utils.Semester.decodeXmlAttr]
             professor = null;   // See [Professor.fromXml]
-            blocks = new HashSet<>(); // TODO: make unmodifiable
+            blocks = new HashSet<>(); // TODO [impl]: make unmodifiable
         }
 
         public final boolean overlapsWith(CourseSection other) {

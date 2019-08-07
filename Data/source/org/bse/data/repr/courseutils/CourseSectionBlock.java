@@ -35,6 +35,7 @@ public final class CourseSectionBlock {
         this.timeEnclosure = timeEnclosure;
     }
 
+    // *note: do not change visibility. may be used in GUI
     public boolean overlapsWith(CourseSectionBlock other) {
         if (dayOfWeek != other.dayOfWeek) {
             return false;
@@ -61,7 +62,7 @@ public final class CourseSectionBlock {
 
 
     /**
-     * TODO: write documentation.
+     * TODO [doc]:
      */
     private static final class BlockTimeEnclosure {
 

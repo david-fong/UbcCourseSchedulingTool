@@ -4,7 +4,7 @@ import org.bse.utils.xml.MalformedXmlDataException;
 import org.w3c.dom.Attr;
 
 /**
- * TODO: write documentation.
+ * TODO [doc]: write documentation.
  */
 public final class CourseUtils {
 
@@ -162,7 +162,7 @@ public final class CourseUtils {
             }
         }
 
-        // TODO: Added string getter methods (and fields?)
+        // TODO [impl]: Added string getter methods (and fields?)
     }
 
 }

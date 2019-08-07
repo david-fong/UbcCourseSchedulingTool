@@ -57,7 +57,7 @@ import java.util.Set;
  * with most the most restrictive entries first.
      * *
      * 1.0. [filter]
-     * TODO: update for new [PickyBuilder] interface and [PickyBuildGenerator] class.
+     * TODO [doc]: update for new [PickyBuilder] interface and [PickyBuildGenerator] class.
      * Take the narrowed [Requirement] from [@STEP 0] and traverse it, collecting its
      * items ([Course]s) to a map from those [Course]s' to their available sections.
      * Exclude [CourseSection]s that the user cannot register for and report their
@@ -99,7 +99,7 @@ import java.util.Set;
  * [CourseSection]s) that satisfy the user's program/specialization's requirements, and
  * has no time conflicts. This collection will be sorted according to how preferable
  * they are to the user.
- * TODO
+ * TODO [alg]
  */
 
 /**

@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * TODO: write documentation.
+ * TODO [doc]: write documentation.
  */
 public final class Student {
 
@@ -18,16 +18,15 @@ public final class Student {
     private YearOfStudy currentYear;
     private FacultyTreeRootCampus.UbcCampuses campus;
 
-    // TODO: discuss alternative of a set, and giving the CourseSchedule class a YearOfStudy field.
-    private final EnumMap<YearOfStudy, CourseScheduleBuild> previousSchedules;
-    private final HashSet<Worklist> worklists; // Worklists must not have the same name.
+    private final Map<YearOfStudy, CourseSchedule> previousSchedules;
+    private final Map<YearOfStudy, WorklistGroup> worklistGroups; // Worklists must not have the same name.
 
     public Student(String name, YearOfStudy yearOfStudy, FacultyTreeRootCampus.UbcCampuses campus) {
         this.name = name;
         this.currentYear = yearOfStudy;
         this.campus = campus;
         this.previousSchedules = new EnumMap<>(YearOfStudy.class);
-        this.worklists = new HashSet<>();
+        this.worklistGroups = new EnumMap<>(YearOfStudy.class);
     }
 
     public String getName() {
@@ -39,11 +38,11 @@ public final class Student {
     public FacultyTreeRootCampus.UbcCampuses getCampus() {
         return campus;
     }
-    public Map<YearOfStudy, CourseScheduleBuild> getPreviousSchedules() {
+    public Map<YearOfStudy, CourseSchedule> getPreviousSchedules() {
         return previousSchedules;
     }
-    public HashSet<Worklist> getWorklists() {
-        return worklists;
+    public Map<YearOfStudy, WorklistGroup> getWorklistGroups() {
+        return worklistGroups;
     }
 
     public void setCurrentYear(YearOfStudy yearOfStudy) {

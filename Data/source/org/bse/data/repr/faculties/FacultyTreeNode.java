@@ -93,7 +93,7 @@ public interface FacultyTreeNode {
     Map<String, Course> getCodeStringToCourseMap();
 
     /**
-     * TODO: Implementations must call this in their constructors.
+     * TODO [impl]: Implementations must call this in their constructors.
      * Also checks if [getRuntimeFullPath] returns an existing directory.
      */
     default void initCodeStringToCourseMapKeys() {

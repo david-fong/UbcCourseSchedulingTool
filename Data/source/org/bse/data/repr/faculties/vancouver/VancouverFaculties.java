@@ -14,7 +14,7 @@ import static org.bse.data.repr.faculties.FacultyTreeNode.FacultyTreeNodeType.FA
  * https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments
  */
 public enum VancouverFaculties implements FacultyTreeNode {
-    // TODO: add entries as needed. prefer alphabetical order.
+    // TODO [dat]: add entries as needed. prefer alphabetical order.
     APSC (FACULTY, "Applied Science", AppliedScienceFaculties.class),
     // ...
     SCIE (FACULTY, "Science", ScienceFaculties.class),

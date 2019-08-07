@@ -18,6 +18,9 @@ import java.util.Set;
  */
 public final class DataMain {
 
+    /**
+     * nested class annotation
+     */
     public static class CreditValuedImpl implements CreditValued {
 
         private final String str;
@@ -48,6 +51,10 @@ public final class DataMain {
     }
 
 
+    /**
+     * main annotation
+     * @param args Commandline arguments.
+     */
     public static void main(String[] args) {
         if (!Files.isDirectory(CourseDataLocator.GENERATED_CAMPUS_DIR)) {
             throw new RuntimeException("could not get development path to generated resources");

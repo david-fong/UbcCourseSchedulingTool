@@ -21,8 +21,8 @@ class CourseScheduleBuild extends CourseSchedule implements PickyBuild<Course.Co
         this.courseSections = new HashSet<>();
     }
 
-    CourseScheduleBuild(CourseScheduleBuild other) {
-        this.courseSections = new HashSet<>(other.courseSections);
+    CourseScheduleBuild(CourseSchedule other) {
+        this.courseSections = new HashSet<>(other.getCourseSections());
     }
 
     @Override
@@ -40,7 +40,7 @@ class CourseScheduleBuild extends CourseSchedule implements PickyBuild<Course.Co
      * would arise as a result of adding [section] to this [CourseSchedule].
      *
      * @param section A [CourseSection] to test adding to this [CourseSchedule].
-     * @return true if the operation was successful.
+     * @return [true] if [section] can be added without conflicts.
      */
     @Override
     public boolean conflictsWith(Course.CourseSection section) {
@@ -52,7 +52,7 @@ class CourseScheduleBuild extends CourseSchedule implements PickyBuild<Course.Co
      * would arise as a result of adding [section] to this [CourseSchedule].
      *
      * @param section A [CourseSection] to attempt to add to this [CourseSchedule].
-     * @return true if the operation was successful.
+     * @return [true] if the operation was successful.
      */
     @Override
     public boolean addIfNoConflicts(Course.CourseSection section) {
@@ -61,7 +61,7 @@ class CourseScheduleBuild extends CourseSchedule implements PickyBuild<Course.Co
         return canAdd;
     }
 
-    public boolean removeSection(Course.CourseSection section) {
+    protected boolean removeSection(Course.CourseSection section) {
         return courseSections.remove(section);
     }
 
