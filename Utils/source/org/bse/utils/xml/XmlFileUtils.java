@@ -1,6 +1,8 @@
 package org.bse.utils.xml;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -81,6 +83,5 @@ public final class XmlFileUtils {
     public static void writeDocumentToFile(Document document, File filePath) throws TransformerException {
         TRANSFORMER.transform(new DOMSource(document), new StreamResult(filePath));
     }
-
 
 }

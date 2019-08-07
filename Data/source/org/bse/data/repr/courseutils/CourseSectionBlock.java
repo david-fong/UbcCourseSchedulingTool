@@ -2,6 +2,7 @@ package org.bse.data.repr.courseutils;
 
 import org.bse.data.repr.courseutils.CourseUtils.BlockTime;
 import org.bse.utils.xml.MalformedXmlDataException;
+import org.bse.utils.xml.XmlParsingUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
@@ -19,20 +20,22 @@ public final class CourseSectionBlock {
     private final BlockRepetition repetitionType;
     private final BlockTimeEnclosure timeEnclosure;
 
-    // TODO [xml:read][CourseSectionBlock]
-    public static CourseSectionBlock fromXml(Element blockElement) {
-        // See [BlockRepetition.decodeXmlAttr] and [utils.BlockTime.decodeXmlAttr]
-        return null;
-    }
+    public CourseSectionBlock(Element blockElement) throws MalformedXmlDataException {
+        this.isWaitlist = blockElement.getAttributeNode(Xml.OPTIONAL_WAITLIST_FLAG_ATTR.value) != null;
 
-    private CourseSectionBlock(boolean isWaitlist,
-                               DayOfWeek dayOfWeek,
-                               BlockRepetition repetitionType,
-                               BlockTimeEnclosure timeEnclosure) {
-        this.isWaitlist = isWaitlist;
-        this.dayOfWeek = dayOfWeek;
-        this.repetitionType = repetitionType;
-        this.timeEnclosure = timeEnclosure;
+        this.dayOfWeek = null; // TODO [xml:read][CourseSectionBlock]
+
+        this.repetitionType = BlockRepetition.decodeXmlAttr(
+                blockElement.getAttributeNode(Xml.OPTIONAL_REPEAT_TYPE_ATTR.value)
+        );
+
+        final BlockTime start = BlockTime.decodeXmlAttr(
+                XmlParsingUtils.getMandatoryAttr(blockElement, Xml.BEGIN_TIME_ATTR.value)
+        );
+        final BlockTime end = BlockTime.decodeXmlAttr(
+                XmlParsingUtils.getMandatoryAttr(blockElement, Xml.END_TIME_ATTR.value)
+        );
+        this.timeEnclosure = new BlockTimeEnclosure(start, end);
     }
 
     // *note: do not change visibility. may be used in GUI
@@ -49,21 +52,25 @@ public final class CourseSectionBlock {
     public boolean isWaitlist() {
         return isWaitlist;
     }
+
     public DayOfWeek getDayOfWeek() {
         return dayOfWeek;
     }
+
     public BlockRepetition getRepetitionType() {
         return repetitionType;
     }
-    public BlockTimeEnclosure getTimeEnclosure() {
-        return timeEnclosure;
+
+    public BlockTime getStartTime() {
+        return timeEnclosure.begin;
+    }
+
+    public BlockTime getEndTime() {
+        return timeEnclosure.end;
     }
 
 
 
-    /**
-     * TODO [doc]:
-     */
     private static final class BlockTimeEnclosure {
 
         private final BlockTime begin;
@@ -95,11 +102,15 @@ public final class CourseSectionBlock {
         }
 
         /**
-         * @param attr An Attr object. Must not be null.
+         * @param attr An Attr object. May be null.
          * @return A [BlockRepetition] whose [xmlAttrVal] is equal to [attr.getValue].
+         *     Never returns null. If [attr] is null, returns [EVERY_WEEK] by default.
          * @throws MalformedXmlDataException if no such [BlockRepetition] can be found.
          */
         private static BlockRepetition decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
+            if (attr == null) {
+                return EVERY_WEEK;
+            }
             try {
                 return BlockRepetition.valueOf(attr.getValue());
             } catch (IllegalArgumentException e) {
