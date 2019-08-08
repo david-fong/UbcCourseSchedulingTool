@@ -17,6 +17,17 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
     Map<String, Course> EMPTY_COURSE_CODE_MAP = Map.of();
 
     @Override
+    default String getNameWithTitle() {
+        // Here the title is a suffix instead of a prefix:
+        return getNameNoTitle() + getType().title;
+    }
+
+    @Override
+    default FacultyTreeNodeType getType() {
+        return FacultyTreeNodeType.CAMPUS;
+    }
+
+    @Override
     default FacultyTreeRootCampus getRootCampus() {
         return this;
     }
@@ -27,8 +38,8 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
     }
 
     @Override
-    default Path getPathToData() {
-        return Paths.get(getAbbreviation().toLowerCase());
+    default Path getRootAnchoredPathToInfo(SubDirectories infoType) {
+        return Paths.get(getAbbreviation().toLowerCase()).resolve(infoType.subDirName);
     }
 
     @Override
@@ -38,7 +49,7 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
 
     /**
      *
-     * @return An empty map because a campus does not have courses directly under it.
+     * @return An empty [Map] because a campus does not have courses directly under it.
      */
     @Override
     default Map<String, Course> getCodeStringToCourseMap() {
@@ -74,11 +85,6 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
         @Override
         public String getAbbreviation() {
             return urlQueryTokenVal;
-        }
-
-        @Override
-        public FacultyTreeNodeType getType() {
-            return FacultyTreeNodeType.CAMPUS;
         }
 
         @Override

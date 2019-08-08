@@ -38,7 +38,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
     private final Set<CourseSection> tutorialSections;
 
     // TODO [xml:read][Course]
-    public Course(Document courseDocument) throws MalformedXmlDataException {
+    public Course(final Document courseDocument) throws MalformedXmlDataException {
         final Element courseElement; {
             NodeList nodeList = courseDocument.getElementsByTagName(Xml.COURSE_TAG.value);
             courseElement = (Element)nodeList.item(0);
@@ -130,7 +130,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         private final Set<CourseSectionBlock> blocks;
 
         // TODO [xml:read][CourseSection]
-        private CourseSection(Element sectionElement) throws MalformedXmlDataException {
+        private CourseSection(final Element sectionElement) throws MalformedXmlDataException {
             sectionCode = null;
             semester = null;    // See [utils.Semester.decodeXmlAttr]
             professor = null;   // See [Professor.fromXml]
@@ -173,7 +173,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         private final Set<CourseSection> requiredTutorialOptions;
 
         // TODO [xml:read][CourseLectureSection]
-        private CourseLectureSection(Element lectureElement) throws MalformedXmlDataException {
+        private CourseLectureSection(final Element lectureElement) throws MalformedXmlDataException {
             super(lectureElement);
 
             // TODO: make unmodifiable:

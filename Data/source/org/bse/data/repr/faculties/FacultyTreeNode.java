@@ -2,6 +2,7 @@ package org.bse.data.repr.faculties;
 
 import org.bse.data.coursedata.CourseDataLocator;
 import org.bse.data.repr.courseutils.Course;
+import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlFileUtils;
 
 import java.io.IOException;
@@ -43,13 +44,14 @@ public interface FacultyTreeNode {
     FacultyTreeNode[] getChildren();
 
     /**
-     * @return A [Path] to the directory containing xml files representing course data
-     *     for courses under [this] faculty, and sub-directories whose [Path]s are for
-     *     [FacultyTreeNode]s under this faculty. [FacultyTreeRootCampus]s must return
-     *     a single-token [Path].
+     * implementation note: [FacultyTreeRootCampus]s must break the upward recursion.
+     * @param infoType The class of information being looked for.
+     * @return The path to the contained data specified by [infoType].
      */
-    default Path getPathToData() {
-        return getParentNode().getPathToData().resolve(getAbbreviation().toLowerCase());
+    default Path getRootAnchoredPathToInfo(SubDirectories infoType) {
+        return getParentNode().getRootAnchoredPathToInfo(SubDirectories.CHILD_FACULTY_NODES)
+                .resolve(getAbbreviation().toLowerCase())
+                .resolve(infoType.subDirName);
     }
 
     default String getRegistrationSiteUrl() {
@@ -75,13 +77,19 @@ public interface FacultyTreeNode {
         } else {
             final Path coursePath = getRuntimeFullPathToData()
                     .resolve(codeString + XmlFileUtils.XML_EXTENSION_STRING);
-            course = new Course(XmlFileUtils.readXmlFromFile(coursePath));
+            try {
+                course = new Course(XmlFileUtils.readXmlFromFile(coursePath));
+            } catch (MalformedXmlDataException e) {
+                throw new RuntimeException("corrupted xml course data", e);
+            }
             getCodeStringToCourseMap().put(codeString, course);
             return course;
         }
     }
     default Path getRuntimeFullPathToData() {
-        return CourseDataLocator.RUNTIME_CAMPUS_DIR.resolve(getPathToData());
+        return CourseDataLocator.RUNTIME_CAMPUS_DIR.resolve(
+                getRootAnchoredPathToInfo(SubDirectories.COURSE_XML_DATA)
+        );
     }
 
     /**
@@ -93,7 +101,8 @@ public interface FacultyTreeNode {
     Map<String, Course> getCodeStringToCourseMap();
 
     /**
-     * TODO [impl]: Implementations must call this in their constructors.
+     * TODO [impl]: change this to be a recursive init method outside this
+     *  interface in [DataMain]/[Core], each with different behaviour.
      * Also checks if [getRuntimeFullPath] returns an existing directory.
      */
     default void initCodeStringToCourseMapKeys() {
@@ -131,7 +140,7 @@ public interface FacultyTreeNode {
      * "school", "institute", and "centre". Sheesh.
      */
     enum FacultyTreeNodeType {
-        CAMPUS     ("Campus - "), // reserved for [FacultyTreeRootCampus]
+        CAMPUS     (" Campus"), // reserved for [FacultyTreeRootCampus]
         FACULTY    ("Faculty of "),
         SCHOOL     ("School of "),
         // INSTITUTE,
@@ -142,6 +151,24 @@ public interface FacultyTreeNode {
 
         FacultyTreeNodeType(String title) {
             this.title = title;
+        }
+    }
+
+    // TODO: make sure usages of [Path]s are following this spec after it is written.
+    enum SubDirectories {
+        CHILD_FACULTY_NODES ("childnodes"),
+        COURSE_XML_DATA ("coursedata"),
+        STANDARD_TIMETABLES ("stts"), // an xml file for each year of study.
+        PROGRAM_SPECS ("programspecs"), // a file for each year of study. include elective reqs.
+        // TODO[spec]: ^design how reqs that need to finished before a certain year are represented.
+        //  also, reqs will need to be able to refer to common reqs like the engineering "impact of tech
+        //  on society" candidates, and the arts elective candidates. How to decide where to put and how
+        //  to refer to them in a way that specifies that?
+        ;
+        public final String subDirName;
+
+        SubDirectories(String subDirName) {
+            this.subDirName = subDirName;
         }
     }
 
