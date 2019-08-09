@@ -44,7 +44,11 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
 
     @Override
     default String getRegistrationSiteUrl() {
-        return HyperlinkBookIf.REGISTRATION_HOME + "&tname=subj-department" + "&campuscd=" + getAbbreviation();
+        return HyperlinkBookIf.REGISTRATION_HOME
+                + QuerySpecifierTokens.TNAME_QUERY_TOKEN_STUB
+                + QuerySpecifierTokens.CAMPUS.tnameQueryVal
+                + QuerySpecifierTokens.CAMPUS.tokenStub
+                + getAbbreviation();
     }
 
     /**

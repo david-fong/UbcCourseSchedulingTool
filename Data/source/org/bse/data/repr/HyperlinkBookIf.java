@@ -4,7 +4,7 @@ public interface HyperlinkBookIf {
 
     String REGISTRATION_HOME = "https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea";
 
-    String getRegistrationLink();
+    String getRegistrationSiteUrl();
 
     //String getUbcLink();
 
@@ -12,14 +12,22 @@ public interface HyperlinkBookIf {
 
 
 
-    enum QueryTnameVal {
-        DEPT ("subj-department"),
-        COURSE ("subj-course"),
+    enum QuerySpecifierTokens {
+        CAMPUS ("campuscd", "subj-campus"), // TODO: what's the tname? is there such thing?
+        FACULTY ("dept", "subj-department"),
+        COURSE ("course", "subj-course"),
+        SECTION ("section", "subj-section")
         ;
-        public String value;
+        public final String name;
+        public final String tokenStub;
+        public final String tnameQueryVal;
 
-        QueryTnameVal(String value) {
-            this.value = value;
+        public static final String TNAME_QUERY_TOKEN_STUB = "&tname=";
+
+        QuerySpecifierTokens(String name, String tnameQueryVal) {
+            this.name = name;
+            this.tokenStub = String.format("&%s=", name);
+            this.tnameQueryVal = tnameQueryVal;
         }
     }
 

@@ -1,6 +1,7 @@
 package org.bse.data.repr.faculties;
 
 import org.bse.data.coursedata.CourseDataLocator;
+import org.bse.data.repr.HyperlinkBookIf;
 import org.bse.data.repr.courseutils.Course;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlFileUtils;
@@ -14,7 +15,7 @@ import java.util.Map;
 /**
  * A property of a [Course].
  */
-public interface FacultyTreeNode {
+public interface FacultyTreeNode extends HyperlinkBookIf {
 
     String getNameNoTitle();
 
@@ -54,8 +55,13 @@ public interface FacultyTreeNode {
                 .resolve(subDir.subDirName);
     }
 
+    @Override
     default String getRegistrationSiteUrl() {
-        return getRootCampus().getRegistrationSiteUrl() + "&dept=" + getAbbreviation();
+        return getRootCampus().getRegistrationSiteUrl()
+                .replace(QuerySpecifierTokens.CAMPUS.tnameQueryVal,
+                        QuerySpecifierTokens.FACULTY.tnameQueryVal)
+                + QuerySpecifierTokens.FACULTY.tokenStub
+                + getAbbreviation();
     }
 
     /**

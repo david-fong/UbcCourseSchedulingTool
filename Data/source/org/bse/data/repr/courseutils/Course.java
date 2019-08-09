@@ -49,8 +49,10 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         creditValue = Integer.parseInt(XmlParsingUtils.getMandatoryAttr(courseElement, Xml.COURSE_CREDIT_ATTR).getValue());
         courseCodeToken = XmlParsingUtils.getMandatoryAttr(courseElement, Xml.COURSE_CODE_ATTR).getValue();
         registrationUrlString = facultyTreeNode.getRegistrationSiteUrl()
-                .replace(QueryTnameVal.DEPT.value, QueryTnameVal.COURSE.value)
-                + "&course=" + courseCodeToken;
+                .replace(QuerySpecifierTokens.FACULTY.tnameQueryVal,
+                        QuerySpecifierTokens.COURSE.tnameQueryVal) // TODO [style] is there a nicer, more reusable way to do this?
+                + QuerySpecifierTokens.COURSE.tokenStub
+                + courseCodeToken;
 
         assert creditValue >= 0 : "credit value must be equal to or greater than zero";
 
@@ -82,7 +84,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
     }
 
     @Override
-    public String getRegistrationLink() {
+    public String getRegistrationSiteUrl() {
         return registrationUrlString;
     }
 
@@ -122,7 +124,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
      *
      * TODO [rep]: add representation of seating / methods to fetch seating state from web.
      */
-    public class CourseSection implements CodeStringPath {
+    public class CourseSection implements CodeStringPath, HyperlinkBookIf {
 
         private final String sectionCode;
         private final CourseUtils.Semester semester;
@@ -147,8 +149,18 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
             return Course.this;
         }
 
+        @Override
         public final String getFullCodeString() {
             return Course.this.getFullCodeString() + sectionCode;
+        }
+
+        @Override
+        public String getRegistrationSiteUrl() {
+            return Course.this.getRegistrationSiteUrl()
+                    .replace(QuerySpecifierTokens.COURSE.tnameQueryVal,
+                            QuerySpecifierTokens.SECTION.tnameQueryVal)
+                    + QuerySpecifierTokens.SECTION.tokenStub
+                    + sectionCode;
         }
 
         public final CourseUtils.Semester getSemester() {
