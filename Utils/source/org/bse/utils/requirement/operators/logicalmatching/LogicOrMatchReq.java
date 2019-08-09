@@ -18,17 +18,19 @@ import java.util.stream.Collectors;
 public final class LogicOrMatchReq<T> extends VariadicOrReq<Set<T>> implements MatchingRequirementIf<T> {
 
     private final Set<MatchingRequirementIf<T>> children;
+    private final long numBarelyPassingCombinations;
 
     public LogicOrMatchReq(Set<MatchingRequirementIf<T>> children) {
         super(children);
         this.children = Collections.unmodifiableSet(children);
+        this.numBarelyPassingCombinations = children.stream()
+                .mapToLong(MatchingRequirementIf::getNumBarelyPassingCombinations)
+                .sum();
     }
 
     @Override
-    public long estimateNumBarelyPassingCombinations() {
-        return children.stream()
-                .mapToLong(MatchingRequirementIf::estimateNumBarelyPassingCombinations)
-                .sum();
+    public long getNumBarelyPassingCombinations() {
+        return numBarelyPassingCombinations;
     }
 
     @Override

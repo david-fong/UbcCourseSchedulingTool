@@ -16,10 +16,10 @@ import java.util.Set;
 public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
 
     /**
-     * @return The estimated expected size of the collection that should be
-     *     returned from the [getAllBarelyPassingCombinations] method.
+     * @return The size of the collection that should be returned
+     *     from the [getAllBarelyPassingCombinations] method.
      */
-    long estimateNumBarelyPassingCombinations();
+    long getNumBarelyPassingCombinations();
 
     /**
      * This method has nothing to do with whether a test subject can pass
@@ -28,7 +28,8 @@ public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
      * @return A collection of all combinations of items that can satisfy the passing
      *     conditions of the implementing [MatchingRequirementIf]. No combinations
      *     should be included that include any more match-items than are absolutely
-     *     necessary to satisfy the implementing [MatchingRequirementIf].
+     *     necessary to satisfy the implementing [MatchingRequirementIf]. This number
+     *     can be cached in implementations since [Requirement]s must be immutable.
      */
     Set<Set<T>> getAllBarelyPassingCombinations();
 
@@ -45,7 +46,7 @@ public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
             implements MatchingRequirementIf<T> {
 
         @Override
-        public long estimateNumBarelyPassingCombinations() {
+        public long getNumBarelyPassingCombinations() {
             return Integer.MAX_VALUE;
         }
 
@@ -74,7 +75,7 @@ public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
             implements MatchingRequirementIf<T> {
 
         @Override
-        public long estimateNumBarelyPassingCombinations() {
+        public long getNumBarelyPassingCombinations() {
             return 0;
         }
 

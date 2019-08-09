@@ -19,12 +19,30 @@ import java.util.stream.Collectors;
  */
 public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
 
+    private final long numBarelyPassingCombinations;
+
     public CountMatchThreshReq(int threshold, Set<T> candidates) {
         super(threshold, candidates);
         assert candidates.size() >= threshold : String.format("The provided"
                 + " threshold (%s) is greater than the number of provided"
                 + " candidates (%s).", threshold, candidates.size()
         );
+
+        // constructor assertions ensure this calculation is correct.
+        final int n = getCandidates().size();
+//        BigInteger numCombinations = BigInteger.ONE;
+//        for (int i = 0; i < n - threshold; i++) {
+//            numCombinations = numCombinations.multiply(BigInteger.valueOf(n - i));
+//            numCombinations = numCombinations.divide(BigInteger.valueOf(i + i));
+//        }
+//        return numCombinations.intValue();
+        // I am unreasonably proud of this.
+        long numCombinations = 1;
+        for (int i = 0; i < n - threshold; i++) {
+            numCombinations *= n - i;
+            numCombinations /= i + i;
+        }
+        this.numBarelyPassingCombinations = numCombinations;
     }
 
     // TODO [xml:read]: Xml parsing constructor?
@@ -70,27 +88,13 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
     }
 
     @Override
-    public long estimateNumBarelyPassingCombinations() {
-        // constructor assertions ensure this calculation is correct.
-        final int n = getCandidates().size();
-//        BigInteger numCombinations = BigInteger.ONE;
-//        for (int i = 0; i < n - threshold; i++) {
-//            numCombinations = numCombinations.multiply(BigInteger.valueOf(n - i));
-//            numCombinations = numCombinations.divide(BigInteger.valueOf(i + i));
-//        }
-//        return numCombinations.intValue();
-        // I am unreasonably proud of this.
-        long numCombinations = 1;
-        for (int i = 0; i < n - threshold; i++) {
-            numCombinations *= n - i;
-            numCombinations /= i + i;
-        }
-        return (int)numCombinations;
+    public long getNumBarelyPassingCombinations() {
+        return numBarelyPassingCombinations;
     }
 
     @Override
     public Set<Set<T>> getAllBarelyPassingCombinations() {
-        final Set<Set<T>> accumulator = new HashSet<>((int)estimateNumBarelyPassingCombinations());
+        final Set<Set<T>> accumulator = new HashSet<>((int) getNumBarelyPassingCombinations());
         final List<T> children = new ArrayList<>(getCandidates());
 
         for (int startIdx = 0; startIdx <= children.size() - threshold; startIdx++) {

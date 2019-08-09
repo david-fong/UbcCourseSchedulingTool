@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public final class CreditMatchThreshReq<T extends CreditValued> extends AbstractMatchThreshReq<T> {
 
     private final int[] candidateCreditValues; // Do not modify or reassign entries.
+    private final long numBarelyPassingCombinations;
 
     public CreditMatchThreshReq(int threshold, Set<T> candidates) {
         super(threshold, candidates);
@@ -32,10 +33,12 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
                 + " the provided candidates (%d).", threshold, creditTotal
         );
 
-        candidateCreditValues = getCandidates().stream()
+        this.candidateCreditValues = getCandidates().stream()
                 .mapToInt(CreditValued::getCreditValue)
+                .sorted() // ascending order
                 .toArray();
-        Arrays.sort(candidateCreditValues); // ascending order
+
+        this.numBarelyPassingCombinations = recursiveCountCombos(this.threshold, 0);
     }
 
     // TODO [xml:read]: Xml parsing constructor?
@@ -87,9 +90,9 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
     }
 
     @Override
-    public long estimateNumBarelyPassingCombinations() {
+    public long getNumBarelyPassingCombinations() {
         // TODO: change this to use math with averages.
-        return recursiveCountCombos(this.threshold, 0);
+        return numBarelyPassingCombinations;
     }
     private int recursiveCountCombos(final int threshold, final int startIdx) {
         int numPassing = 0;

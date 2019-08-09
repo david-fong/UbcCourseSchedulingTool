@@ -40,14 +40,14 @@ public interface Requirement<T> {
      * @return A [Requirement] with identical behaviour as [this] one when specifically
      *     used against the parameter [givens]. Returns [NULL] if enough terms pass for
      *     [this] whole [Requirement] to pass. Since [Requirement] implementations must
-     *     be immutable (see spec), this method is allowed to return [this] (Ie. itself).
+     *     be immutable (see spec), this method is allowed to return [this] (itself).
      */
     Requirement<T> excludingPassingTermsFor(T givens);
 
 
 
     /**
-     * A utility lass for a [Requirement] that
+     * A utility class for a [Requirement] that
      * always returns with a passing status.
      * @param <T>
      */
@@ -70,7 +70,7 @@ public interface Requirement<T> {
     }
 
     /**
-     * A utility lass for a [Requirement] that
+     * A utility class for a [Requirement] that
      * always returns with a failing status.
      */
     class StrictlyFailingReq<T> implements Requirement<T> {
