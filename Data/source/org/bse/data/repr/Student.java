@@ -1,11 +1,10 @@
 package org.bse.data.repr;
 
-import org.bse.data.repr.courseutils.CourseUtils.YearOfStudy;
 import org.bse.data.repr.courseutils.Course;
+import org.bse.data.repr.courseutils.CourseUtils.YearOfStudy;
 import org.bse.data.repr.faculties.FacultyTreeRootCampus;
 
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

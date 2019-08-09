@@ -38,8 +38,8 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
     }
 
     @Override
-    default Path getRootAnchoredPathToInfo(SubDirectories infoType) {
-        return Paths.get(getAbbreviation().toLowerCase()).resolve(infoType.subDirName);
+    default Path getRootAnchoredPathToInfo(SubDirectories subDir) {
+        return Paths.get(getAbbreviation().toLowerCase()).resolve(subDir.subDirName);
     }
 
     @Override

@@ -9,3 +9,6 @@
 
 # Project/Module Dependencies:
 /lib
+
+# Generated resources:
+genresource/**/coursedata/

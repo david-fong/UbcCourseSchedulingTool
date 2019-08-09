@@ -45,13 +45,13 @@ public interface FacultyTreeNode {
 
     /**
      * implementation note: [FacultyTreeRootCampus]s must break the upward recursion.
-     * @param infoType The class of information being looked for.
-     * @return The path to the contained data specified by [infoType].
+     * @param subDir The class of information being looked for.
+     * @return The path to the contained data specified by [subDir].
      */
-    default Path getRootAnchoredPathToInfo(SubDirectories infoType) {
+    default Path getRootAnchoredPathToInfo(SubDirectories subDir) {
         return getParentNode().getRootAnchoredPathToInfo(SubDirectories.CHILD_FACULTY_NODES)
                 .resolve(getAbbreviation().toLowerCase())
-                .resolve(infoType.subDirName);
+                .resolve(subDir.subDirName);
     }
 
     default String getRegistrationSiteUrl() {
@@ -87,7 +87,7 @@ public interface FacultyTreeNode {
         }
     }
     default Path getRuntimeFullPathToData() {
-        return CourseDataLocator.RUNTIME_CAMPUS_DIR.resolve(
+        return CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path.resolve(
                 getRootAnchoredPathToInfo(SubDirectories.COURSE_XML_DATA)
         );
     }
@@ -154,7 +154,6 @@ public interface FacultyTreeNode {
         }
     }
 
-    // TODO: make sure usages of [Path]s are following this spec after it is written.
     enum SubDirectories {
         CHILD_FACULTY_NODES ("childnodes"),
         COURSE_XML_DATA ("coursedata"),
@@ -173,4 +172,3 @@ public interface FacultyTreeNode {
     }
 
 }
-
