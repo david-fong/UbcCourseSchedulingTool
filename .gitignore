@@ -5,10 +5,10 @@
 /.idea/uiDesigner.*
 
 # Project Compilation Output:
-/out
+/out/
 
 # Project/Module Dependencies:
-/lib
+/lib/
 
 # Generated resources:
-genresource/**/coursedata/
+Data/genresource/
