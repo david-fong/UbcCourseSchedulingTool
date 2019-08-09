@@ -6,9 +6,6 @@ import org.bse.data.repr.courseutils.Course;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlFileUtils;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -31,6 +28,7 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
         return getParentNode().getRootCampus();
     }
 
+
     /**
      * @return The [FacultyTreeNode] containing [this] in the
      *     collection returned by its [getChildren] method. Must
@@ -43,6 +41,7 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
      *     [getParentNode] methods return [this]
      */
     FacultyTreeNode[] getChildren();
+
 
     /**
      * implementation note: [FacultyTreeRootCampus]s must break the upward recursion.
@@ -64,6 +63,7 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
                 + getAbbreviation();
     }
 
+
     /**
      *
      * @param codeString must not be null. Ex "101". This operation will only succeed if
@@ -81,8 +81,9 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
         if (course != null) {
             return course;
         } else {
-            final Path coursePath = getRuntimeFullPathToData()
-                    .resolve(codeString + XmlFileUtils.XML_EXTENSION_STRING);
+            final Path coursePath = CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path.resolve(
+                    getRootAnchoredPathToInfo(SubDirectories.COURSE_XML_DATA)
+            ).resolve(codeString + XmlFileUtils.XML_EXTENSION_STRING);
             try {
                 course = new Course(XmlFileUtils.readXmlFromFile(coursePath));
             } catch (MalformedXmlDataException e) {
@@ -92,11 +93,6 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
             return course;
         }
     }
-    default Path getRuntimeFullPathToData() {
-        return CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path.resolve(
-                getRootAnchoredPathToInfo(SubDirectories.COURSE_XML_DATA)
-        );
-    }
 
     /**
      * @return A map from course code strings to [Course]s. Must not be null.
@@ -105,39 +101,6 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
      *     construction. Keys in the returned set must never change.
      */
     Map<String, Course> getCodeStringToCourseMap();
-
-    /**
-     * TODO [impl]: change this to be a recursive init method outside this
-     *  interface in [DataMain]/[Core], each with different behaviour.
-     * Also checks if [getRuntimeFullPath] returns an existing directory.
-     */
-    default void initCodeStringToCourseMapKeys() {
-        // Check that path to data exists:
-        final Path dataPath = getRuntimeFullPathToData();
-        if (!Files.isDirectory(dataPath)) {
-            final String messageFmt = "the expected path to the contents of course"
-                    + " data for the faculty \"%s\" did not exist at %s";
-            throw new RuntimeException(String.format(messageFmt,
-                    getClass().getName(),
-                    dataPath.toString()
-            ));
-        }
-        // Init keys of [getCodeStringToCourseMap] with names of files under the faculty folder:
-        try (final DirectoryStream<Path> fileStream = Files.newDirectoryStream(
-                getRuntimeFullPathToData(), XML_FILE_FILTER)
-        ) {
-            fileStream.forEach(file -> {
-                String fileName = file.getFileName().toString();
-                fileName = fileName.substring(0, fileName.length() - XmlFileUtils.XML_EXTENSION_STRING.length());
-                getCodeStringToCourseMap().putIfAbsent(fileName, null);
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    DirectoryStream.Filter<Path> XML_FILE_FILTER = entry ->
-            Files.isDirectory(entry) && entry.getFileName()
-                    .toString().endsWith(XmlFileUtils.XML_EXTENSION_STRING);
 
 
 

@@ -35,7 +35,7 @@ public final class CourseDataLocator {
         final String packagePath = CourseDataLocator.class.getPackageName()
                 .replace(".", RUNTIME_DATA_MODULE.getFileSystem().getSeparator());
         RUNTIME_CAMPUS_DIR = RUNTIME_DATA_MODULE.resolve(packagePath);
-        GENERATED_CAMPUS_DIR = DEVLP_GEN_RESOURCES.resolve(packagePath);;
+        GENERATED_CAMPUS_DIR = DEVLP_GEN_RESOURCES.resolve(packagePath);
     }
 
     public enum StagedDataPath {

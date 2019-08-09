@@ -4,7 +4,6 @@ import org.bse.data.repr.HyperlinkBookIf;
 import org.bse.data.repr.courseutils.Course;
 import org.bse.data.repr.faculties.vancouver.VancouverFaculties;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -76,9 +75,6 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
             this.name = name;
             this.childrenClass = childrenClass;
             this.urlQueryTokenVal = urlQueryTokenVal;
-            if (!Files.isDirectory(getRuntimeFullPathToData())) {
-                throw new RuntimeException("Campus folder does not exist at runtime");
-            }
         }
 
         @Override
