@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * Used to generate all possible [PickyBuild]s (which inherently have no conflicts.
+ * Used to generate all possible [PickyBuild]s (which inherently have no conflicts).
  *
  * @param <T> The type of items contained in generated [PickyBuild]s.
  */
@@ -26,19 +26,19 @@ public final class PickyBuildGenerator<T> {
      * @param conjunctiveNormalFormed An AND of OR's. Each OR clause represents items
      *     of which one and only one must be included in each [PickyBuild] generated
      *     by [generateAllFullPickyBuilds]. This field initializer is not defensively
-     *     copied, so this collection, its clauses, and any enclosed [T] items must not
-     *     be modified after being passed to this constructor. The amount of unnecessary
-     *     computation in [generateAllFullPickyBuilds] may be reduced if more restrictive
+     *     copied, so this collection's clauses, and any enclosed [T] items must not
+     *     be modified after being passed to this constructor.
      */
     public PickyBuildGenerator(
             final Supplier<PickyBuild<T>> emptyBuildSupplier,
             final Set<Set<T>> conjunctiveNormalFormed) {
         this.emptyBuildSupplier = emptyBuildSupplier;
-        //this.clauses = clauses;
-        this.clauses = conjunctiveNormalFormed.stream()
-                .map(Collections::unmodifiableSet)
-                .collect(Collectors.toList());
-        this.clauses.sort(Comparator.comparingInt(Set::size));
+        this.clauses = Collections.unmodifiableList(
+                conjunctiveNormalFormed.stream()
+                        .map(Collections::unmodifiableSet)
+                        .sorted(Comparator.comparingInt(Set::size))
+                        .collect(Collectors.toList())
+        );
         this.numClauses = clauses.size();
     }
 

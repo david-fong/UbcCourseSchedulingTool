@@ -28,11 +28,11 @@ public final class DataMain {
      * @param args Commandline arguments.
      */
     public static void main(String[] args) {
-        if (!Files.isDirectory(CourseDataLocator.GENERATED_CAMPUS_DIR)) {
+        if (!Files.isDirectory(CourseDataLocator.StagedDataPath.PRE_DEPLOYMENT.path)) {
             throw new RuntimeException("could not get development path to generated resources");
         }
-        System.out.println(CourseDataLocator.RUNTIME_CAMPUS_DIR);
-        System.out.println(CourseDataLocator.GENERATED_CAMPUS_DIR);
+        System.out.println(CourseDataLocator.StagedDataPath.PRE_DEPLOYMENT.path);
+        System.out.println(CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path);
 
     }
 

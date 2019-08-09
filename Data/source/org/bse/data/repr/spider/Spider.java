@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 
 /**
  * Traverses the web gathering information on course offerings at UBC, and outputting
@@ -26,7 +27,17 @@ public final class Spider {
     public final void fetchDataFromWebAndCache(FacultyTreeNode faculty, StagedDataPath absolutePathToCampuses) {
         switch (absolutePathToCampuses) {
             case PRE_DEPLOYMENT:
+                try {
+                    for (FacultyTreeNode.SubDirectories subDir : FacultyTreeNode.SubDirectories.values()) {
+                        Files.createDirectories(absolutePathToCampuses.path.resolve(
+                                faculty.getRootAnchoredPathToInfo(subDir)
+                        ));
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
+
             case POST_DEPLOYMENT:
                 break;
         }

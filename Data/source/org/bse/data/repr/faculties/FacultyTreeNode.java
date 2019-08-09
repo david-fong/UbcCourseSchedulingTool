@@ -45,7 +45,7 @@ public interface FacultyTreeNode {
 
     /**
      * implementation note: [FacultyTreeRootCampus]s must break the upward recursion.
-     * @param subDir The class of information being looked for.
+     * @param subDir The class of information being looked for. Must not be null.
      * @return The path to the contained data specified by [subDir].
      */
     default Path getRootAnchoredPathToInfo(SubDirectories subDir) {
@@ -114,7 +114,7 @@ public interface FacultyTreeNode {
             throw new RuntimeException(String.format(messageFmt,
                     getClass().getName(),
                     dataPath.toString()
-                    ));
+            ));
         }
         // Init keys of [getCodeStringToCourseMap] with names of files under the faculty folder:
         try (final DirectoryStream<Path> fileStream = Files.newDirectoryStream(
@@ -155,6 +155,7 @@ public interface FacultyTreeNode {
     }
 
     enum SubDirectories {
+        THIS (""),
         CHILD_FACULTY_NODES ("childnodes"),
         COURSE_XML_DATA ("coursedata"),
         STANDARD_TIMETABLES ("stts"), // an xml file for each year of study.
