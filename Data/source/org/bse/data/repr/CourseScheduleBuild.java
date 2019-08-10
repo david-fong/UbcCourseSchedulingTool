@@ -26,7 +26,7 @@ class CourseScheduleBuild extends CourseSchedule implements PickyBuild<Course.Co
     }
 
     @Override
-    public Set<Course.CourseSection> getCourseSections() {
+    public final Set<Course.CourseSection> getCourseSections() {
         return Collections.unmodifiableSet(courseSections);
     }
 
@@ -55,7 +55,7 @@ class CourseScheduleBuild extends CourseSchedule implements PickyBuild<Course.Co
      * @return [true] if the operation was successful.
      */
     @Override
-    public boolean addIfNoConflicts(Course.CourseSection section) {
+    public final boolean addIfNoConflicts(Course.CourseSection section) {
         final boolean canAdd = conflictsWith(section);
         if (canAdd) {
             courseSections.add(section);

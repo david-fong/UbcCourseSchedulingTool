@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -27,14 +28,13 @@ public final class WorklistGroup {
     }
 
     /**
-     * @param source Another [Worklist] that does not necessarily need to be in
-     *     this [WorklistGroup].
+     * @param name A string to get a safe version of to use as a name.
      * @return A [String] to be used as a [Worklist] [name] that has as many of
      *     the [NAME_OF_COPY_SUFFIX] appended to it as are needed so there are
      *     no conflicts with [Worklist]s already in this [WorklistGroup].
      */
-    private String safeNameCopy(Worklist source) {
-        String safeName = source.name;
+    private String safeNameCopy(String name) {
+        String safeName = name;
         while (worklists.containsKey(safeName)) {
             safeName += NAME_OF_COPY_SUFFIX;
         }
@@ -60,7 +60,7 @@ public final class WorklistGroup {
      */
     public boolean createCopyOf(Worklist other) {
         if (isFromThis(other)) {
-            return addNewBasedOn(other, safeNameCopy(other));
+            return addNewBasedOn(other, safeNameCopy(other.name));
         } else {
             return false;
         }
@@ -104,7 +104,9 @@ public final class WorklistGroup {
 
     /**
      * A mutable wrapper for a [CourseSchedule] object. [name] is immutable.
-     * Implementation is final with no public constructors.
+     * Implementation is final with no public constructors. While this class
+     * can be used for generating schedules in the [PickyBuildGenerator], it
+     * is not intended for such use, which should be left to [CourseScheduleBuild].
      */
     public class Worklist extends CourseScheduleBuild {
 
@@ -132,7 +134,7 @@ public final class WorklistGroup {
 
         @Override
         public Worklist copy() {
-            Worklist copy = new Worklist(this, safeNameCopy(this));
+            Worklist copy = new Worklist(this, safeNameCopy(name));
             worklists.put(copy.name, copy);
             return copy;
         }
@@ -169,32 +171,65 @@ public final class WorklistGroup {
         }
     }
 
+
+
     /**
      * [CourseSection]s contained in [SttWorklist]s as part its STT cannot be removed.
-     * TODO [impl][SttWorklist]:
+     * This class is for user interaction with a worklist based on an STT. For a rep
+     * without the need for interactive behaviour, use an [ImmutableCourseSchedule].
+     *
+     * Implementation note: superclasses must only know about the STT sections through
+     * the [getCourseSections] method. This means STT section records don't need to be
+     * defensively copied as long as they are guaranteed not to be modified anywhere.
      */
     public final class SttWorklist extends Worklist {
 
+        // Only used for checking operation validity.
+        // STT contents must be backed in superclass rep.
         private final Set<Course.CourseSection> sttSections;
+        private final Supplier<CourseScheduleBuild> unmodifiedSttWorklistSupplier;
 
         private SttWorklist(Element sttElement) throws MalformedXmlDataException {
             super(XmlParsingUtils.getMandatoryAttr(sttElement, SttXml.NAME_ATTR).getValue());
 
-            List<String> sectionRefs = XmlParsingUtils
+            final List<String> sectionRefs = XmlParsingUtils
                     .getElementsByTagName(sttElement, SttXml.SECTION_REF_TAG)
                     .stream().map(Object::toString) // TODO: think of what to do here.
                     .collect(Collectors.toList());
-            this.sttSections = null; // TODO:
+            this.sttSections = Collections.unmodifiableSet(new HashSet<>());
+            // TODO: ^implement. also, should entry type be changed to a new class for string-based references?
+
+            this.unmodifiedSttWorklistSupplier = () -> new SttWorklist(sttSections, getName());
+
+            for (Course.CourseSection sttSection : sttSections) {
+                addIfNoConflicts(sttSection);
+            }
         }
 
-        private SttWorklist(SttWorklist otherSchedule) {
-            super(otherSchedule, otherSchedule.getName());
-            this.sttSections = Collections.unmodifiableSet(
-                    new HashSet<>(otherSchedule.sttSections)
-            );
+        // copy constructor (sections added by the user are retained):
+        private SttWorklist(SttWorklist otherStt) {
+            super(otherStt, otherStt.getName());
+            this.sttSections = otherStt.sttSections;
+            this.unmodifiedSttWorklistSupplier = () -> new SttWorklist(sttSections, getName());
         }
 
-        // TODO: override methods where appropriate like [copy].
+        // bare STT copy constructor (sections added by the user are NOT retained):
+        private SttWorklist(Set<Course.CourseSection> sttSections, String name) {
+            super(safeNameCopy(name));
+            this.sttSections = sttSections;
+            this.unmodifiedSttWorklistSupplier = () -> new SttWorklist(sttSections, getName());
+        }
+
+        @Override
+        public SttWorklist copy() {
+            // Use the copy constructor that retains sections added by the user:
+            return new SttWorklist(this);
+        }
+
+        @Override
+        protected boolean removeSection(Course.CourseSection section) {
+            return !sttSections.contains(section) && super.removeSection(section);
+        }
     }
 
 
