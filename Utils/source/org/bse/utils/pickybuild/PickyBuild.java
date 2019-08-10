@@ -24,7 +24,10 @@ public interface PickyBuild<T> {
      * It is up to the implementation to determine what qualifies as a conflict.
      * The return value for this method is allowed to evaluate upon the qualities
      * of [item], and on what [item]s have previously been added, but must not
-     * depend on the order in which those previous [item]s were added.
+     * depend on the order in which those previous [item]s were added. It is allowed
+     * to depend on the state of previously added [item]s as long as those stateful
+     * qualities are guaranteed not to change as the result of any of the operations
+     * specified in this interface.
      *
      * @param item An item to check if it can be added to [this][PickyBuild] without
      *     conflicting with any existing items.

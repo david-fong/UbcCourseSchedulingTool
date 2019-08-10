@@ -44,7 +44,7 @@ class CourseScheduleBuild extends CourseSchedule implements PickyBuild<Course.Co
      */
     @Override
     public boolean conflictsWith(Course.CourseSection section) {
-        return courseSections.stream().noneMatch(section::overlapsWith);
+        return getCourseSections().stream().noneMatch(section::overlapsWith);
     }
 
     /**
@@ -57,7 +57,9 @@ class CourseScheduleBuild extends CourseSchedule implements PickyBuild<Course.Co
     @Override
     public boolean addIfNoConflicts(Course.CourseSection section) {
         final boolean canAdd = conflictsWith(section);
-        if (canAdd) courseSections.add(section);
+        if (canAdd) {
+            courseSections.add(section);
+        }
         return canAdd;
     }
 

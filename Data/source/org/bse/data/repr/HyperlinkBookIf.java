@@ -13,7 +13,7 @@ public interface HyperlinkBookIf {
 
 
     enum QuerySpecifierTokens {
-        CAMPUS ("campuscd", "subj-campus"), // TODO: what's the tname? is there such thing?
+        CAMPUS ("campuscd", "subj-all-departments"),
         FACULTY ("dept", "subj-department"),
         COURSE ("course", "subj-course"),
         SECTION ("section", "subj-section")

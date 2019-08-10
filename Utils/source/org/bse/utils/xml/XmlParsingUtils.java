@@ -4,6 +4,9 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class XmlParsingUtils {
 
     /**
@@ -24,6 +27,22 @@ public final class XmlParsingUtils {
         } else {
             throw MalformedXmlDataException.noSuchUniqueChildElement(host, tagName.value());
         }
+    }
+
+    /**
+     * @param host An [Element] that is expected to contain [Element]s by the
+     *     given tag name.
+     * @param tagName The tag name of child [Element]s to search for.
+     * @return A [List] of all [Elements] directly under [host] with a tag name
+     *     equal to [tagName].
+     */
+    public static List<Element> getElementsByTagName(Element host, XmlConstant tagName) {
+        final NodeList nodeList = host.getElementsByTagName(tagName.value());
+        final List<Element> elements = new ArrayList<>(nodeList.getLength());
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            elements.add((Element)nodeList.item(i));
+        }
+        return elements;
     }
 
     /**

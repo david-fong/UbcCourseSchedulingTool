@@ -45,9 +45,16 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         }
 
         facultyTreeNode = null;
-        descriptionString = XmlParsingUtils.getMandatoryUniqueElementByTag(courseElement, Xml.DESCRIPTION_TAG).getTextContent();
-        creditValue = Integer.parseInt(XmlParsingUtils.getMandatoryAttr(courseElement, Xml.COURSE_CREDIT_ATTR).getValue());
-        courseCodeToken = XmlParsingUtils.getMandatoryAttr(courseElement, Xml.COURSE_CODE_ATTR).getValue();
+
+        descriptionString = XmlParsingUtils.getMandatoryUniqueElementByTag(
+                courseElement, Xml.DESCRIPTION_TAG).getTextContent();
+
+        creditValue = Integer.parseInt(XmlParsingUtils.getMandatoryAttr(
+                courseElement, Xml.COURSE_CREDIT_ATTR).getValue());
+
+        courseCodeToken = XmlParsingUtils.getMandatoryAttr(
+                courseElement, Xml.COURSE_CODE_ATTR).getValue();
+
         registrationUrlString = facultyTreeNode.getRegistrationSiteUrl()
                 .replace(QuerySpecifierTokens.FACULTY.tnameQueryVal,
                         QuerySpecifierTokens.COURSE.tnameQueryVal) // TODO [style] is there a nicer, more reusable way to do this?
@@ -60,7 +67,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         corequisites = null;
         studentReqs = null;
 
-        lectureSections = null;
+        lectureSections = null; // TODO: @David: this looks fun. let's do this next.
         labSections = null;
         tutorialSections = null;
     }
@@ -133,9 +140,12 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
 
         // TODO [xml:read][CourseSection]
         private CourseSection(final Element sectionElement) throws MalformedXmlDataException {
-            sectionCode = null;
-            semester = null;    // See [utils.Semester.decodeXmlAttr]
-            professor = null;   // See [Professor.fromXml]
+            sectionCode = XmlParsingUtils.getMandatoryAttr(
+                    sectionElement, SecXml.SECTION_CODE_ATTR).getValue();
+            semester = CourseUtils.Semester.decodeXmlAttr(XmlParsingUtils.getMandatoryAttr(
+                    sectionElement, SecXml.SECTION_SEMESTER_ATTR));
+            professor = new Professor(XmlParsingUtils.getMandatoryUniqueElementByTag(
+                    sectionElement, SecXml.SECTION_PROFESSOR_TAG));
             blocks = new HashSet<>(); // TODO [impl]: make unmodifiable
         }
 
@@ -245,7 +255,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         COURSE_SECTION_TAG ("Section"),
         SECTION_CODE_ATTR ("code"),
         SECTION_SEMESTER_ATTR ("semester"), // See [CourseUtils.Semester
-        SECTION_PROFESSOR ("Instructor"),
+        SECTION_PROFESSOR_TAG("Instructor"),
         ;
         private final String value;
 
