@@ -169,18 +169,25 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         private final Professor professor;
         private final Set<CourseSectionBlock> blocks;
 
-        // TODO [xml:read][CourseSection]
         private CourseSection(final Element sectionElement) throws MalformedXmlDataException {
-            sectionCode = XmlParsingUtils.getMandatoryAttr(
+            this.sectionCode = XmlParsingUtils.getMandatoryAttr(
                     sectionElement, SecXml.SECTION_CODE_ATTR
             ).getValue();
-            semester = CourseUtils.Semester.decodeXmlAttr(XmlParsingUtils.getMandatoryAttr(
+            this.semester = CourseUtils.Semester.decodeXmlAttr(XmlParsingUtils.getMandatoryAttr(
                     sectionElement, SecXml.SECTION_SEMESTER_ATTR
             ));
-            professor = new Professor(XmlParsingUtils.getMandatoryUniqueElementByTag(
+            this.professor = new Professor(XmlParsingUtils.getMandatoryUniqueElementByTag(
                     sectionElement, SecXml.SECTION_PROFESSOR_TAG
             ));
-            blocks = new HashSet<>(); // TODO [impl]: make unmodifiable
+
+            final List<Element> blockElements = XmlParsingUtils.getElementsByTagName(
+                    sectionElement, CourseSectionBlock.Xml.BLOCK_TAG
+            );
+            final Set<CourseSectionBlock> blocks = new HashSet<>(blockElements.size());
+            for (Element blockElement : blockElements) {
+                blocks.add(new CourseSectionBlock(blockElement));
+            }
+            this.blocks = Collections.unmodifiableSet(blocks);
         }
 
         public final boolean overlapsWith(CourseSection other) {

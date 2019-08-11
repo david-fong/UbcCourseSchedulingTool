@@ -21,7 +21,7 @@ public final class CourseSectionBlock {
     private final BlockTimeEnclosure timeEnclosure;
     // TODO [repr][CourseSectionBlock]: add representation for location (building).
 
-    public CourseSectionBlock(Element blockElement) throws MalformedXmlDataException {
+    public CourseSectionBlock(final Element blockElement) throws MalformedXmlDataException {
         this.isWaitlist = blockElement.getAttributeNode(Xml.OPTIONAL_WAITLIST_FLAG_ATTR.value) != null;
 
         this.dayOfWeek = null; // TODO [xml:read][CourseSectionBlock]

@@ -22,7 +22,7 @@ public final class Professor {
     private final String lastName;
 
     // TODO [xml:read]
-    public Professor(Element profElement) throws MalformedXmlDataException {
+    public Professor(final Element profElement) throws MalformedXmlDataException {
         // get first name and last name, and check if a prof by that full name
         // already exists in [PROF_FULL_NAME_MAP]. If so, return that prof, and
         // if not, create one, register it to the map, and return it.

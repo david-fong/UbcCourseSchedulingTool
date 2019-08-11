@@ -35,7 +35,7 @@ public interface CourseSectionRef {
      * @throws MalformedXmlDataException If any [Element]s by the [CourseSectionRef]
      *     tag name were found but did not follow the rest of the format spec.
      */
-    static Set<CourseSectionRef> extractAndParseAll(Element host) throws MalformedXmlDataException {
+    static Set<CourseSectionRef> extractAndParseAll(final Element host) throws MalformedXmlDataException {
         if (host == null) return new HashSet<>();
         final List<Element> refElements = XmlParsingUtils.getElementsByTagName(
                 host, Xml.SECTION_REF_TAG
@@ -53,7 +53,7 @@ public interface CourseSectionRef {
 
         private final String refString; // TODO: change rep to make this a faculty, a Course name, and a section name.
 
-        private CourseSectionRefUnloaded(Element refElement) throws MalformedXmlDataException {
+        private CourseSectionRefUnloaded(final Element refElement) throws MalformedXmlDataException {
             this(XmlParsingUtils.getMandatoryAttr(refElement, Xml.SECTION_REF_TO_ATTR).getValue());
         }
 
