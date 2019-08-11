@@ -1,9 +1,5 @@
 package org.bse.data.schedule;
 
-import org.bse.data.schedule.Schedule.SttSchedule;
-import org.bse.data.schedule.ScheduleBuild.SttScheduleBuild;
-import org.bse.data.schedule.Worklist.SttWorklist;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -14,11 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class WorklistGroup {
 
-    private static final String PLACEHOLDER_NAME = "unnamed";
     private static final String NAME_OF_COPY_SUFFIX = "~";
 
-    private final Map<String, Worklist> worklists;
-    private final Set<String> backingNameSet;
+    private final Map<String, Worklist> worklists; // values never null.
+    private final Set<String> backingNameSet; // unmodifiable.
 
     public WorklistGroup() {
         this.worklists = new ConcurrentHashMap<>();
@@ -29,34 +24,33 @@ public final class WorklistGroup {
      * @param other A [Schedule] to add a new [Worklist] based on. Must not be null.
      * @param name A name for the new [Worklist]. Operation fails if another
      *     [Worklist] by the same name already exists in this [WorklistGroup].
-     *     If null, will attempt to create a name from [other] if it has one, and
-     *     otherwise use a generic placeholder name.
+     *     If [null], will attempt to create a name from [other] if it has one, and
+     *     otherwise use a generic placeholder name. Operation will always succeed
+     *     if a [null] name is supplied.
      * @return [true] if the operation was successful.
      */
     public boolean addNewBasedOn(Schedule other, String name) {
         final Worklist copy;
 
-        if (other instanceof SttSchedule) {
-            if (name == null) name = safeNameCopy(((SttSchedule) other).getName());
-            copy = new SttWorklist((SttSchedule) other, name);
-
-        } else if (other instanceof SttScheduleBuild) {
-            if (name == null) name = safeNameCopy(PLACEHOLDER_NAME);
-            copy = new SttWorklist((SttScheduleBuild) other, name);
-
-        } else if (other instanceof SttWorklist) {
-            if (name == null) name = safeNameCopy(((SttWorklist) other).getName());
-            copy = new SttWorklist((SttWorklist) other);
-
-        } else if (other instanceof Worklist) {
-            if (name == null) name = safeNameCopy(((Worklist) other).getName());
+        if (other instanceof Worklist) {
+            final Worklist otherWorklist = (Worklist)other;
+            if (name == null) {
+                name = otherWorklist.getName();
+                if (otherWorklist.getName().equals(Worklist.Xml.WORKLIST_NAME_ATTR_DEFAULT.value())) {
+                    name = other.getEnclosedSttName() + NAME_OF_COPY_SUFFIX; // always add when using STT's name.
+                }
+                name = safeNameCopy(name);
+            }
             copy = new Worklist(other, name);
-
         } else {
-            if (name == null) name = safeNameCopy(PLACEHOLDER_NAME);
+            if (name == null) {
+                name = safeNameCopy(Worklist.Xml.WORKLIST_NAME_ATTR_DEFAULT.value());
+            }
             copy = new Worklist(other, name);
         }
 
+        // [true] if the previous value mapped from key was null,
+        // which should only be true if there was no such mapping.
         return worklists.putIfAbsent(name, copy) == null;
     }
 
@@ -121,7 +115,6 @@ public final class WorklistGroup {
     }
 
     private boolean isFromThis(Worklist worklist) {
-        // return worklist.getContext() == this;
         return worklists.get(worklist.getName()) == worklist;
     }
 

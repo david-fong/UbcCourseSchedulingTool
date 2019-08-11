@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
  */
 public class MalformedXmlDataException extends Exception {
 
-    private MalformedXmlDataException(String message) {
+    public MalformedXmlDataException(String message) {
         super(message);
     }
 

@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -67,9 +68,9 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         corequisites = null;
         studentReqs = null;
 
-        lectureSections = null; // TODO: @David: this looks fun. let's do this next.
-        labSections = null;
-        tutorialSections = null;
+        lectureSections = Collections.unmodifiableSet(null); // TODO: @David: this looks fun. let's do this next.
+        labSections = Collections.unmodifiableSet(null);;
+        tutorialSections = Collections.unmodifiableSet(null);;
     }
 
     public final FacultyTreeNode getFacultyTreeNode() {
@@ -131,7 +132,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
      *
      * TODO [rep]: add representation of seating / methods to fetch seating state from web.
      */
-    public class CourseSection implements CodeStringPath, HyperlinkBookIf {
+    public class CourseSection implements CourseSectionRef, CodeStringPath, HyperlinkBookIf {
 
         private final String sectionCode;
         private final CourseUtils.Semester semester;
@@ -183,6 +184,11 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
 
         public final Set<CourseSectionBlock> getBlocks() {
             return blocks;
+        }
+
+        @Override
+        public final CourseSection dereference() {
+            return this;
         }
     }
 

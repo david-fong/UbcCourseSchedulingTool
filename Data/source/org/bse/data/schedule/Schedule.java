@@ -1,14 +1,12 @@
 package org.bse.data.schedule;
 
-import org.bse.data.repr.courseutils.Course.CourseSection;
+import org.bse.data.repr.courseutils.CourseSectionRef;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlParsingUtils;
 import org.w3c.dom.Element;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,38 +16,57 @@ import java.util.Set;
  */
 public class Schedule {
 
-    final Set<CourseSection> courseSections;
-    private final Set<CourseSection> unmodifiableSectionsView;
+    final Set<CourseSectionRef> courseSections;
+    private final Set<CourseSectionRef> publicSectionsView;
+    private final String sttName;
+    private final Set<CourseSectionRef> sttSections; // unmodifiable.
 
-    // TODO [xml:read][Schedule]:
     public Schedule(Element scheduleElement) throws MalformedXmlDataException {
-        final List<Element> refElements = XmlParsingUtils.getElementsByTagName(scheduleElement, Xml.SECTION_REF_TAG);
-        final List<String> sectionRefs = new ArrayList<>(refElements.size());
-        for (Element sectionRefElement : refElements) {
-            sectionRefs.add(XmlParsingUtils.getMandatoryAttr(sectionRefElement, Xml.SECTION_REF_TO_ATTR).getValue());
+        final Element sectionListElement
+                = XmlParsingUtils.getOptionalUniqueElementByTag(
+                        scheduleElement, Xml.MANUAL_SECTION_LIST_TAG
+        );
+        final Element sttSectionListElement
+                = XmlParsingUtils.getOptionalUniqueElementByTag(
+                        scheduleElement, Xml.STT_SECTION_LIST_TAG
+        );
+        if (sectionListElement == null && sttSectionListElement == null) {
+            throw new MalformedXmlDataException("A schedule must have one or both of a"
+                    + " manually-added-sections-list and a STT-based-sections-list, but"
+                    + " neither were found for the given Element.");
         }
-        this.courseSections = new HashSet<>();
-        // TODO: ^implement. Also, should the entry type be changed to a new class for string-based references?
-        this.unmodifiableSectionsView = Collections.unmodifiableSet(courseSections);
+
+        // manually-added section fields:
+        this.courseSections = CourseSectionRef.extractAndParseAll(sectionListElement);
+        this.publicSectionsView = Collections.unmodifiableSet(courseSections);
+
+        // standard timetable section fields:
+        if (sttSectionListElement != null) {
+            this.sttName = XmlParsingUtils.getMandatoryAttr(scheduleElement, Xml.STT_NAME_ATTR).getValue();
+            this.sttSections = CourseSectionRef.extractAndParseAll(sttSectionListElement);
+        } else {
+            this.sttName = "N/A";
+            this.sttSections = Collections.emptySet();
+        }
+        this.courseSections.addAll(sttSections);
     }
 
     /**
-     * IMPORTANT: Does not defensively copy.
-     *
-     * @param courseSections A collection of [CourseSection]s to include in this
-     *     [Schedule] from the start.
+     * Defensively shallow-copies.
      */
-    Schedule(Set<CourseSection> courseSections) {
-        this.courseSections = courseSections;
-        this.unmodifiableSectionsView = Collections.unmodifiableSet(this.courseSections);
+    Schedule(Schedule other) {
+        this.courseSections = new HashSet<>(other.getCourseSections());
+        this.publicSectionsView = Collections.unmodifiableSet(this.courseSections);
+        this.sttName = other.sttName;
+        this.sttSections = other.sttSections;
     }
 
     /**
      * @return An unmodifiable view of the [Set] of
      *     [CourseSection]s contained in this [Schedule].
      */
-    public final Set<CourseSection> getCourseSections() {
-        return unmodifiableSectionsView;
+    public final Set<CourseSectionRef> getCourseSections() {
+        return publicSectionsView;
     }
 
     /**
@@ -57,8 +74,19 @@ public class Schedule {
      *     its [CourseSection]s cannot be removed. The value returned by this method
      *     must never vary when called from the same instance multiple times.
      */
-    public boolean isBasedOffAnStt() {
-        return false;
+    public final boolean isBasedOffAnStt() {
+        return !sttSections.isEmpty();
+    }
+
+    public final String getEnclosedSttName() {
+        return sttName;
+    }
+
+    /**
+     * @return Not null.
+     */
+    public Set<CourseSectionRef> getEnclosedSttSections() {
+        return sttSections;
     }
 
     /**
@@ -66,7 +94,7 @@ public class Schedule {
      *     containing all the schedules of [this][Schedule] at the time of the
      *     method call.
      */
-    public ScheduleBuild createPickyBuildTemplate() {
+    public final ScheduleBuild createPickyBuildTemplate() {
         return new ScheduleBuild(this);
     }
 
@@ -77,61 +105,17 @@ public class Schedule {
      *     and no longer requires any of its mutable behaviour.
      */
     public final Schedule createImmutableCopy() {
-        return new Schedule(new HashSet<>(getCourseSections())) {
-            private final boolean isBasedOffAnStt = Schedule.this.isBasedOffAnStt();
-            @Override
-            public boolean isBasedOffAnStt() {
-                return isBasedOffAnStt;
-            }
-        };
+        return new Schedule(this);
     }
 
 
-
-    /**
-     *
-     */
-    public static final class SttSchedule extends Schedule {
-
-        private final String name;
-        private final Set<CourseSection> sttSections;
-
-        public SttSchedule(Element sttElement) throws MalformedXmlDataException {
-            super(sttElement);
-            this.name = XmlParsingUtils.getMandatoryAttr(sttElement, Xml.STT_NAME_ATTR).getValue();
-            this.sttSections = Collections.unmodifiableSet(new HashSet<>(getCourseSections())); // snapshot.
-        }
-
-        public final String getName() {
-            return name;
-        }
-
-        @Override
-        public boolean isBasedOffAnStt() {
-            return true;
-        }
-
-        @Override
-        public ScheduleBuild.SttScheduleBuild createPickyBuildTemplate() {
-            return new ScheduleBuild.SttScheduleBuild(this);
-        }
-
-        public Set<CourseSection> getSttSections() {
-            return sttSections;
-        }
-    }
 
     // TODO [xml:spec]
     public enum Xml implements XmlParsingUtils.XmlConstant {
         SCHEDULE_TAG("Schedule"),
-
         MANUAL_SECTION_LIST_TAG ("Sections"), // optional if there are stt sections.
         STT_SECTION_LIST_TAG ("SttSections"), // optional if there are manually added sections.
         STT_NAME_ATTR ("sttName"), // mandatory for the [STT_SECTION_LIST_TAG] element if it exists.
-
-        // contents of section-list elements:
-        SECTION_REF_TAG ("SectionRef"),
-        SECTION_REF_TO_ATTR ("to"),
         ;
         private final String value;
 
