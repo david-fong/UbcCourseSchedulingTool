@@ -17,6 +17,9 @@ public interface PickyBuild<T> {
      *     must return the same value for any item to their [checkForConflictsWith]
      *     methods. Any other state-related information that has no bearings on these
      *     requirements is free to differ between a newborn clone and its parent.
+     *     Implementations must return an instance of their own type so build-generation
+     *     operations are ensured to return builds that are cast-safe to the type
+     *     provided to the [PickyBuildGenerator] constructor as a template.
      */
     PickyBuild<T> copy();
 
@@ -27,17 +30,18 @@ public interface PickyBuild<T> {
      * depend on the order in which those previous [item]s were added. It is allowed
      * to depend on the state of previously added [item]s as long as those stateful
      * qualities are guaranteed not to change as the result of any of the operations
-     * specified in this interface.
+     * specified in this interface. Attempts to add an item that has already been
+     * added should return [true] without any changes to the implementation's state.
      *
      * @param item An item to check if it can be added to [this][PickyBuild] without
      *     conflicting with any existing items.
      * @return True if [item] does not conflict with any current contents.
      */
-    boolean conflictsWith(final T item);
+    boolean conflictsWithAny(final T item);
 
     /**
      * It is up to the implementation to determine what qualifies as a conflict.
-     * Return value must be consistent with that of [checkForConflictsWith].
+     * Return value must be consistent with that of [conflictsWithAny].
      *
      * @param item An item to add if doing so would not result in any conflicts with
      *     existing items in [this][PickyBuild].
