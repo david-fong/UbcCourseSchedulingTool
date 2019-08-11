@@ -7,7 +7,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- *
+ * The package of this class specifies that which will be used for generated
+ * resources (based off of the generated resources folder) and for deployed
+ * local registration data.
  */
 public final class CourseDataLocator {
 

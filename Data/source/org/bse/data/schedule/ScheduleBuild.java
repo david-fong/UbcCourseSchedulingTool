@@ -2,6 +2,8 @@ package org.bse.data.schedule;
 
 import org.bse.data.repr.courseutils.Course.CourseSection;
 import org.bse.utils.pickybuild.PickyBuild;
+import org.bse.utils.xml.MalformedXmlDataException;
+import org.w3c.dom.Element;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +16,11 @@ public class ScheduleBuild extends Schedule implements PickyBuild<CourseSection>
     // defensively copies.
     ScheduleBuild(Schedule other) {
         super(new HashSet<>(other.getCourseSections()));
+    }
+
+    ScheduleBuild(Element scheduleBuildElement) throws MalformedXmlDataException {
+        super(scheduleBuildElement);
+        // No additional fields to parse for this class.
     }
 
     @Override

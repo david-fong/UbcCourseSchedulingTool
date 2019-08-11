@@ -64,6 +64,9 @@ public final class XmlParsingUtils {
         }
     }
 
+    // TODO [xml:utils] add static methods for getting optional elements and attributes
+    //  the attribute one should allow the host element to be null.
+
 
 
     public interface XmlConstant {

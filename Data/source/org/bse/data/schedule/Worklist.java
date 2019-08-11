@@ -1,6 +1,10 @@
 package org.bse.data.schedule;
 
 import org.bse.data.repr.courseutils.Course.CourseSection;
+import org.bse.utils.xml.MalformedXmlDataException;
+import org.bse.utils.xml.XmlParsingUtils;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
 
 import java.util.Set;
 
@@ -24,6 +28,11 @@ public class Worklist extends ScheduleBuild {
             this.isLocked = otherWorklist.isLocked;
             this.favorability = otherWorklist.favorability;
         }
+    }
+
+    public Worklist(Element worklistElement) throws MalformedXmlDataException {
+        super(worklistElement);
+        this.name = null;
     }
 
     @Override
@@ -121,10 +130,46 @@ public class Worklist extends ScheduleBuild {
 
 
     public enum WorklistFavorability {
-        FAVORABLE,
-        NEUTRAL,
-        UNFAVORABLE,
+        FAVORABLE ("^"),
+        NEUTRAL ("~"),
+        UNFAVORABLE ("v"),
         ;
+        private final String xmlAttrVal;
+
+        WorklistFavorability(String xmlAttrVal) {
+            this.xmlAttrVal = xmlAttrVal;
+        }
+
+        /**
+         * @param attr An Attr object. Must not be null.
+         * @return A [WorklistFavorability] whose [xmlAttrVal] is equal to [attr.getValue].
+         * @throws MalformedXmlDataException if no such [WorklistFavorability] can be found.
+         */
+        public static WorklistFavorability decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
+            for (WorklistFavorability favorability : WorklistFavorability.values()) {
+                if (favorability.xmlAttrVal.equals(attr.getValue())) {
+                    return favorability;
+                }
+            }
+            throw MalformedXmlDataException.invalidAttrVal(attr);
+        }
+    }
+
+    public enum Xml implements XmlParsingUtils.XmlConstant {
+        WORKLIST_NAME_ATTR ("worklistName"), // optional for the [MANUAL_SECTION_LIST_TAG] element if it exists.
+        WORKLIST_IS_LOCKED_ATTR ("locked"), // parsing: true if attribute exists and false otherwise.
+        WORKLIST_FAVORABILITY_ATTR ("favorability"), // parsing: see [WorklistFavorability.decodeXmlAttr]
+        ;
+        private final String value;
+
+        Xml(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String value() {
+            return value;
+        }
     }
 
 }

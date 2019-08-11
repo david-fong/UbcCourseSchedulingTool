@@ -98,7 +98,7 @@ public class Schedule {
 
         public SttSchedule(Element sttElement) throws MalformedXmlDataException {
             super(sttElement);
-            this.name = XmlParsingUtils.getMandatoryAttr(sttElement, Xml.NAME_ATTR).getValue();
+            this.name = XmlParsingUtils.getMandatoryAttr(sttElement, Xml.STT_NAME_ATTR).getValue();
             this.sttSections = Collections.unmodifiableSet(new HashSet<>(getCourseSections())); // snapshot.
         }
 
@@ -124,8 +124,12 @@ public class Schedule {
     // TODO [xml:spec]
     public enum Xml implements XmlParsingUtils.XmlConstant {
         SCHEDULE_TAG("Schedule"),
-        NAME_ATTR ("name"), // for STT's and worklists.
 
+        MANUAL_SECTION_LIST_TAG ("Sections"), // optional if there are stt sections.
+        STT_SECTION_LIST_TAG ("SttSections"), // optional if there are manually added sections.
+        STT_NAME_ATTR ("sttName"), // mandatory for the [STT_SECTION_LIST_TAG] element if it exists.
+
+        // contents of section-list elements:
         SECTION_REF_TAG ("SectionRef"),
         SECTION_REF_TO_ATTR ("to"),
         ;
