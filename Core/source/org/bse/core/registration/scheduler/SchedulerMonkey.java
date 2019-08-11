@@ -81,7 +81,7 @@ import java.util.Set;
      * restrictive courses should be the first to attempt to add to a generating schedule.
      * By starting with the least-flexible players ([CourseSections]), we can avoid
      * treading down many unfruitful paths.
-     * >>> See [CourseSchedule.canAddSection]
+     * >>> See [Schedule.canAddSection]
      *
      * 1.1. [filter]
      * Translate each combination of (usable) courses produced by [@STEP 0] into a

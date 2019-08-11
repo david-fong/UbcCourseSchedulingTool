@@ -1,6 +1,6 @@
 package org.bse.data.repr.courseutils;
 
-import org.bse.data.repr.CourseSchedule;
+import org.bse.data.schedule.Schedule;
 import org.bse.data.repr.HyperlinkBookIf;
 import org.bse.data.repr.Professor;
 import org.bse.data.repr.Student;
@@ -30,8 +30,8 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
 
     // non-null:
     private final Requirement<Student> studentReqs;
-    private final MatchingRequirementIf<CourseSchedule> prerequisites;
-    private final MatchingRequirementIf<CourseSchedule> corequisites;
+    private final MatchingRequirementIf<Schedule> prerequisites;
+    private final MatchingRequirementIf<Schedule> corequisites;
 
     private final Set<CourseLectureSection> lectureSections;
     private final Set<CourseSection> labSections;
@@ -99,11 +99,11 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         return studentReqs;
     }
 
-    public final MatchingRequirementIf<CourseSchedule> getPrerequisites() {
+    public final MatchingRequirementIf<Schedule> getPrerequisites() {
         return prerequisites;
     }
 
-    public final MatchingRequirementIf<CourseSchedule> getCorequisites() {
+    public final MatchingRequirementIf<Schedule> getCorequisites() {
         return corequisites;
     }
 

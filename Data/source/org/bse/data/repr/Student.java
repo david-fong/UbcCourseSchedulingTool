@@ -3,6 +3,8 @@ package org.bse.data.repr;
 import org.bse.data.repr.courseutils.Course;
 import org.bse.data.repr.courseutils.CourseUtils.YearOfStudy;
 import org.bse.data.repr.faculties.FacultyTreeRootCampus;
+import org.bse.data.schedule.Schedule;
+import org.bse.data.schedule.WorklistGroup;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -17,7 +19,7 @@ public final class Student {
     private YearOfStudy currentYear;
     private FacultyTreeRootCampus.UbcCampuses campus;
 
-    private final Map<YearOfStudy, CourseSchedule> previousSchedules;
+    private final Map<YearOfStudy, Schedule> previousSchedules;
     private final Map<YearOfStudy, WorklistGroup> worklistGroups; // Worklists must not have the same name.
 
     public Student(String name, YearOfStudy yearOfStudy, FacultyTreeRootCampus.UbcCampuses campus) {
@@ -31,15 +33,19 @@ public final class Student {
     public String getName() {
         return name;
     }
+
     public YearOfStudy getCurrentYear() {
         return currentYear;
     }
+
     public FacultyTreeRootCampus.UbcCampuses getCampus() {
         return campus;
     }
-    public Map<YearOfStudy, CourseSchedule> getPreviousSchedules() {
+
+    public Map<YearOfStudy, Schedule> getPreviousSchedules() {
         return previousSchedules;
     }
+
     public Map<YearOfStudy, WorklistGroup> getWorklistGroups() {
         return worklistGroups;
     }
@@ -47,6 +53,7 @@ public final class Student {
     public void setCurrentYear(YearOfStudy yearOfStudy) {
         this.currentYear = yearOfStudy;
     }
+
     public void setCampus(FacultyTreeRootCampus.UbcCampuses campus) {
         this.campus = campus;
     }
