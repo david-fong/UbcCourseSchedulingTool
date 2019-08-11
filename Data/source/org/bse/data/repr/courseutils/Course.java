@@ -16,6 +16,7 @@ import org.w3c.dom.NodeList;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,7 +30,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
     private final String descriptionString;
     private final String registrationUrlString;
 
-    // non-null:
+    // reqs are non-null:
     private final Requirement<Student> studentReqs;
     private final MatchingRequirementIf<Schedule> prerequisites;
     private final MatchingRequirementIf<Schedule> corequisites;
@@ -38,25 +39,24 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
     private final Set<CourseSection> labSections;
     private final Set<CourseSection> tutorialSections;
 
-    // TODO [xml:read][Course]
     public Course(final Document courseDocument) throws MalformedXmlDataException {
         final Element courseElement; {
             NodeList nodeList = courseDocument.getElementsByTagName(Xml.COURSE_TAG.value);
             courseElement = (Element)nodeList.item(0);
         }
 
-        facultyTreeNode = null;
+        this.facultyTreeNode = null; // TODO [xml:read][Course:facultyNode]
 
-        descriptionString = XmlParsingUtils.getMandatoryUniqueElementByTag(
-                courseElement, Xml.DESCRIPTION_TAG).getTextContent();
-
-        creditValue = Integer.parseInt(XmlParsingUtils.getMandatoryAttr(
-                courseElement, Xml.COURSE_CREDIT_ATTR).getValue());
-
-        courseCodeToken = XmlParsingUtils.getMandatoryAttr(
-                courseElement, Xml.COURSE_CODE_ATTR).getValue();
-
-        registrationUrlString = facultyTreeNode.getRegistrationSiteUrl()
+        this.descriptionString = XmlParsingUtils.getMandatoryUniqueElementByTag(
+                courseElement, Xml.DESCRIPTION_TAG
+        ).getTextContent();
+        this.creditValue = Integer.parseInt(XmlParsingUtils.getMandatoryAttr(
+                courseElement, Xml.COURSE_CREDIT_ATTR
+        ).getValue());
+        this.courseCodeToken = XmlParsingUtils.getMandatoryAttr(
+                courseElement, Xml.COURSE_CODE_ATTR
+        ).getValue();
+        this.registrationUrlString = facultyTreeNode.getRegistrationSiteUrl()
                 .replace(QuerySpecifierTokens.FACULTY.tnameQueryVal,
                         QuerySpecifierTokens.COURSE.tnameQueryVal) // TODO [style] is there a nicer, more reusable way to do this?
                 + QuerySpecifierTokens.COURSE.tokenStub
@@ -64,13 +64,43 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
 
         assert creditValue >= 0 : "credit value must be equal to or greater than zero";
 
-        prerequisites = null;
-        corequisites = null;
-        studentReqs = null;
+        // TODO [xml:read][Course:reqs]
+        this.studentReqs = new Requirement.StrictlyFailingReq<>();
+        this.prerequisites = new MatchingRequirementIf.StrictlyFailingMatchThreshReq<>();
+        this.corequisites = new MatchingRequirementIf.StrictlyFailingMatchThreshReq<>();
 
-        lectureSections = Collections.unmodifiableSet(null); // TODO: @David: this looks fun. let's do this next.
-        labSections = Collections.unmodifiableSet(null);;
-        tutorialSections = Collections.unmodifiableSet(null);;
+        // lab sections:
+        final List<Element> labSectionElements = XmlParsingUtils.getElementsByTagName(
+                XmlParsingUtils.getMandatoryUniqueElementByTag(courseElement, Xml.LABS_TAG),
+                SecXml.COURSE_SECTION_TAG
+        );
+        final Set<CourseLectureSection> labSections = new HashSet<>(labSectionElements.size());
+        for (Element sectionElement : labSectionElements) {
+            labSections.add(new CourseLectureSection(sectionElement));
+        }
+        this.labSections = Collections.unmodifiableSet(labSections);
+
+        // tutorial sections:
+        final List<Element> tutorialSectionElements = XmlParsingUtils.getElementsByTagName(
+                XmlParsingUtils.getMandatoryUniqueElementByTag(courseElement, Xml.TUTORIALS_TAG),
+                SecXml.COURSE_SECTION_TAG
+        );
+        final Set<CourseLectureSection> tutorialSections = new HashSet<>(tutorialSectionElements.size());
+        for (Element sectionElement : tutorialSectionElements) {
+            tutorialSections.add(new CourseLectureSection(sectionElement));
+        }
+        this.tutorialSections = Collections.unmodifiableSet(tutorialSections);
+
+        // lecture sections (must be done last to refer to labs and tutorials):
+        final List<Element> lectureSectionElements = XmlParsingUtils.getElementsByTagName(
+                XmlParsingUtils.getMandatoryUniqueElementByTag(courseElement, Xml.LECTURES_TAG),
+                SecXml.COURSE_SECTION_TAG
+        );
+        final Set<CourseLectureSection> lectureSections = new HashSet<>(lectureSectionElements.size());
+        for (Element sectionElement : lectureSectionElements) {
+            lectureSections.add(new CourseLectureSection(sectionElement));
+        }
+        this.lectureSections = Collections.unmodifiableSet(lectureSections);
     }
 
     public final FacultyTreeNode getFacultyTreeNode() {
@@ -142,11 +172,14 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         // TODO [xml:read][CourseSection]
         private CourseSection(final Element sectionElement) throws MalformedXmlDataException {
             sectionCode = XmlParsingUtils.getMandatoryAttr(
-                    sectionElement, SecXml.SECTION_CODE_ATTR).getValue();
+                    sectionElement, SecXml.SECTION_CODE_ATTR
+            ).getValue();
             semester = CourseUtils.Semester.decodeXmlAttr(XmlParsingUtils.getMandatoryAttr(
-                    sectionElement, SecXml.SECTION_SEMESTER_ATTR));
+                    sectionElement, SecXml.SECTION_SEMESTER_ATTR
+            ));
             professor = new Professor(XmlParsingUtils.getMandatoryUniqueElementByTag(
-                    sectionElement, SecXml.SECTION_PROFESSOR_TAG));
+                    sectionElement, SecXml.SECTION_PROFESSOR_TAG
+            ));
             blocks = new HashSet<>(); // TODO [impl]: make unmodifiable
         }
 

@@ -7,7 +7,6 @@ import org.w3c.dom.Element;
 
 /**
  * Used when generating schedules.
- * TODO [api:delete] this class. reason: no longer has any additional fields.
  */
 public class ScheduleBuild extends Schedule implements PickyBuild<CourseSectionRef> {
 
