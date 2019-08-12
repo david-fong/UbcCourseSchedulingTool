@@ -5,7 +5,11 @@ import org.bse.data.repr.courseutils.CourseUtils.YearOfStudy;
 import org.bse.data.repr.faculties.FacultyTreeRootCampus;
 import org.bse.data.schedule.Schedule;
 import org.bse.data.schedule.WorklistGroup;
+import org.bse.utils.xml.MalformedXmlDataException;
+import org.bse.utils.xml.XmlParsingUtils;
+import org.w3c.dom.Element;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
@@ -15,51 +19,104 @@ import java.util.Set;
  */
 public final class Student {
 
-    private final String name;
+    private final String firstName;
+    private final String lastName;
     private YearOfStudy currentYear;
     private FacultyTreeRootCampus.UbcCampuses campus;
 
+    /*
+    TODO [repr][Student]: Unless we keep data for sections from past years, this
+     will need to change to map to a set of [Course]s instead of a [Schedule].
+     Also, we need to investigate whether registering in any courses depend on
+     whether the student got a certain mark for a prerequisite. This may require
+     a wrapper class around [Course] that takes a [grade] constructor argument.
+     I'd do it, but I'd feel bad about asking about this information from the user.
+     */
     private final Map<YearOfStudy, Schedule> previousSchedules;
     private final Map<YearOfStudy, WorklistGroup> worklistGroups; // Worklists must not have the same name.
 
-    public Student(String name, YearOfStudy yearOfStudy, FacultyTreeRootCampus.UbcCampuses campus) {
-        this.name = name;
+    // For first time-creation. Subsequent constructions
+    // upon application-start will be from saved xml data.
+    public Student(String firstName, String lastName, YearOfStudy yearOfStudy,
+                   FacultyTreeRootCampus.UbcCampuses campus) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.currentYear = yearOfStudy;
         this.campus = campus;
         this.previousSchedules = new EnumMap<>(YearOfStudy.class);
         this.worklistGroups = new EnumMap<>(YearOfStudy.class);
     }
 
-    public String getName() {
-        return name;
+    // TODO [xml:read][Student]
+    // read cached student data.
+    public Student(final Element studentElement) throws MalformedXmlDataException {
+        this.firstName = XmlParsingUtils.getMandatoryAttr(studentElement, Xml.FIRST_NAME_ATTR).getValue();
+        this.lastName = XmlParsingUtils.getMandatoryAttr(studentElement, Xml.LAST_NAME_ATTR).getValue();
+        this.currentYear = null; // need to create enum.static decoder
+        this.campus = null; // need to create enum.static decoder
+
+        this.previousSchedules = Collections.unmodifiableMap(new EnumMap<>(YearOfStudy.class)); // need to populate.
+        this.worklistGroups = Collections.unmodifiableMap(new EnumMap<>(YearOfStudy.class)); // need to populate.
     }
 
-    public YearOfStudy getCurrentYear() {
+    public final String getFirstName() {
+        return firstName;
+    }
+
+    public final String getLastName() {
+        return lastName;
+    }
+
+    public final YearOfStudy getCurrentYear() {
         return currentYear;
     }
 
-    public FacultyTreeRootCampus.UbcCampuses getCampus() {
+    public final FacultyTreeRootCampus.UbcCampuses getCampus() {
         return campus;
     }
 
-    public Map<YearOfStudy, Schedule> getPreviousSchedules() {
+    public final Map<YearOfStudy, Schedule> getPreviousSchedules() {
         return previousSchedules;
     }
 
-    public Map<YearOfStudy, WorklistGroup> getWorklistGroups() {
+    public final Map<YearOfStudy, WorklistGroup> getWorklistGroups() {
         return worklistGroups;
     }
 
-    public void setCurrentYear(YearOfStudy yearOfStudy) {
+    public final void setCurrentYear(YearOfStudy yearOfStudy) {
         this.currentYear = yearOfStudy;
     }
 
-    public void setCampus(FacultyTreeRootCampus.UbcCampuses campus) {
+    public final void setCampus(FacultyTreeRootCampus.UbcCampuses campus) {
         this.campus = campus;
     }
 
-    public Set<Course> getCompletedCourses() {
+    public final Set<Course> getCompletedCourses() {
         return null; // TODO:
+    }
+
+
+
+    // TODO [xml:spec][Student]
+    public enum Xml implements XmlParsingUtils.XmlConstant {
+        STUDENT_TAG ("Student"),
+        FIRST_NAME_ATTR ("firstName"),
+        LAST_NAME_ATTR ("lastName"),
+        YEAR_OF_STUDY_ATTR ("currentYear"),
+        CAMPUS_ATTR ("campus"),
+        PREVIOUS_COURSES_TAG ("PreviousCourses"),
+        WORKLISTS_TAG ("Worklists"),
+        ;
+        private final String value;
+
+        Xml(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String value() {
+            return value;
+        }
     }
 
 }
