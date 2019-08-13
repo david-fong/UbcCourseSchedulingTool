@@ -1,6 +1,7 @@
 
 # Intellij IDEA:
 /.idea/dictionaries
+/.idea/edaphic/
 /.idea/workspace.*
 /.idea/uiDesigner.*
 
