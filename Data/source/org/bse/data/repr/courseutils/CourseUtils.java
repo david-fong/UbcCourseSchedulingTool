@@ -114,7 +114,6 @@ public final class CourseUtils {
         }
     }
 
-    // TODO[impl:refactor] usages of DayOfWeek to use this enum.
     public enum WeekDay implements XmlUtils.XmlConstant {
         MONDAY ("mon"),
         TUESDAY ("tues"),

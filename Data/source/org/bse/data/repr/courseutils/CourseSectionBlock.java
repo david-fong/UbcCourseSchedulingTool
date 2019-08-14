@@ -1,12 +1,11 @@
 package org.bse.data.repr.courseutils;
 
 import org.bse.data.repr.courseutils.CourseUtils.BlockTime;
+import org.bse.data.repr.courseutils.CourseUtils.WeekDay;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
-
-import java.time.DayOfWeek;
 
 /**
  * One of several blocks (typically 2 or 3) that describe
@@ -16,7 +15,7 @@ import java.time.DayOfWeek;
 public final class CourseSectionBlock {
 
     private final boolean isWaitlist;
-    private final DayOfWeek dayOfWeek;
+    private final WeekDay dayOfWeek;
     private final BlockRepetition repetitionType;
     private final BlockTimeEnclosure timeEnclosure;
     // TODO [repr][CourseSectionBlock]: add representation for location (building).
@@ -24,12 +23,12 @@ public final class CourseSectionBlock {
     public CourseSectionBlock(final Element blockElement) throws MalformedXmlDataException {
         this.isWaitlist = blockElement.getAttributeNode(Xml.OPTIONAL_WAITLIST_FLAG_ATTR.value) != null;
 
-        this.dayOfWeek = null; // TODO [xml:read][CourseSectionBlock]
-
+        this.dayOfWeek = WeekDay.decodeXmlAttr(
+                XmlUtils.getMandatoryAttr(blockElement, Xml.DAY_OF_WEEK_ATTR)
+        );
         this.repetitionType = BlockRepetition.decodeXmlAttr(
                 blockElement.getAttributeNode(Xml.OPTIONAL_REPEAT_TYPE_ATTR.value)
         );
-
         final BlockTime start = BlockTime.decodeXmlAttr(
                 XmlUtils.getMandatoryAttr(blockElement, Xml.BEGIN_TIME_ATTR)
         );
@@ -54,7 +53,7 @@ public final class CourseSectionBlock {
         return isWaitlist;
     }
 
-    public DayOfWeek getDayOfWeek() {
+    public WeekDay getDayOfWeek() {
         return dayOfWeek;
     }
 
