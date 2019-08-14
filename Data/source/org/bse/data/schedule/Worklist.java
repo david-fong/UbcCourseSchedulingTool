@@ -88,7 +88,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
 
     @Override
     public Element toXml(final Document document) {
-        final Element worklistElement = document.createElement(Xml.WORKLIST_TAG_NAME.value);
+        final Element worklistElement = document.createElement(Xml.WORKLIST_TAG.value);
         createImmutableCopy().populateXmlElement(document, worklistElement);
         worklistElement.setAttribute(Xml.WORKLIST_NAME_ATTR.value, name);
         if (isLocked) {
@@ -131,7 +131,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     }
 
     public enum Xml implements XmlUtils.XmlConstant {
-        WORKLIST_TAG_NAME ("Worklist"), // for user data. do not use for data from UBC's registration site.
+        WORKLIST_TAG("Worklist"), // for user data. do not use for data from UBC's registration site.
         WORKLIST_NAME_ATTR ("worklistName"), // optional for the [MANUAL_SECTION_LIST_TAG] element if it exists.
         WORKLIST_NAME_ATTR_DEFAULT ("unnamed"),
         WORKLIST_IS_LOCKED_ATTR ("locked"), // parsing: true if attribute exists and false otherwise.

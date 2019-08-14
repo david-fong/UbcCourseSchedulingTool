@@ -1,6 +1,8 @@
 package org.bse.data.schedule;
 
+import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.Collections;
@@ -22,6 +24,20 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
     public WorklistGroup() {
         this.worklists = new ConcurrentHashMap<>();
         this.backingNameSet = Collections.unmodifiableSet(worklists.keySet());
+    }
+
+    public WorklistGroup(final Element worklistGroupElement) throws MalformedXmlDataException {
+        this.worklists = new ConcurrentHashMap<>();
+        this.backingNameSet = Collections.unmodifiableSet(worklists.keySet());
+
+        for (Element worklistElement : XmlUtils.getElementsByTagName(worklistGroupElement, Worklist.Xml.WORKLIST_TAG)) {
+            final Worklist worklist = new Worklist(worklistElement);
+            if (worklists.containsKey(worklist.getName())) {
+                throw new MalformedXmlDataException("Corrupted data: worklists must have unique names");
+            } else {
+                worklists.put(worklist.getName(), worklist);
+            }
+        }
     }
 
     /**
@@ -115,10 +131,13 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
         return backingNameSet;
     }
 
-    // TODO [xml:write][WorklistGroup]
     @Override
-    public Element toXml() {
-        return null;
+    public Element toXml(final Document document) {
+        final Element worklistElement = document.createElement(Xml.WORKLIST_GROUP_TAG.xmlAttrVal);
+        for (Worklist worklist : worklists.values()) {
+            worklistElement.appendChild(worklist.toXml(document));
+        }
+        return worklistElement;
     }
 
     /**
@@ -137,6 +156,23 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
 
     private boolean isFromThis(Worklist worklist) {
         return worklists.get(worklist.getName()) == worklist;
+    }
+
+
+
+    public enum Xml implements XmlUtils.XmlConstant {
+        WORKLIST_GROUP_TAG ("WorklistGroup"),
+        ;
+        private final String xmlAttrVal;
+
+        Xml(String xmlAttrVal) {
+            this.xmlAttrVal = xmlAttrVal;
+        }
+
+        @Override
+        public String getXmlConstantValue() {
+            return xmlAttrVal;
+        }
     }
 
 }

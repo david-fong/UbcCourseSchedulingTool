@@ -119,7 +119,7 @@ public final class Student implements XmlUtils.UserDataXml {
         YEAR_OF_STUDY_ATTR ("currentYear"),
         CAMPUS_ATTR ("campus"),
         PREVIOUS_COURSES_TAG ("PreviousCourses"),
-        WORKLISTS_TAG ("Worklists"),
+        WORKLIST_GROUPS_TAG("Worklists"),
         ;
         private final String value;
 
