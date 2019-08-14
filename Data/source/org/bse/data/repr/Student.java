@@ -7,6 +7,7 @@ import org.bse.data.schedule.Schedule;
 import org.bse.data.schedule.WorklistGroup;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.Collections;
@@ -52,7 +53,7 @@ public final class Student implements XmlUtils.UserDataXml {
     public Student(final Element studentElement) throws MalformedXmlDataException {
         this.firstName = XmlUtils.getMandatoryAttr(studentElement, Xml.FIRST_NAME_ATTR).getValue();
         this.lastName = XmlUtils.getMandatoryAttr(studentElement, Xml.LAST_NAME_ATTR).getValue();
-        this.currentYear = null; // need to create enum.static decoder
+        this.currentYear = YearOfStudy.decodeXmlAttr(XmlUtils.getMandatoryAttr(studentElement, Xml.YEAR_OF_STUDY_ATTR));
         this.campus = null; // need to create enum.static decoder
 
         this.previousSchedules = Collections.unmodifiableMap(new EnumMap<>(YearOfStudy.class)); // need to populate.
@@ -61,8 +62,15 @@ public final class Student implements XmlUtils.UserDataXml {
 
     // TODO [xml:write][Student]
     @Override
-    public Element toXml() {
-        return null;
+    public Element toXml(final Document document) {
+        final Element studentElement = document.createElement(Xml.STUDENT_TAG.value);
+        studentElement.setAttribute(Xml.FIRST_NAME_ATTR.value, firstName);
+        studentElement.setAttribute(Xml.LAST_NAME_ATTR.value, lastName);
+        studentElement.setAttribute(Xml.YEAR_OF_STUDY_ATTR.value, currentYear.getXmlConstantValue());
+        studentElement.setAttribute(Xml.CAMPUS_ATTR.value, campus.getXmlConstantValue());
+        // previous schedules
+        // worklists
+        return studentElement;
     }
 
     public final String getFirstName() {
@@ -100,6 +108,7 @@ public final class Student implements XmlUtils.UserDataXml {
     public final Set<Course> getCompletedCourses() {
         return null; // TODO:
     }
+
 
 
     // TODO [xml:spec][Student]

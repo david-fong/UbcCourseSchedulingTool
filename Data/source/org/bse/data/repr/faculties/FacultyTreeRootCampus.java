@@ -3,6 +3,7 @@ package org.bse.data.repr.faculties;
 import org.bse.data.repr.HyperlinkBookIf;
 import org.bse.data.repr.courseutils.Course;
 import org.bse.data.repr.faculties.vancouver.VancouverFaculties;
+import org.bse.utils.xml.XmlUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,7 +12,7 @@ import java.util.Map;
 /**
  * At the top level, everything is first partitioned by campus.
  */
-public interface FacultyTreeRootCampus extends FacultyTreeNode {
+public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlConstant {
 
     Map<String, Course> EMPTY_COURSE_CODE_MAP = Map.of();
 
@@ -19,6 +20,11 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
     default String getNameWithTitle() {
         // Here the title is a suffix instead of a prefix:
         return getNameNoTitle() + getType().title;
+    }
+
+    @Override
+    default String getXmlConstantValue() {
+        return getNameNoTitle();
     }
 
     @Override

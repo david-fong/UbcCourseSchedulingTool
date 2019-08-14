@@ -9,7 +9,7 @@ import org.w3c.dom.Attr;
  */
 public final class CourseUtils {
 
-    public enum YearOfStudy {
+    public enum YearOfStudy implements XmlUtils.XmlConstant {
         FIRST_YEAR  ("First year"),
         SECOND_YEAR ("Second year"),
         THIRD_YEAR  ("Third year"),
@@ -29,6 +29,25 @@ public final class CourseUtils {
         @Override
         public String toString() {
             return label;
+        }
+
+        @Override
+        public String getXmlConstantValue() {
+            return label;
+        }
+
+        /**
+         * @param attr An [Attr] object. Must not be [null].
+         * @return A [YearOfStudy] whose [label] is equal to [attr.getValue].
+         * @throws MalformedXmlDataException if no such [YearOfStudy] can be found.
+         */
+        public static YearOfStudy decodeXmlAttr(final Attr attr) throws MalformedXmlDataException {
+            for (YearOfStudy yearOfStudy : values()) {
+                if (yearOfStudy.label.equals(attr.getValue())) {
+                    return yearOfStudy;
+                }
+            }
+            throw MalformedXmlDataException.invalidAttrVal(attr);
         }
     }
 
@@ -53,11 +72,11 @@ public final class CourseUtils {
         }
 
         /**
-         * @param attr An Attr object. Must not be null.
+         * @param attr An [Attr] object. Must not be [null].
          * @return A [Semester] whose [xmlAttrVal] is equal to [attr.getValue].
          * @throws MalformedXmlDataException if no such [Semester] can be found.
          */
-        public static Semester decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
+        public static Semester decodeXmlAttr(final Attr attr) throws MalformedXmlDataException {
             for (Semester semester : Semester.values()) {
                 if (semester.xmlAttrVal.equals(attr.getValue())) {
                     return semester;

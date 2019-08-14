@@ -3,6 +3,7 @@ package org.bse.data.schedule;
 import org.bse.data.repr.courseutils.CourseSectionRef;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.Collections;
@@ -111,6 +112,10 @@ public class Schedule {
     /*
     TODO [api][Schedule] methods to export contents to csv files, google calendar files.
      */
+
+    // TODO [xml:write][Schedule]
+    void populateXmlElement(final Document document, final Element unpopulatedScheduleElement) {
+    }
 
 
 

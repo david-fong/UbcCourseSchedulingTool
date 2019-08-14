@@ -1,6 +1,7 @@
 package org.bse.utils.xml;
 
 import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -102,7 +103,13 @@ public final class XmlUtils {
     }
 
     public interface UserDataXml {
-        Element toXml();
+        /**
+         * @param document Must not be modified. Only used to create an [Element]
+         *     with an implementation-specific tag name.
+         * @return An [Element] representing a user data object that can later be
+         *     reconstructed.
+         */
+        Element toXml(Document document);
     }
 
 }

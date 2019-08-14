@@ -5,6 +5,7 @@ import org.bse.data.repr.courseutils.CourseSectionRef;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -85,10 +86,16 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
         this.favorability = favorability;
     }
 
-    // TODO [xml:write][Worklist]
     @Override
-    public Element toXml() {
-        return null;
+    public Element toXml(final Document document) {
+        final Element worklistElement = document.createElement(Xml.WORKLIST_TAG_NAME.value);
+        createImmutableCopy().populateXmlElement(document, worklistElement);
+        worklistElement.setAttribute(Xml.WORKLIST_NAME_ATTR.value, name);
+        if (isLocked) {
+            worklistElement.setAttribute(Xml.WORKLIST_IS_LOCKED_ATTR.value, "");
+        }
+        worklistElement.setAttribute(Xml.WORKLIST_FAVORABILITY_ATTR.value, favorability.getXmlConstantValue());
+        return worklistElement;
     }
 
 
