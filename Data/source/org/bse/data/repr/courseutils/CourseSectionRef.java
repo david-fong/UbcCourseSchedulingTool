@@ -2,7 +2,7 @@ package org.bse.data.repr.courseutils;
 
 import org.bse.data.repr.courseutils.Course.CourseSection;
 import org.bse.utils.xml.MalformedXmlDataException;
-import org.bse.utils.xml.XmlParsingUtils;
+import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
 
 import java.util.Collections;
@@ -37,7 +37,7 @@ public interface CourseSectionRef {
      */
     static Set<CourseSectionRef> extractAndParseAll(final Element host) throws MalformedXmlDataException {
         if (host == null) return new HashSet<>();
-        final List<Element> refElements = XmlParsingUtils.getElementsByTagName(
+        final List<Element> refElements = XmlUtils.getElementsByTagName(
                 host, Xml.SECTION_REF_TAG
         );
         final Set<CourseSectionRef> sectionRefs = new HashSet<>(refElements.size());
@@ -54,7 +54,7 @@ public interface CourseSectionRef {
         private final String refString; // TODO: change rep to make this a faculty, a Course name, and a section name.
 
         private CourseSectionRefUnloaded(final Element refElement) throws MalformedXmlDataException {
-            this(XmlParsingUtils.getMandatoryAttr(refElement, Xml.SECTION_REF_TO_ATTR).getValue());
+            this(XmlUtils.getMandatoryAttr(refElement, Xml.SECTION_REF_TO_ATTR).getValue());
         }
 
         private CourseSectionRefUnloaded(String refString) {
@@ -69,7 +69,7 @@ public interface CourseSectionRef {
 
 
 
-    enum Xml implements XmlParsingUtils.XmlConstant {
+    enum Xml implements XmlUtils.XmlConstant {
         SECTION_REF_TAG ("SectionRef"),
         SECTION_REF_TO_ATTR ("to"),
         ;
@@ -80,7 +80,7 @@ public interface CourseSectionRef {
         }
 
         @Override
-        public String value() {
+        public String getXmlConstantValue() {
             return value;
         }
     }

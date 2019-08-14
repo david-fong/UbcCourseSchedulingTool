@@ -9,7 +9,7 @@ import java.util.Map;
 import static org.bse.data.repr.faculties.FacultyTreeNode.FacultyTreeNodeType.DEPARTMENT;
 
 public enum ScienceFaculties implements FacultyTreeNode {
-    // TODO [dat]: add entries as needed. prefer alphabetical order.
+    // TODO [data]: add entries as needed. prefer alphabetical order.
     // ...
     CPSC (DEPARTMENT, "Computer Science"),
     // ...

@@ -2,7 +2,7 @@ package org.bse.data.repr.courseutils;
 
 import org.bse.data.repr.courseutils.CourseUtils.BlockTime;
 import org.bse.utils.xml.MalformedXmlDataException;
-import org.bse.utils.xml.XmlParsingUtils;
+import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
@@ -31,10 +31,10 @@ public final class CourseSectionBlock {
         );
 
         final BlockTime start = BlockTime.decodeXmlAttr(
-                XmlParsingUtils.getMandatoryAttr(blockElement, Xml.BEGIN_TIME_ATTR)
+                XmlUtils.getMandatoryAttr(blockElement, Xml.BEGIN_TIME_ATTR)
         );
         final BlockTime end = BlockTime.decodeXmlAttr(
-                XmlParsingUtils.getMandatoryAttr(blockElement, Xml.END_TIME_ATTR)
+                XmlUtils.getMandatoryAttr(blockElement, Xml.END_TIME_ATTR)
         );
         this.timeEnclosure = new BlockTimeEnclosure(start, end);
     }
@@ -103,9 +103,9 @@ public final class CourseSectionBlock {
         }
 
         /**
-         * @param attr An Attr object. May be null.
+         * @param attr An [Attr] object. May be [null].
          * @return A [BlockRepetition] whose [xmlAttrVal] is equal to [attr.getValue].
-         *     Never returns null. If [attr] is null, returns [EVERY_WEEK] by default.
+         *     Never returns [null]. If [attr] is [null], returns [EVERY_WEEK] by default.
          * @throws MalformedXmlDataException if no such [BlockRepetition] can be found.
          */
         private static BlockRepetition decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
@@ -122,7 +122,7 @@ public final class CourseSectionBlock {
 
 
 
-    public enum Xml implements XmlParsingUtils.XmlConstant {
+    public enum Xml implements XmlUtils.XmlConstant {
         BLOCK_TAG ("Block"),
 
         DAY_OF_WEEK_ATTR ("day"),
@@ -142,7 +142,7 @@ public final class CourseSectionBlock {
         }
 
         @Override
-        public String value() {
+        public String getXmlConstantValue() {
             return value;
         }
     }

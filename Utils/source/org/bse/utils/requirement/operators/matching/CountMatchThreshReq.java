@@ -2,7 +2,7 @@ package org.bse.utils.requirement.operators.matching;
 
 import org.bse.utils.requirement.RequireOpResult.ReqOpOutcome;
 import org.bse.utils.requirement.Requirement;
-import org.bse.utils.xml.XmlParsingUtils;
+import org.bse.utils.xml.XmlUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -147,7 +147,7 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
         return new CountMatchThreshReq<>(1, Collections.singleton(candidate));
     }
 
-    public enum Xml implements XmlParsingUtils.XmlConstant {
+    public enum Xml implements XmlUtils.XmlConstant {
         COUNT_MTR_TAG ("CountMtr"),
         ;
         private final String value;
@@ -157,7 +157,7 @@ public final class CountMatchThreshReq<T> extends AbstractMatchThreshReq<T> {
         }
 
         @Override
-        public String value() {
+        public String getXmlConstantValue() {
             return value;
         }
     }

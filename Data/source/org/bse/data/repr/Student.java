@@ -6,7 +6,7 @@ import org.bse.data.repr.faculties.FacultyTreeRootCampus;
 import org.bse.data.schedule.Schedule;
 import org.bse.data.schedule.WorklistGroup;
 import org.bse.utils.xml.MalformedXmlDataException;
-import org.bse.utils.xml.XmlParsingUtils;
+import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
 
 import java.util.Collections;
@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * TODO [doc]: write documentation.
  */
-public final class Student {
+public final class Student implements XmlUtils.UserDataXml {
 
     private final String firstName;
     private final String lastName;
@@ -50,13 +50,19 @@ public final class Student {
     // TODO [xml:read][Student]
     // read cached student data.
     public Student(final Element studentElement) throws MalformedXmlDataException {
-        this.firstName = XmlParsingUtils.getMandatoryAttr(studentElement, Xml.FIRST_NAME_ATTR).getValue();
-        this.lastName = XmlParsingUtils.getMandatoryAttr(studentElement, Xml.LAST_NAME_ATTR).getValue();
+        this.firstName = XmlUtils.getMandatoryAttr(studentElement, Xml.FIRST_NAME_ATTR).getValue();
+        this.lastName = XmlUtils.getMandatoryAttr(studentElement, Xml.LAST_NAME_ATTR).getValue();
         this.currentYear = null; // need to create enum.static decoder
         this.campus = null; // need to create enum.static decoder
 
         this.previousSchedules = Collections.unmodifiableMap(new EnumMap<>(YearOfStudy.class)); // need to populate.
         this.worklistGroups = Collections.unmodifiableMap(new EnumMap<>(YearOfStudy.class)); // need to populate.
+    }
+
+    // TODO [xml:write][Student]
+    @Override
+    public Element toXml() {
+        return null;
     }
 
     public final String getFirstName() {
@@ -96,9 +102,8 @@ public final class Student {
     }
 
 
-
     // TODO [xml:spec][Student]
-    public enum Xml implements XmlParsingUtils.XmlConstant {
+    public enum Xml implements XmlUtils.XmlConstant {
         STUDENT_TAG ("Student"),
         FIRST_NAME_ATTR ("firstName"),
         LAST_NAME_ATTR ("lastName"),
@@ -114,7 +119,7 @@ public final class Student {
         }
 
         @Override
-        public String value() {
+        public String getXmlConstantValue() {
             return value;
         }
     }

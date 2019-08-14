@@ -7,7 +7,7 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class XmlParsingUtils {
+public final class XmlUtils {
 
     /**
      * A convenience method for finding a mandatory [Element] in a host [Element]
@@ -21,11 +21,11 @@ public final class XmlParsingUtils {
      *     found, or if more than one was found as a direct child of [host].
      */
     public static Element getMandatoryUniqueElementByTag(Element host, XmlConstant tagName) throws MalformedXmlDataException {
-        final NodeList nodeList = host.getElementsByTagName(tagName.value());
+        final NodeList nodeList = host.getElementsByTagName(tagName.getXmlConstantValue());
         if (nodeList.getLength() == 1 && nodeList.item(0) instanceof Element) {
             return (Element)nodeList.item(0);
         } else {
-            throw MalformedXmlDataException.noSuchUniqueChildElement(host, tagName.value());
+            throw MalformedXmlDataException.noSuchUniqueChildElement(host, tagName.getXmlConstantValue());
         }
     }
 
@@ -34,13 +34,13 @@ public final class XmlParsingUtils {
      * a [MalformedXmlDataException] if zero [Element]s with [tagName] are found.
      */
     public static Element getOptionalUniqueElementByTag(Element host, XmlConstant tagName) throws MalformedXmlDataException {
-        final NodeList nodeList = host.getElementsByTagName(tagName.value());
+        final NodeList nodeList = host.getElementsByTagName(tagName.getXmlConstantValue());
         if (nodeList.getLength() == 1 && nodeList.item(0) instanceof Element) {
             return (Element)nodeList.item(0);
         } else if (nodeList.getLength() == 0) {
             return null;
         } else {
-            throw MalformedXmlDataException.noSuchUniqueChildElement(host, tagName.value());
+            throw MalformedXmlDataException.noSuchUniqueChildElement(host, tagName.getXmlConstantValue());
         }
     }
 
@@ -52,7 +52,7 @@ public final class XmlParsingUtils {
      *     equal to [tagName].
      */
     public static List<Element> getElementsByTagName(Element host, XmlConstant tagName) {
-        final NodeList nodeList = host.getElementsByTagName(tagName.value());
+        final NodeList nodeList = host.getElementsByTagName(tagName.getXmlConstantValue());
         final List<Element> elements = new ArrayList<>(nodeList.getLength());
         for (int i = 0; i < nodeList.getLength(); i++) {
             elements.add((Element)nodeList.item(i));
@@ -71,9 +71,9 @@ public final class XmlParsingUtils {
      * @throws MalformedXmlDataException If [attrName] could not be found.
      */
     public static Attr getMandatoryAttr(Element host, XmlConstant attrName) throws MalformedXmlDataException {
-        Attr attr = host.getAttributeNode(attrName.value());
+        Attr attr = host.getAttributeNode(attrName.getXmlConstantValue());
         if (attr == null) {
-            throw MalformedXmlDataException.missingAttr(host, attrName.value());
+            throw MalformedXmlDataException.missingAttr(host, attrName.getXmlConstantValue());
         } else {
             return attr;
         }
@@ -90,7 +90,7 @@ public final class XmlParsingUtils {
         if (host == null) {
             return defaultValue;
         } else {
-            Attr attr = host.getAttributeNode(attrName.value());
+            Attr attr = host.getAttributeNode(attrName.getXmlConstantValue());
             return (attr == null) ? defaultValue : attr.getValue();
         }
     }
@@ -98,7 +98,11 @@ public final class XmlParsingUtils {
 
 
     public interface XmlConstant {
-        String value();
+        String getXmlConstantValue();
+    }
+
+    public interface UserDataXml {
+        Element toXml();
     }
 
 }

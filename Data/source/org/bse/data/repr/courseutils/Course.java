@@ -9,7 +9,7 @@ import org.bse.utils.requirement.Requirement;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
 import org.bse.utils.xml.MalformedXmlDataException;
-import org.bse.utils.xml.XmlParsingUtils;
+import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -47,13 +47,13 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
 
         this.facultyTreeNode = null; // TODO [xml:read][Course:facultyNode]
 
-        this.descriptionString = XmlParsingUtils.getMandatoryUniqueElementByTag(
+        this.descriptionString = XmlUtils.getMandatoryUniqueElementByTag(
                 courseElement, Xml.DESCRIPTION_TAG
         ).getTextContent();
-        this.creditValue = Integer.parseInt(XmlParsingUtils.getMandatoryAttr(
+        this.creditValue = Integer.parseInt(XmlUtils.getMandatoryAttr(
                 courseElement, Xml.COURSE_CREDIT_ATTR
         ).getValue());
-        this.courseCodeToken = XmlParsingUtils.getMandatoryAttr(
+        this.courseCodeToken = XmlUtils.getMandatoryAttr(
                 courseElement, Xml.COURSE_CODE_ATTR
         ).getValue();
         this.registrationUrlString = facultyTreeNode.getRegistrationSiteUrl()
@@ -70,8 +70,8 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         this.corequisites = new MatchingRequirementIf.StrictlyFailingMatchThreshReq<>();
 
         // lab sections:
-        final List<Element> labSectionElements = XmlParsingUtils.getElementsByTagName(
-                XmlParsingUtils.getMandatoryUniqueElementByTag(courseElement, Xml.LABS_TAG),
+        final List<Element> labSectionElements = XmlUtils.getElementsByTagName(
+                XmlUtils.getMandatoryUniqueElementByTag(courseElement, Xml.LABS_TAG),
                 SecXml.COURSE_SECTION_TAG
         );
         final Set<CourseLectureSection> labSections = new HashSet<>(labSectionElements.size());
@@ -81,8 +81,8 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         this.labSections = Collections.unmodifiableSet(labSections);
 
         // tutorial sections:
-        final List<Element> tutorialSectionElements = XmlParsingUtils.getElementsByTagName(
-                XmlParsingUtils.getMandatoryUniqueElementByTag(courseElement, Xml.TUTORIALS_TAG),
+        final List<Element> tutorialSectionElements = XmlUtils.getElementsByTagName(
+                XmlUtils.getMandatoryUniqueElementByTag(courseElement, Xml.TUTORIALS_TAG),
                 SecXml.COURSE_SECTION_TAG
         );
         final Set<CourseLectureSection> tutorialSections = new HashSet<>(tutorialSectionElements.size());
@@ -92,8 +92,8 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         this.tutorialSections = Collections.unmodifiableSet(tutorialSections);
 
         // lecture sections (must be done last to refer to labs and tutorials):
-        final List<Element> lectureSectionElements = XmlParsingUtils.getElementsByTagName(
-                XmlParsingUtils.getMandatoryUniqueElementByTag(courseElement, Xml.LECTURES_TAG),
+        final List<Element> lectureSectionElements = XmlUtils.getElementsByTagName(
+                XmlUtils.getMandatoryUniqueElementByTag(courseElement, Xml.LECTURES_TAG),
                 SecXml.COURSE_SECTION_TAG
         );
         final Set<CourseLectureSection> lectureSections = new HashSet<>(lectureSectionElements.size());
@@ -151,6 +151,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
     }
 
 
+
     /**
      * Represents a section of a [Course]. On top of the properties provided by a
      * [Course], a [CourseSection] includes information on the lecturer, times and
@@ -170,17 +171,17 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         private final Set<CourseSectionBlock> blocks;
 
         private CourseSection(final Element sectionElement) throws MalformedXmlDataException {
-            this.sectionCode = XmlParsingUtils.getMandatoryAttr(
+            this.sectionCode = XmlUtils.getMandatoryAttr(
                     sectionElement, SecXml.SECTION_CODE_ATTR
             ).getValue();
-            this.semester = CourseUtils.Semester.decodeXmlAttr(XmlParsingUtils.getMandatoryAttr(
+            this.semester = CourseUtils.Semester.decodeXmlAttr(XmlUtils.getMandatoryAttr(
                     sectionElement, SecXml.SECTION_SEMESTER_ATTR
             ));
-            this.professor = new Professor(XmlParsingUtils.getMandatoryUniqueElementByTag(
+            this.professor = new Professor(XmlUtils.getMandatoryUniqueElementByTag(
                     sectionElement, SecXml.SECTION_PROFESSOR_TAG
             ));
 
-            final List<Element> blockElements = XmlParsingUtils.getElementsByTagName(
+            final List<Element> blockElements = XmlUtils.getElementsByTagName(
                     sectionElement, CourseSectionBlock.Xml.BLOCK_TAG
             );
             final Set<CourseSectionBlock> blocks = new HashSet<>(blockElements.size());
@@ -233,7 +234,8 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
     }
 
     /**
-     *
+     * Implementation note: must be constructed after lab and tutorial sections
+     * to be able to refer to them.
      */
     public final class CourseLectureSection extends CourseSection {
 
@@ -270,7 +272,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
 
 
 
-    public enum Xml implements XmlParsingUtils.XmlConstant {
+    public enum Xml implements XmlUtils.XmlConstant {
         COURSE_TAG ("Course"),
         COURSE_FACULTY_ATTR ("faculty"),
         COURSE_CODE_ATTR ("code"),
@@ -292,12 +294,12 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         }
 
         @Override
-        public String value() {
+        public String getXmlConstantValue() {
             return value;
         }
     }
 
-    public enum SecXml implements XmlParsingUtils.XmlConstant {
+    public enum SecXml implements XmlUtils.XmlConstant {
         COURSE_SECTION_TAG ("Section"),
         SECTION_CODE_ATTR ("code"),
         SECTION_SEMESTER_ATTR ("semester"), // See [CourseUtils.Semester
@@ -310,7 +312,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         }
 
         @Override
-        public String value() {
+        public String getXmlConstantValue() {
             return value;
         }
     }

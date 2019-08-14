@@ -1,6 +1,7 @@
 package org.bse.data.repr.courseutils;
 
 import org.bse.utils.xml.MalformedXmlDataException;
+import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
 
 /**
@@ -113,9 +114,43 @@ public final class CourseUtils {
         }
     }
 
+    // TODO[impl:refactor] usages of DayOfWeek to use this enum.
+    public enum WeekDay implements XmlUtils.XmlConstant {
+        MONDAY ("mon"),
+        TUESDAY ("tues"),
+        WEDNESDAY ("wed"),
+        THURSDAY ("thurs"),
+        FRIDAY ("fri"),
+        ;
+        private final String xmlAttrVal;
+
+        WeekDay(String xmlAttrVal) {
+            this.xmlAttrVal = xmlAttrVal;
+        }
+
+        @Override
+        public String getXmlConstantValue() {
+            return xmlAttrVal;
+        }
+
+        /**
+         * @param attr An [Attr] object. Must not be [null].
+         * @return A [WeekDay] whose [getXmlConstantValue] is equal to [attr.getValue].
+         * @throws MalformedXmlDataException if no such [WeekDay] can be found.
+         */
+        public static WeekDay decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
+            for (WeekDay weekDay : WeekDay.values()) {
+                if (weekDay.xmlAttrVal.equals(attr.getValue())) {
+                    return weekDay;
+                }
+            }
+            throw MalformedXmlDataException.invalidAttrVal(attr);
+        }
+    }
+
     private static final int EARLIEST_BLOCK_HOUR = 7;
 
-    public enum BlockTime {
+    public enum BlockTime implements XmlUtils.XmlConstant {
         T0700, T0730,
         T0800, T0830,
         T0900, T0930,
@@ -149,8 +184,8 @@ public final class CourseUtils {
         }
 
         /**
-         * @param attr An Attr object. Must not be null.
-         * @return A [BlockTime] whose [xmlAttrVal] is equal to [attr.getValue].
+         * @param attr An [Attr] object. Must not be [null].
+         * @return A [BlockTime] whose [getXmlConstantValue] is equal to [attr.getValue].
          * @throws MalformedXmlDataException if no such [BlockTime] can be found.
          */
         public static BlockTime decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
@@ -160,6 +195,11 @@ public final class CourseUtils {
             } catch (IllegalArgumentException e) {
                 throw MalformedXmlDataException.invalidAttrVal(attr);
             }
+        }
+
+        @Override
+        public String getXmlConstantValue() {
+            return name().substring(1);
         }
 
         // TODO [impl]: Added string getter methods (and fields?)

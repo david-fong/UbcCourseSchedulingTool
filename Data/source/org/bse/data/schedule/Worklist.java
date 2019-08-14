@@ -3,7 +3,7 @@ package org.bse.data.schedule;
 import org.bse.data.repr.courseutils.Course.CourseSection;
 import org.bse.data.repr.courseutils.CourseSectionRef;
 import org.bse.utils.xml.MalformedXmlDataException;
-import org.bse.utils.xml.XmlParsingUtils;
+import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
@@ -12,7 +12,7 @@ import org.w3c.dom.Element;
  * can be used for generating schedules in the [PickyBuildGenerator], it
  * is not intended for such use, which should be left to [ScheduleBuild].
  */
-public final class Worklist extends ScheduleBuild {
+public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXml {
 
     private final String name;
     private boolean isLocked = false;
@@ -32,14 +32,14 @@ public final class Worklist extends ScheduleBuild {
 
     public Worklist(Element worklistElement) throws MalformedXmlDataException {
         super(worklistElement);
-        this.name = XmlParsingUtils.getOptionalAttr(
+        this.name = XmlUtils.getOptionalAttr(
                 worklistElement,
                 Xml.WORKLIST_NAME_ATTR,
                 Xml.WORKLIST_NAME_ATTR_DEFAULT.value
         );
         this.isLocked = worklistElement.getAttribute(Xml.WORKLIST_IS_LOCKED_ATTR.value) != null;
         this.favorability = WorklistFavorability.decodeXmlAttr(
-                XmlParsingUtils.getMandatoryAttr(
+                XmlUtils.getMandatoryAttr(
                         worklistElement,
                         Xml.WORKLIST_FAVORABILITY_ATTR
                 )
@@ -85,9 +85,14 @@ public final class Worklist extends ScheduleBuild {
         this.favorability = favorability;
     }
 
+    // TODO [xml:write][Worklist]
+    @Override
+    public Element toXml() {
+        return null;
+    }
 
 
-    public enum WorklistFavorability {
+    public enum WorklistFavorability implements XmlUtils.XmlConstant {
         FAVORABLE ("^"),
         NEUTRAL ("~"),
         UNFAVORABLE ("v"),
@@ -98,8 +103,13 @@ public final class Worklist extends ScheduleBuild {
             this.xmlAttrVal = xmlAttrVal;
         }
 
+        @Override
+        public String getXmlConstantValue() {
+            return xmlAttrVal;
+        }
+
         /**
-         * @param attr An Attr object. Must not be null.
+         * @param attr An Attr object. Must not be [null].
          * @return A [WorklistFavorability] whose [xmlAttrVal] is equal to [attr.getValue].
          * @throws MalformedXmlDataException if no such [WorklistFavorability] can be found.
          */
@@ -113,7 +123,7 @@ public final class Worklist extends ScheduleBuild {
         }
     }
 
-    public enum Xml implements XmlParsingUtils.XmlConstant {
+    public enum Xml implements XmlUtils.XmlConstant {
         WORKLIST_TAG_NAME ("Worklist"), // for user data. do not use for data from UBC's registration site.
         WORKLIST_NAME_ATTR ("worklistName"), // optional for the [MANUAL_SECTION_LIST_TAG] element if it exists.
         WORKLIST_NAME_ATTR_DEFAULT ("unnamed"),
@@ -127,7 +137,7 @@ public final class Worklist extends ScheduleBuild {
         }
 
         @Override
-        public String value() {
+        public String getXmlConstantValue() {
             return value;
         }
     }

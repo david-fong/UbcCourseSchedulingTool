@@ -2,7 +2,7 @@ package org.bse.data.schedule;
 
 import org.bse.data.repr.courseutils.CourseSectionRef;
 import org.bse.utils.xml.MalformedXmlDataException;
-import org.bse.utils.xml.XmlParsingUtils;
+import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
 
 import java.util.Collections;
@@ -23,11 +23,11 @@ public class Schedule {
 
     public Schedule(Element scheduleElement) throws MalformedXmlDataException {
         final Element sectionListElement
-                = XmlParsingUtils.getOptionalUniqueElementByTag(
+                = XmlUtils.getOptionalUniqueElementByTag(
                         scheduleElement, Xml.MANUAL_SECTION_LIST_TAG
         );
         final Element sttSectionListElement
-                = XmlParsingUtils.getOptionalUniqueElementByTag(
+                = XmlUtils.getOptionalUniqueElementByTag(
                         scheduleElement, Xml.STT_SECTION_LIST_TAG
         );
         if (sectionListElement == null && sttSectionListElement == null) {
@@ -42,7 +42,7 @@ public class Schedule {
 
         // standard timetable section fields:
         if (sttSectionListElement != null) {
-            this.sttName = XmlParsingUtils.getMandatoryAttr(scheduleElement, Xml.STT_NAME_ATTR).getValue();
+            this.sttName = XmlUtils.getMandatoryAttr(scheduleElement, Xml.STT_NAME_ATTR).getValue();
             this.sttSections = CourseSectionRef.extractAndParseAll(sttSectionListElement);
         } else {
             this.sttName = "N/A";
@@ -108,10 +108,14 @@ public class Schedule {
         return new Schedule(this);
     }
 
+    /*
+    TODO [api][Schedule] methods to export contents to csv files, google calendar files.
+     */
+
 
 
     // TODO [xml:spec]
-    public enum Xml implements XmlParsingUtils.XmlConstant {
+    public enum Xml implements XmlUtils.XmlConstant {
         SCHEDULE_TAG("Schedule"),
         MANUAL_SECTION_LIST_TAG ("Sections"), // optional if there are stt sections.
         STT_SECTION_LIST_TAG ("SttSections"), // optional if there are manually added sections.
@@ -124,7 +128,7 @@ public class Schedule {
         }
 
         @Override
-        public String value() {
+        public String getXmlConstantValue() {
             return value;
         }
     }

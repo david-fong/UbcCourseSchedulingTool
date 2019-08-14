@@ -1,14 +1,18 @@
 package org.bse.data.schedule;
 
+import org.bse.utils.xml.XmlUtils;
+import org.w3c.dom.Element;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * TODO [doc]:
+ * A collection of [Worklist]s with distinct names. Contents can be added,
+ * duplicated, removed, and renamed.
  */
-public final class WorklistGroup {
+public final class WorklistGroup implements XmlUtils.UserDataXml {
 
     private static final String NAME_OF_COPY_SUFFIX = "~";
 
@@ -27,16 +31,17 @@ public final class WorklistGroup {
      *     If [null], will attempt to create a name from [other] if it has one, and
      *     otherwise use a generic placeholder name. Operation will always succeed
      *     if a [null] name is supplied.
-     * @return [true] if the operation was successful.
+     * @return The new [Worklist] based on [other] if the operation was successful,
+     *     and [null] otherwise.
      */
-    public boolean addNewBasedOn(Schedule other, String name) {
+    public Worklist addNewBasedOn(Schedule other, String name) {
         final Worklist copy;
 
         if (other instanceof Worklist) {
             final Worklist otherWorklist = (Worklist)other;
             if (name == null) {
                 name = otherWorklist.getName();
-                if (otherWorklist.getName().equals(Worklist.Xml.WORKLIST_NAME_ATTR_DEFAULT.value())) {
+                if (otherWorklist.getName().equals(Worklist.Xml.WORKLIST_NAME_ATTR_DEFAULT.getXmlConstantValue())) {
                     name = other.getEnclosedSttName() + NAME_OF_COPY_SUFFIX; // always add when using STT's name.
                 }
                 name = safeNameCopy(name);
@@ -44,14 +49,14 @@ public final class WorklistGroup {
             copy = new Worklist(other, name);
         } else {
             if (name == null) {
-                name = safeNameCopy(Worklist.Xml.WORKLIST_NAME_ATTR_DEFAULT.value());
+                name = safeNameCopy(Worklist.Xml.WORKLIST_NAME_ATTR_DEFAULT.getXmlConstantValue());
             }
             copy = new Worklist(other, name);
         }
 
-        // [true] if the previous value mapped from key was null,
+        // [copy] if the previous value mapped from key was null,
         // which should only be true if there was no such mapping.
-        return worklists.putIfAbsent(name, copy) == null;
+        return worklists.putIfAbsent(name, copy) == null ? null : copy;
     }
 
     /**
@@ -59,13 +64,14 @@ public final class WorklistGroup {
      *     is not from this [WorklistGroup].
      * @return A copy of [other], which is added to this [WorklistGroup]. The copy's
      *     name will indicate that it is a copy, and is guaranteed not to be the
-     *     same as that of any other [Worklist] already in this [WorklistGroup].
+     *     same as that of any other [Worklist] already in this [WorklistGroup]. If
+     *     the operation failed, returns [null] instead.
      */
-    public boolean createCopyOf(Worklist other) {
+    public Worklist createCopyOf(Worklist other) {
         if (isFromThis(other)) {
             return addNewBasedOn(other, null);
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -75,15 +81,16 @@ public final class WorklistGroup {
      * @param newName A [String] to set as the new name for [worklist]. This
      *     operation will fail if another [Worklist] in this [WorklistGroup]
      *     already goes by the name [name].
-     * @return [true] if [worklist] is from [this] [WorklistGroup] and [newName]
-     *     is not already the name of another [Worklist] in this [WorklistGroup].
+     * @return The renamed [Worklist] if [worklist] is from [this][WorklistGroup]
+     *     and [newName] is not already the name of another [Worklist] in this
+     *     [WorklistGroup] and null otherwise.
      */
-    public boolean rename(Worklist worklist, String newName) {
+    public Worklist rename(Worklist worklist, String newName) {
         if (isFromThis(worklist) && !worklist.isLocked() && !worklists.containsKey(newName)) {
             worklists.remove(worklist.getName(), worklist);
             return addNewBasedOn(worklist, newName);
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -98,6 +105,20 @@ public final class WorklistGroup {
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return An unmodifiable view of the [Set] of all [Worklist] names in [this]
+     *     [WorklistGroup].
+     */
+    public Set<String> getNames() {
+        return backingNameSet;
+    }
+
+    // TODO [xml:write][WorklistGroup]
+    @Override
+    public Element toXml() {
+        return null;
     }
 
     /**
@@ -116,14 +137,6 @@ public final class WorklistGroup {
 
     private boolean isFromThis(Worklist worklist) {
         return worklists.get(worklist.getName()) == worklist;
-    }
-
-    /**
-     * @return An unmodifiable view of the [Set] of all [Worklist] names in [this]
-     *     [WorklistGroup].
-     */
-    public Set<String> getNames() {
-        return backingNameSet;
     }
 
 }

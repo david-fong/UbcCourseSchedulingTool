@@ -2,7 +2,7 @@ package org.bse.utils.requirement.operators.matching;
 
 import org.bse.utils.requirement.RequireOpResult;
 import org.bse.utils.requirement.Requirement;
-import org.bse.utils.xml.XmlParsingUtils;
+import org.bse.utils.xml.XmlUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -158,7 +158,7 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
 
 
 
-    public enum Xml implements XmlParsingUtils.XmlConstant {
+    public enum Xml implements XmlUtils.XmlConstant {
         CREDIT_MTR_TAG ("CreditMtr"),
         ;
         private final String value;
@@ -168,7 +168,7 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
         }
 
         @Override
-        public String value() {
+        public String getXmlConstantValue() {
             return value;
         }
     }

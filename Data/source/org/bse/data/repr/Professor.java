@@ -1,7 +1,7 @@
 package org.bse.data.repr;
 
 import org.bse.utils.xml.MalformedXmlDataException;
-import org.bse.utils.xml.XmlParsingUtils;
+import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
 
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public final class Professor {
     }
 
 
-    public enum Xml implements XmlParsingUtils.XmlConstant {
+    public enum Xml implements XmlUtils.XmlConstant {
         ;
         private final String value;
 
@@ -48,7 +48,7 @@ public final class Professor {
         }
 
         @Override
-        public String value() {
+        public String getXmlConstantValue() {
             return value;
         }
     }
