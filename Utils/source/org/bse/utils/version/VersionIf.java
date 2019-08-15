@@ -25,7 +25,7 @@ public interface VersionIf<I extends VersionIf> extends Comparable<I> {
     String getDescription();
 
     default String getVersionString() {
-        return String.format("%d.%d.%d", getMajor(), getMinor(), getPatch());
+        return String.format("v%d.%d.%d", getMajor(), getMinor(), getPatch());
     }
 
 }
