@@ -14,9 +14,10 @@ public enum UCSToolVersion implements VersionIf<UCSToolVersion> {
     private final String description;
 
     UCSToolVersion(String description) {
-        this.major = Integer.parseInt(name().split("_")[3]);
-        this.minor = Integer.parseInt(name().split("_")[2]);
-        this.patch = Integer.parseInt(name().split("_")[1]);
+        final String[] tokens = name().split("_");
+        this.major = Integer.parseInt(tokens[tokens.length - 1]);
+        this.minor = Integer.parseInt(tokens[tokens.length - 2]);
+        this.patch = Integer.parseInt(tokens[tokens.length - 3]);
         this.description = description;
     }
 

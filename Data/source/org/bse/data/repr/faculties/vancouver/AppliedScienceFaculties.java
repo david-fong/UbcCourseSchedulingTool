@@ -58,7 +58,7 @@ public enum AppliedScienceFaculties implements FacultyTreeNode {
     }
 
     @Override
-    public Map<String, Course> getCodeStringToCourseMap() {
+    public Map<String, Course> getCourseIdTokenToCourseMap() {
         return courseCodeMap;
     }
 

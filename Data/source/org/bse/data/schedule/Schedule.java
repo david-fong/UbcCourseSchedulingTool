@@ -18,9 +18,9 @@ import java.util.Set;
 public class Schedule {
 
     final Set<CourseSectionRef> courseSections;
-    private final Set<CourseSectionRef> publicSectionsView;
+    private final Set<CourseSectionRef> publicSectionsView; // unmodifiable.
     private final String sttName;
-    private final Set<CourseSectionRef> sttSections; // unmodifiable.
+    final Set<CourseSectionRef> sttSections; // unmodifiable.
 
     public Schedule(Element scheduleElement) throws MalformedXmlDataException {
         final Element sectionListElement

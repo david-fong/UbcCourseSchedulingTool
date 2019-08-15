@@ -10,10 +10,12 @@ import org.w3c.dom.Element;
  */
 public class ScheduleBuild extends Schedule implements PickyBuild<CourseSectionRef> {
 
+    // Copy constructor. Used publicly through [copy] method.
     ScheduleBuild(Schedule other) {
         super(other);
     }
 
+    // Only here for [Worklist] to call super constructor.
     ScheduleBuild(Element scheduleBuildElement) throws MalformedXmlDataException {
         super(scheduleBuildElement);
         // No additional fields to parse for this class.

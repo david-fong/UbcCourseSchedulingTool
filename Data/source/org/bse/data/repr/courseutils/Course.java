@@ -1,10 +1,10 @@
 package org.bse.data.repr.courseutils;
 
-import org.bse.data.schedule.Schedule;
 import org.bse.data.repr.HyperlinkBookIf;
 import org.bse.data.repr.Professor;
 import org.bse.data.repr.Student;
 import org.bse.data.repr.faculties.FacultyTreeNode;
+import org.bse.data.schedule.Schedule;
 import org.bse.utils.requirement.Requirement;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
@@ -22,7 +22,7 @@ import java.util.Set;
 /**
  *
  */
-public final class Course implements CreditValued, CodeStringPath, HyperlinkBookIf {
+public final class Course implements CreditValued, HyperlinkBookIf {
 
     private final FacultyTreeNode facultyTreeNode;
     private final int creditValue;
@@ -112,12 +112,12 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
     }
 
     @Override
-    public int getCreditValue() {
+    public final int getCreditValue() {
         return creditValue;
     }
 
     @Override
-    public String getFullCodeString() {
+    public String toString() {
         return facultyTreeNode.getAbbreviation() + " " + courseCodeToken;
     }
 
@@ -158,12 +158,11 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
      * places of meetings, and seating availability and restrictions. Seating
      * availability is not saved as part of state.
      *
-     * All code tokens ([CodeStringPath]) for instances under a common [Course]
-     * should be unique.
+     * All code tokens for [CourseSection]s under a common [Course] should be unique.
      *
      * TODO [rep]: add representation of seating / methods to fetch seating state from web.
      */
-    public class CourseSection implements CourseSectionRef, CodeStringPath, HyperlinkBookIf {
+    public class CourseSection implements CourseSectionRef, HyperlinkBookIf {
 
         private final String sectionCode;
         private final CourseUtils.Semester semester;
@@ -202,8 +201,13 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         }
 
         @Override
-        public final String getFullCodeString() {
-            return Course.this.getFullCodeString() + sectionCode;
+        public final String toString() {
+            return Course.this.toString() + " " + sectionCode;
+        }
+
+        @Override
+        public final boolean isLoaded() {
+            return true;
         }
 
         @Override
@@ -256,7 +260,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
          *     must register for ONE to be considered taking the [Course] returned by
          *     [getParentCourse], or null if that [Course] has no labs.
          */
-        public Set<CourseSection> getRequiredLabOptions() {
+        public final Set<CourseSection> getRequiredLabOptions() {
             return requiredLabOptions;
         }
 
@@ -265,7 +269,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
          *     must register for ONE to be considered taking the [Course] returned by
          *     [getParentCourse], or null if that [Course] has no tutorials.
          */
-        public Set<CourseSection> getRequiredTutorialOptions() {
+        public final Set<CourseSection> getRequiredTutorialOptions() {
             return requiredTutorialOptions;
         }
     }

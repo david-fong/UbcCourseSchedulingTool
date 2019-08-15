@@ -57,7 +57,7 @@ public enum VancouverFaculties implements FacultyTreeNode {
     }
 
     @Override
-    public Map<String, Course> getCodeStringToCourseMap() {
+    public Map<String, Course> getCourseIdTokenToCourseMap() {
         return null;
     }
 

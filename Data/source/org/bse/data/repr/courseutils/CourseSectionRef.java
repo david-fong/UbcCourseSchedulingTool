@@ -1,6 +1,9 @@
 package org.bse.data.repr.courseutils;
 
 import org.bse.data.repr.courseutils.Course.CourseSection;
+import org.bse.data.repr.faculties.CampusNotFoundException;
+import org.bse.data.repr.faculties.FacultyTreeNode;
+import org.bse.data.repr.faculties.FacultyTreeRootCampus;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
@@ -17,6 +20,11 @@ import java.util.Set;
  */
 public interface CourseSectionRef {
 
+    boolean isLoaded();
+
+    // TODO [api:handling] declare to throw exceptions. consider
+    //  decoupling schedule class and scheduleBuild class so the
+    //  build doesn't need to constantly dereference things.
     CourseSection dereference();
 
     default boolean overlapsWith(CourseSectionRef other) {
@@ -41,29 +49,52 @@ public interface CourseSectionRef {
                 host, Xml.SECTION_REF_TAG
         );
         final Set<CourseSectionRef> sectionRefs = new HashSet<>(refElements.size());
-        for (Element sectionRefElement : refElements) {
-            sectionRefs.add(new CourseSectionRefUnloaded(sectionRefElement));
+        try {
+            for (Element sectionRefElement : refElements) {
+                sectionRefs.add(new CourseSectionRefUnloaded(sectionRefElement));
+            }
+        } catch (CampusNotFoundException e) {
+            throw new MalformedXmlDataException(e);
         }
+
         return Collections.unmodifiableSet(sectionRefs);
     }
 
 
-
+    /**
+     * Construct with a string following the format:
+     * "FACULTY COURSE SECTION", ex. "CPEN 211 T1A".
+     * Each of the three tokens must not contain any spaces.
+     */
     final class CourseSectionRefUnloaded implements CourseSectionRef {
+        private final FacultyTreeNode facultyToken;
+        private final String courseToken;
+        private final String sectionToken;
 
-        private final String refString; // TODO: change rep to make this a faculty, a Course name, and a section name.
-
-        private CourseSectionRefUnloaded(final Element refElement) throws MalformedXmlDataException {
+        private CourseSectionRefUnloaded(final Element refElement) throws MalformedXmlDataException, CampusNotFoundException {
             this(XmlUtils.getMandatoryAttr(refElement, Xml.SECTION_REF_TO_ATTR).getValue());
         }
 
-        private CourseSectionRefUnloaded(String refString) {
-            this.refString = refString;
+        private CourseSectionRefUnloaded(String refString) throws CampusNotFoundException {
+            final String[] tokens = refString.split("\\s+");
+            final FacultyTreeRootCampus campusToken  = FacultyTreeRootCampus
+                    .UbcCampuses.getCampusBySectionRefToken(tokens[0]);
+            if (campusToken == null) {
+                throw new CampusNotFoundException(tokens[0]);
+            }
+            this.facultyToken = campusToken.getSquashedFacultyAbbrMap().get(tokens[1]);
+            this.courseToken  = tokens[2];
+            this.sectionToken = tokens[3];
+        }
+
+        @Override
+        public boolean isLoaded() {
+            return false;
         }
 
         @Override
         public CourseSection dereference() {
-            return null; // TODO [impl] once the squashed campus-faculty lookup system is up.
+            return facultyToken.getCourseByCodeString(courseToken)
         }
     }
 

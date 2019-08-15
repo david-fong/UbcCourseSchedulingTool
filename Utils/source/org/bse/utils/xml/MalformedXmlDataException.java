@@ -12,6 +12,10 @@ public class MalformedXmlDataException extends Exception {
         super(message);
     }
 
+    public MalformedXmlDataException(Exception rootCause) {
+        super(rootCause);
+    }
+
     public static MalformedXmlDataException noSuchUniqueChildElement(Element host, String tagName) {
         return new MalformedXmlDataException(""); // TODO [impl][noSuchUniqueChildElement]:
     }

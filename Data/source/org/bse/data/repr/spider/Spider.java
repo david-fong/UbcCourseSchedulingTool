@@ -64,7 +64,7 @@ public final class Spider {
                     fileStream.forEach(file -> {
                         String fileName = file.getFileName().toString();
                         fileName = fileName.substring(0, fileName.length() - XmlFileUtils.XML_EXTENSION_STRING.length());
-                        faculty.getCodeStringToCourseMap().putIfAbsent(fileName, null);
+                        faculty.getCourseIdTokenToCourseMap().putIfAbsent(fileName, null);
                     });
                 } catch (IOException e) {
                     e.printStackTrace();

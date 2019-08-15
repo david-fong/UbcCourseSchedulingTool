@@ -73,11 +73,11 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
      *     of the [Course] registered by the code [codeString].
      */
     default Course getCourseByCodeString(String codeString) throws FacultyCourseNotFoundException {
-        if (!getCodeStringToCourseMap().containsKey(codeString)) {
+        if (!getCourseIdTokenToCourseMap().containsKey(codeString)) {
             final String message = "code string not registered in faculty tree node";
             throw new FacultyCourseNotFoundException(message, this);
         }
-        Course course = getCodeStringToCourseMap().get(codeString);
+        Course course = getCourseIdTokenToCourseMap().get(codeString);
         if (course != null) {
             return course;
         } else {
@@ -89,7 +89,7 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
             } catch (MalformedXmlDataException e) {
                 throw new RuntimeException("corrupted xml course data", e);
             }
-            getCodeStringToCourseMap().put(codeString, course);
+            getCourseIdTokenToCourseMap().put(codeString, course);
             return course;
         }
     }
@@ -100,7 +100,7 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
      *     must have their code string as a key after an implementation's
      *     construction. Keys in the returned set must never change.
      */
-    Map<String, Course> getCodeStringToCourseMap();
+    Map<String, Course> getCourseIdTokenToCourseMap();
 
 
 
