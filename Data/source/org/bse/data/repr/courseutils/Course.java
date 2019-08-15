@@ -47,7 +47,7 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
 
         this.facultyTreeNode = null; // TODO [xml:read][Course:facultyNode]
 
-        this.descriptionString = XmlUtils.getMandatoryUniqueElementByTag(
+        this.descriptionString = XmlUtils.getMandatoryUniqueChildByTag(
                 courseElement, Xml.DESCRIPTION_TAG
         ).getTextContent();
         this.creditValue = Integer.parseInt(XmlUtils.getMandatoryAttr(
@@ -70,8 +70,8 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         this.corequisites = new MatchingRequirementIf.StrictlyFailingMatchThreshReq<>();
 
         // lab sections:
-        final List<Element> labSectionElements = XmlUtils.getElementsByTagName(
-                XmlUtils.getMandatoryUniqueElementByTag(courseElement, Xml.LABS_TAG),
+        final List<Element> labSectionElements = XmlUtils.getChildElementsByTagName(
+                XmlUtils.getMandatoryUniqueChildByTag(courseElement, Xml.LABS_TAG),
                 SecXml.COURSE_SECTION_TAG
         );
         final Set<CourseLectureSection> labSections = new HashSet<>(labSectionElements.size());
@@ -81,8 +81,8 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         this.labSections = Collections.unmodifiableSet(labSections);
 
         // tutorial sections:
-        final List<Element> tutorialSectionElements = XmlUtils.getElementsByTagName(
-                XmlUtils.getMandatoryUniqueElementByTag(courseElement, Xml.TUTORIALS_TAG),
+        final List<Element> tutorialSectionElements = XmlUtils.getChildElementsByTagName(
+                XmlUtils.getMandatoryUniqueChildByTag(courseElement, Xml.TUTORIALS_TAG),
                 SecXml.COURSE_SECTION_TAG
         );
         final Set<CourseLectureSection> tutorialSections = new HashSet<>(tutorialSectionElements.size());
@@ -92,8 +92,8 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
         this.tutorialSections = Collections.unmodifiableSet(tutorialSections);
 
         // lecture sections (must be done last to refer to labs and tutorials):
-        final List<Element> lectureSectionElements = XmlUtils.getElementsByTagName(
-                XmlUtils.getMandatoryUniqueElementByTag(courseElement, Xml.LECTURES_TAG),
+        final List<Element> lectureSectionElements = XmlUtils.getChildElementsByTagName(
+                XmlUtils.getMandatoryUniqueChildByTag(courseElement, Xml.LECTURES_TAG),
                 SecXml.COURSE_SECTION_TAG
         );
         final Set<CourseLectureSection> lectureSections = new HashSet<>(lectureSectionElements.size());
@@ -177,11 +177,11 @@ public final class Course implements CreditValued, CodeStringPath, HyperlinkBook
             this.semester = CourseUtils.Semester.decodeXmlAttr(XmlUtils.getMandatoryAttr(
                     sectionElement, SecXml.SECTION_SEMESTER_ATTR
             ));
-            this.professor = new Professor(XmlUtils.getMandatoryUniqueElementByTag(
+            this.professor = new Professor(XmlUtils.getMandatoryUniqueChildByTag(
                     sectionElement, SecXml.SECTION_PROFESSOR_TAG
             ));
 
-            final List<Element> blockElements = XmlUtils.getElementsByTagName(
+            final List<Element> blockElements = XmlUtils.getChildElementsByTagName(
                     sectionElement, CourseSectionBlock.Xml.BLOCK_TAG
             );
             final Set<CourseSectionBlock> blocks = new HashSet<>(blockElements.size());

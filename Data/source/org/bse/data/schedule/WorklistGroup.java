@@ -30,7 +30,7 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
         this.worklists = new ConcurrentHashMap<>();
         this.backingNameSet = Collections.unmodifiableSet(worklists.keySet());
 
-        for (Element worklistElement : XmlUtils.getElementsByTagName(worklistGroupElement, Worklist.Xml.WORKLIST_TAG)) {
+        for (Element worklistElement : XmlUtils.getChildElementsByTagName(worklistGroupElement, Worklist.Xml.WORKLIST_TAG)) {
             final Worklist worklist = new Worklist(worklistElement);
             if (worklists.containsKey(worklist.getName())) {
                 throw new MalformedXmlDataException("Corrupted data: worklists must have unique names");

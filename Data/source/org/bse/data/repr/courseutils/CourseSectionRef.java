@@ -37,7 +37,7 @@ public interface CourseSectionRef {
      */
     static Set<CourseSectionRef> extractAndParseAll(final Element host) throws MalformedXmlDataException {
         if (host == null) return new HashSet<>();
-        final List<Element> refElements = XmlUtils.getElementsByTagName(
+        final List<Element> refElements = XmlUtils.getChildElementsByTagName(
                 host, Xml.SECTION_REF_TAG
         );
         final Set<CourseSectionRef> sectionRefs = new HashSet<>(refElements.size());

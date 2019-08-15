@@ -20,10 +20,12 @@ public final class CourseUtils {
         ;
         public final int value;
         public final String label;
+        private final String xmlAttrVal;
 
         YearOfStudy(String label) {
             this.value = ordinal() + 1;
             this.label = label;
+            this.xmlAttrVal = this.label.split("\\s+")[0];
         }
 
         @Override
@@ -33,7 +35,7 @@ public final class CourseUtils {
 
         @Override
         public String getXmlConstantValue() {
-            return label;
+            return xmlAttrVal;
         }
 
         /**
@@ -42,8 +44,9 @@ public final class CourseUtils {
          * @throws MalformedXmlDataException if no such [YearOfStudy] can be found.
          */
         public static YearOfStudy decodeXmlAttr(final Attr attr) throws MalformedXmlDataException {
+            final String attrToken = attr.getValue().split("\\s+")[0];
             for (YearOfStudy yearOfStudy : values()) {
-                if (yearOfStudy.label.equals(attr.getValue())) {
+                if (yearOfStudy.label.equals(attrToken)) {
                     return yearOfStudy;
                 }
             }

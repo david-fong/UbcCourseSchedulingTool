@@ -24,11 +24,11 @@ public class Schedule {
 
     public Schedule(Element scheduleElement) throws MalformedXmlDataException {
         final Element sectionListElement
-                = XmlUtils.getOptionalUniqueElementByTag(
+                = XmlUtils.getOptionalUniqueChildByTag(
                         scheduleElement, Xml.MANUAL_SECTION_LIST_TAG
         );
         final Element sttSectionListElement
-                = XmlUtils.getOptionalUniqueElementByTag(
+                = XmlUtils.getOptionalUniqueChildByTag(
                         scheduleElement, Xml.STT_SECTION_LIST_TAG
         );
         if (sectionListElement == null && sttSectionListElement == null) {
