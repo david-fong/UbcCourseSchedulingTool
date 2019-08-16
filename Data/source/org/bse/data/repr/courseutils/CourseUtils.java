@@ -190,10 +190,17 @@ public final class CourseUtils {
         ;
         public final int hour;
         public final int minute;
+        public final String _12hrTimeString;
+        public final String _24hrTimeString;
 
         BlockTime() {
             this.hour = (ordinal() / 2) + EARLIEST_BLOCK_HOUR;
             this.minute = (ordinal() % 2 == 0) ? 0 : 30;
+
+            final int _12hr = (hour - 12) < 0 ? hour : hour - 12;
+            final String amPm = (hour - 12) < 0 ? "am" : "pm";
+            this._12hrTimeString = String.format("%2d:%02d%s", _12hr, minute, amPm);
+            this._24hrTimeString = String.format("%02d:%02d", hour, minute);
         }
 
         public boolean isBefore(BlockTime other) {
@@ -210,20 +217,21 @@ public final class CourseUtils {
          * @throws MalformedXmlDataException if no such [BlockTime] can be found.
          */
         public static BlockTime decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
-            final String enumName = "T" + attr.getValue(); // TODO [xml:spec][BlockTime] decide on format.
-            try {
-                return BlockTime.valueOf(enumName);
-            } catch (IllegalArgumentException e) {
-                throw MalformedXmlDataException.invalidAttrVal(attr);
+            for (BlockTime blockTime : BlockTime.values()) {
+                if (blockTime.getXmlConstantValue().equals(attr.getValue())) {
+                    return blockTime;
+                }
             }
+            throw MalformedXmlDataException.invalidAttrVal(attr);
         }
 
+        /**
+         * @return A zero-padded time string in 24-hour format such as "15:27" (3:27pm).
+         */
         @Override
         public String getXmlConstantValue() {
-            return name().substring(1);
+            return _24hrTimeString;
         }
-
-        // TODO [impl]: Added string getter methods (and fields?)
     }
 
 }

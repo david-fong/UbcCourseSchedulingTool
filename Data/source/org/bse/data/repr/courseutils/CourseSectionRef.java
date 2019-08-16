@@ -2,6 +2,7 @@ package org.bse.data.repr.courseutils;
 
 import org.bse.data.repr.courseutils.Course.CourseSection;
 import org.bse.data.repr.faculties.CampusNotFoundException;
+import org.bse.data.repr.faculties.FacultyCourseNotFoundException;
 import org.bse.data.repr.faculties.FacultyTreeNode;
 import org.bse.data.repr.faculties.FacultyTreeRootCampus;
 import org.bse.utils.xml.MalformedXmlDataException;
@@ -22,14 +23,7 @@ public interface CourseSectionRef {
 
     boolean isLoaded();
 
-    // TODO [api:handling] declare to throw exceptions. consider
-    //  decoupling schedule class and scheduleBuild class so the
-    //  build doesn't need to constantly dereference things.
-    CourseSection dereference();
-
-    default boolean overlapsWith(CourseSectionRef other) {
-        return dereference().overlapsWith(other.dereference());
-    }
+    CourseSection dereference() throws FacultyCourseNotFoundException, CourseSectionNotFoundException;
 
     /**
      * Used to unpack [Schedule] data created by the Spider, or [Worklist] data
@@ -77,11 +71,8 @@ public interface CourseSectionRef {
 
         private CourseSectionRefUnloaded(String refString) throws CampusNotFoundException {
             final String[] tokens = refString.split("\\s+");
-            final FacultyTreeRootCampus campusToken  = FacultyTreeRootCampus
+            final FacultyTreeRootCampus campusToken = FacultyTreeRootCampus
                     .UbcCampuses.getCampusBySectionRefToken(tokens[0]);
-            if (campusToken == null) {
-                throw new CampusNotFoundException(tokens[0]);
-            }
             this.facultyToken = campusToken.getSquashedFacultyAbbrMap().get(tokens[1]);
             this.courseToken  = tokens[2];
             this.sectionToken = tokens[3];
@@ -93,8 +84,10 @@ public interface CourseSectionRef {
         }
 
         @Override
-        public CourseSection dereference() {
-            return facultyToken.getCourseByCodeString(courseToken)
+        public CourseSection dereference() throws FacultyCourseNotFoundException, CourseSectionNotFoundException {
+            return facultyToken
+                    .getCourseByCodeString(courseToken)
+                    .getSectionByIdToken(sectionToken);
         }
     }
 

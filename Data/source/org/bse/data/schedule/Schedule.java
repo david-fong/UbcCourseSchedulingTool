@@ -15,12 +15,12 @@ import java.util.Set;
  * COMPLETELY immutable from a public point of view,
  * where instances can only be created through XML.
  */
-public class Schedule {
+public final class Schedule implements ScheduleIf<CourseSectionRef> {
 
-    final Set<CourseSectionRef> courseSections;
+    private final Set<CourseSectionRef> courseSections;
     private final Set<CourseSectionRef> publicSectionsView; // unmodifiable.
     private final String sttName;
-    final Set<CourseSectionRef> sttSections; // unmodifiable.
+    private final Set<CourseSectionRef> sttSections; // unmodifiable.
 
     public Schedule(Element scheduleElement) throws MalformedXmlDataException {
         final Element sectionListElement
@@ -105,6 +105,7 @@ public class Schedule {
      *     successfully registered into a [Worklist] (a subclass of [ScheduleBuild]),
      *     and no longer requires any of its mutable behaviour.
      */
+    // TODO: this will need to move up a class
     public final Schedule createImmutableCopy() {
         return new Schedule(this);
     }

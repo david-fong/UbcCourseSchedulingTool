@@ -27,14 +27,20 @@
 
     <Lectures>
         <Section code="101">
+            <Instructor firstName="Paul" lastName="Carter"/>
+            <Instructor firstname="Jonatan" lastName="Schroeder"/>
+            <Block day="tues" begin="09:00" end="10:00"/>
+            <Labs>
+                <Section at="L1A"/>
+            </Labs>
             ...
         </Section>
     </Lectures>
 
     <Labs>
         <Section code="L1A" semester="W1">
-            <Instructor>Paul Carter</Instructor>
-            <Instructor>Farshid</Instructor>
+            <Instructor firstName="Paul" lastName="Carter"/>
+            <Instructor firstname="Jonatan" lastName="Schroeder"/>
             <Block day="mon" begin="08:00" end="09:30"/>
         </Section>
     </Labs>

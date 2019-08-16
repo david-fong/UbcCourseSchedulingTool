@@ -4,6 +4,7 @@ import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,22 +13,23 @@ import java.util.Map;
  */
 public final class Professor {
 
-    private static final Map<String, Professor> PROF_FULL_NAME_MAP;
+    private static final Map<String, Professor> MODIFIABLE_PROF_FULL_NAME_MAP;
+    public static final Map<String, Professor> PROF_FULL_NAME_MAP;
     static {
         final int initialCapacity = 30;
-        PROF_FULL_NAME_MAP = new HashMap<>(initialCapacity);
+        MODIFIABLE_PROF_FULL_NAME_MAP = new HashMap<>(initialCapacity);
+        PROF_FULL_NAME_MAP = Collections.unmodifiableMap(MODIFIABLE_PROF_FULL_NAME_MAP);
     }
 
     private final String firstName;
     private final String lastName;
 
-    // TODO [xml:read]
     public Professor(final Element profElement) throws MalformedXmlDataException {
-        // get first name and last name, and check if a prof by that full name
-        // already exists in [PROF_FULL_NAME_MAP]. If so, return that prof, and
-        // if not, create one, register it to the map, and return it.
-        this.firstName = null;
-        this.lastName = null;
+        this.firstName = XmlUtils.getMandatoryAttr(profElement, Xml.FIRST_NAME_ATTR).getValue();
+        this.lastName  = XmlUtils.getMandatoryAttr(profElement, Xml.LAST_NAME_ATTR).getValue();
+
+        final String fullName = firstName + " " + lastName;
+        MODIFIABLE_PROF_FULL_NAME_MAP.putIfAbsent(fullName, this);
     }
 
     public String getFirstName() {
@@ -40,6 +42,9 @@ public final class Professor {
 
 
     public enum Xml implements XmlUtils.XmlConstant {
+        PROFESSOR_TAG ("Instructor"),
+        FIRST_NAME_ATTR ("firstName"),
+        LAST_NAME_ATTR ("lastName"),
         ;
         private final String value;
 

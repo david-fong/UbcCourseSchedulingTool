@@ -6,18 +6,15 @@ import java.util.Set;
  *
  * @param <S> The type of the [ScheduleIf]'s contents (represent course sections).
  */
-public interface ScheduleIf<S> {
+interface ScheduleIf<S> {
 
     Set<S> getCourseSections();
 
-    default boolean isBasedOffAnStt() {
-        return false;
-    }
+    // implementations should return whether they have any stt sections.
+    boolean isBasedOffAnStt();
 
     String getEnclosedSttName();
 
     Set<S> getEnclosedSttSections();
-
-
 
 }

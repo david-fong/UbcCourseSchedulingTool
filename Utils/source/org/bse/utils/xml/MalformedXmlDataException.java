@@ -17,11 +17,17 @@ public class MalformedXmlDataException extends Exception {
     }
 
     public static MalformedXmlDataException noSuchUniqueChildElement(Element host, String tagName) {
-        return new MalformedXmlDataException(""); // TODO [impl][noSuchUniqueChildElement]:
+        return new MalformedXmlDataException(String.format("A unique %s by the tag name"
+                + " \"%s\" could not be found as a direct child of the host %s",
+                Element.class.getName(), tagName, host.getTagName()
+        ));
     }
 
     public static MalformedXmlDataException missingAttr(Element host, String attrName) {
-        return new MalformedXmlDataException(""); // TODO [impl][missingAttr]:
+        return new MalformedXmlDataException(String.format("An %s.%s by the name \"%s\""
+                + " could not be found for the %s %s", Attr.class.getPackageName(),
+                Attr.class.getName(), attrName, Element.class.getName(), host.getTagName()
+        ));
     }
 
     public static MalformedXmlDataException invalidAttrVal(Attr attr) {

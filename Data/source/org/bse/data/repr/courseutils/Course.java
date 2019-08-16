@@ -280,13 +280,37 @@ public final class Course implements CreditValued, HyperlinkBookIf {
         private final Set<CourseSection> requiredLabOptions;
         private final Set<CourseSection> requiredTutorialOptions;
 
-        // TODO [xml:read][CourseLectureSection]
         private CourseLectureSection(final Element lectureElement) throws MalformedXmlDataException {
             super(lectureElement);
 
-            // TODO: make unmodifiable:
-            this.requiredLabOptions = new HashSet<>();
-            this.requiredTutorialOptions = new HashSet<>();
+            this.requiredLabOptions = getComplimentarySectionOptions(
+                    XmlUtils.getOptionalUniqueChildByTag(lectureElement, Xml.LABS_TAG)
+            );
+            this.requiredTutorialOptions = getComplimentarySectionOptions(
+                    XmlUtils.getOptionalUniqueChildByTag(lectureElement, Xml.TUTORIALS_TAG)
+            );
+        }
+
+        // helper for xml constructor.
+        private Set<CourseSection> getComplimentarySectionOptions(final Element optionsElement) throws MalformedXmlDataException {
+            if (optionsElement == null) {
+                return Collections.emptySet();
+            } else {
+                final Set<CourseSection> complementarySections = new HashSet<>();
+                for (final Element sectionElement : XmlUtils.getChildElementsByTagName(
+                        optionsElement, SecXml.COURSE_SECTION_TAG
+                )) {
+                    try {
+                        complementarySections.add(getSectionByIdToken(XmlUtils.getMandatoryAttr(
+                                sectionElement, SecXml.LECTURE_COMPLIMENTARY_SECTION_REF_ATTR
+                        ).getValue()));
+                    } catch (CourseSectionNotFoundException e) {
+                        throw new RuntimeException("lab or tutorial sections for a lecture"
+                                + " must be from the same course as the lecture", e);
+                    }
+                }
+                return Collections.unmodifiableSet(complementarySections);
+            }
         }
 
         /**
@@ -323,6 +347,12 @@ public final class Course implements CreditValued, HyperlinkBookIf {
         COREQS_TAG ("Corequisites"),
 
         LECTURES_TAG ("Lectures"),
+        /*
+        the below two tags are optional for use inside a lecture section element.
+        if present, list complimentary sections to the same course as the lecture
+        of which a student must take one at the same time as the declaring lecture
+        element to be considered taking the course. If not found, none are required.
+         */
         LABS_TAG ("Labs"),
         TUTORIALS_TAG ("Tutorials"),
         ;
@@ -340,6 +370,7 @@ public final class Course implements CreditValued, HyperlinkBookIf {
 
     public enum SecXml implements XmlUtils.XmlConstant {
         COURSE_SECTION_TAG ("Section"),
+        LECTURE_COMPLIMENTARY_SECTION_REF_ATTR ("at"),
         SECTION_CODE_ATTR ("code"),
         SECTION_SEMESTER_ATTR ("semester"), // See [CourseUtils.Semester]
         SECTION_PROFESSOR_TAG("Instructor"),
