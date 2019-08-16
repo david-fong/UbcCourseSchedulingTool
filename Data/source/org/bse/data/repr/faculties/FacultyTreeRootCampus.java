@@ -25,6 +25,8 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         return getNameNoTitle() + getType().title;
     }
 
+    String getSectionIdToken();
+
     @Override
     default String getXmlConstantValue() {
         return getNameNoTitle();
@@ -83,15 +85,15 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         //OKANAGAN  ("Okanagan", "OKA", OkanaganFaculties.class, "UBCO"),
         ;
         private final String name;
-        private final String courseSectionRefToken;
+        private final String sectionIdToken;
         private final Class<? extends FacultyTreeNode> childrenClass;
         private final String urlQueryTokenVal;
         private final Map<String, FacultyTreeNode> squashedFacultyAbbrMap; // unmodifiable
 
-        <T extends Enum & FacultyTreeNode> UbcCampuses(String name, String courseSectionRefToken,
+        <T extends Enum & FacultyTreeNode> UbcCampuses(String name, String sectionIdToken,
                                                        Class<T> childrenClass, String urlQueryTokenVal) {
             this.name = name;
-            this.courseSectionRefToken = courseSectionRefToken;
+            this.sectionIdToken = sectionIdToken;
             this.childrenClass = childrenClass;
             this.urlQueryTokenVal = urlQueryTokenVal;
 
@@ -102,9 +104,9 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
 
         private void recursiveInitSquashedFacultyAbbrMap(final Map<String, FacultyTreeNode> map, final FacultyTreeNode scrub) {
             if (scrub != null) {
-                for (FacultyTreeNode facultyTreeNode : scrub.getChildren()) {
-                    map.putIfAbsent(facultyTreeNode.getAbbreviation(), facultyTreeNode);
-                    recursiveInitSquashedFacultyAbbrMap(map, facultyTreeNode);
+                for (FacultyTreeNode childNode : scrub.getChildren()) {
+                    map.putIfAbsent(childNode.getAbbreviation(), childNode);
+                    recursiveInitSquashedFacultyAbbrMap(map, childNode);
                 }
             }
         }
@@ -120,6 +122,11 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         }
 
         @Override
+        public String getSectionIdToken() {
+            return sectionIdToken;
+        }
+
+        @Override
         public FacultyTreeNode[] getChildren() {
             return childrenClass.getEnumConstants();
         }
@@ -130,16 +137,16 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         }
 
         /**
-         * @param sectionRefToken
+         * @param sectionIdSearchToken a String
          * @return [null] if not found.
          */
-        public static UbcCampuses getCampusBySectionRefToken(String sectionRefToken) {
+        public static UbcCampuses getCampusBySectionRefToken(String sectionIdSearchToken) throws CampusNotFoundException {
             for (UbcCampuses campus : UbcCampuses.values()) {
-                if (campus.courseSectionRefToken.equals(sectionRefToken)) {
+                if (campus.sectionIdToken.equals(sectionIdSearchToken)) {
                     return campus;
                 }
             }
-            return null;
+            throw new CampusNotFoundException(sectionIdSearchToken);
         }
 
     }

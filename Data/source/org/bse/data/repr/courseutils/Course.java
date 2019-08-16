@@ -3,7 +3,9 @@ package org.bse.data.repr.courseutils;
 import org.bse.data.repr.HyperlinkBookIf;
 import org.bse.data.repr.Professor;
 import org.bse.data.repr.Student;
+import org.bse.data.repr.faculties.CampusNotFoundException;
 import org.bse.data.repr.faculties.FacultyTreeNode;
+import org.bse.data.repr.faculties.FacultyTreeRootCampus;
 import org.bse.data.schedule.Schedule;
 import org.bse.utils.requirement.Requirement;
 import org.bse.utils.requirement.operators.matching.CreditValued;
@@ -14,15 +16,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.swing.text.html.Option;
+import java.util.*;
 
 /**
  *
  */
 public final class Course implements CreditValued, HyperlinkBookIf {
+
+    private static final String LAB_SECTION_ID_TOKEN_PREFIX = "L";
+    private static final String TUTORIAL_SECTION_ID_TOKEN_PREFIX = "T";
 
     private final FacultyTreeNode facultyTreeNode;
     private final int creditValue;
@@ -45,17 +48,25 @@ public final class Course implements CreditValued, HyperlinkBookIf {
             courseElement = (Element)nodeList.item(0);
         }
 
-        this.facultyTreeNode = null; // TODO [xml:read][Course:facultyNode]
+        try { // get faculty node:
+            this.facultyTreeNode = FacultyTreeRootCampus.UbcCampuses.getCampusBySectionRefToken(
+                    XmlUtils.getMandatoryAttr(courseElement, Xml.COURSE_CAMPUS_ATTR).getValue()
+            ).getSquashedFacultyAbbrMap().get(
+                    XmlUtils.getMandatoryAttr(courseElement, Xml.COURSE_FACULTY_ATTR).getValue()
+            );
+        } catch (CampusNotFoundException e) {
+            throw new MalformedXmlDataException(e);
+        }
 
         this.descriptionString = XmlUtils.getMandatoryUniqueChildByTag(
-                courseElement, Xml.DESCRIPTION_TAG
-        ).getTextContent();
+                courseElement, Xml.DESCRIPTION_TAG).getTextContent();
+
         this.creditValue = Integer.parseInt(XmlUtils.getMandatoryAttr(
-                courseElement, Xml.COURSE_CREDIT_ATTR
-        ).getValue());
+                courseElement, Xml.COURSE_CREDIT_ATTR).getValue());
+
         this.courseCodeToken = XmlUtils.getMandatoryAttr(
-                courseElement, Xml.COURSE_CODE_ATTR
-        ).getValue();
+                courseElement, Xml.COURSE_CODE_ATTR).getValue();
+
         this.registrationUrlString = facultyTreeNode.getRegistrationSiteUrl()
                 .replace(QuerySpecifierTokens.FACULTY.tnameQueryVal,
                         QuerySpecifierTokens.COURSE.tnameQueryVal) // TODO [style] is there a nicer, more reusable way to do this?
@@ -69,27 +80,8 @@ public final class Course implements CreditValued, HyperlinkBookIf {
         this.prerequisites = new MatchingRequirementIf.StrictlyFailingMatchThreshReq<>();
         this.corequisites = new MatchingRequirementIf.StrictlyFailingMatchThreshReq<>();
 
-        // lab sections:
-        final List<Element> labSectionElements = XmlUtils.getChildElementsByTagName(
-                XmlUtils.getMandatoryUniqueChildByTag(courseElement, Xml.LABS_TAG),
-                SecXml.COURSE_SECTION_TAG
-        );
-        final Set<CourseLectureSection> labSections = new HashSet<>(labSectionElements.size());
-        for (Element sectionElement : labSectionElements) {
-            labSections.add(new CourseLectureSection(sectionElement));
-        }
-        this.labSections = Collections.unmodifiableSet(labSections);
-
-        // tutorial sections:
-        final List<Element> tutorialSectionElements = XmlUtils.getChildElementsByTagName(
-                XmlUtils.getMandatoryUniqueChildByTag(courseElement, Xml.TUTORIALS_TAG),
-                SecXml.COURSE_SECTION_TAG
-        );
-        final Set<CourseLectureSection> tutorialSections = new HashSet<>(tutorialSectionElements.size());
-        for (Element sectionElement : tutorialSectionElements) {
-            tutorialSections.add(new CourseLectureSection(sectionElement));
-        }
-        this.tutorialSections = Collections.unmodifiableSet(tutorialSections);
+        this.labSections = parseOutLabTutorialSections(courseElement, Xml.LABS_TAG);
+        this.tutorialSections = parseOutLabTutorialSections(courseElement, Xml.TUTORIALS_TAG);
 
         // lecture sections (must be done last to refer to labs and tutorials):
         final List<Element> lectureSectionElements = XmlUtils.getChildElementsByTagName(
@@ -118,7 +110,9 @@ public final class Course implements CreditValued, HyperlinkBookIf {
 
     @Override
     public String toString() {
-        return facultyTreeNode.getAbbreviation() + " " + courseCodeToken;
+        return facultyTreeNode.getRootCampus().getSectionIdToken()
+                + " " + facultyTreeNode.getAbbreviation()
+                + " " + courseCodeToken;
     }
 
     @Override
@@ -150,6 +144,52 @@ public final class Course implements CreditValued, HyperlinkBookIf {
         return tutorialSections;
     }
 
+    public final CourseSection getSectionByIdToken(final String sectionIdToken) throws CourseSectionNotFoundException {
+        final Optional<CourseLectureSection> section;
+        if (sectionIdToken.startsWith(LAB_SECTION_ID_TOKEN_PREFIX)) {
+            return null;
+        } else if (sectionIdToken.startsWith(TUTORIAL_SECTION_ID_TOKEN_PREFIX)) {
+            return null;
+        } else {
+             section = lectureSections.stream()
+                    .filter(lectureSec -> lectureSec.getSectionIdToken().equals(sectionIdToken))
+                    .findAny();
+        }
+        if (section.isPresent()) {
+            return section.get();
+        } else {
+            throw new CourseSectionNotFoundException(this, sectionIdToken);
+        }
+    }
+
+    // helper for xml constructor.
+    private Set<CourseSection> parseOutLabTutorialSections(final Element courseElement, final Xml sectionGroupTag) throws MalformedXmlDataException {
+        final String idPrefix;
+        switch (sectionGroupTag) {
+            case LABS_TAG:      idPrefix = LAB_SECTION_ID_TOKEN_PREFIX; break;
+            case TUTORIALS_TAG: idPrefix = TUTORIAL_SECTION_ID_TOKEN_PREFIX; break;
+            default: throw new RuntimeException(new IllegalArgumentException());
+        }
+
+        final List<Element> SectionElements = XmlUtils.getChildElementsByTagName(
+                XmlUtils.getMandatoryUniqueChildByTag(courseElement, Xml.LABS_TAG),
+                SecXml.COURSE_SECTION_TAG
+        );
+
+        final Set<CourseSection> sectionGroup = new HashSet<>(SectionElements.size());
+        for (final Element sectionElement : SectionElements) {
+            final CourseSection labSectionObj = new CourseSection(sectionElement);
+            if (!labSectionObj.sectionIdToken.startsWith(idPrefix)) {
+                throw new MalformedXmlDataException(String.format("section id tokens"
+                        + " under the \"%s\" tag must start with a \"%s\"",
+                        sectionGroupTag.value, idPrefix
+                ));
+            }
+            sectionGroup.add(labSectionObj);
+        }
+        return Collections.unmodifiableSet(sectionGroup);
+    }
+
 
 
     /**
@@ -162,15 +202,15 @@ public final class Course implements CreditValued, HyperlinkBookIf {
      *
      * TODO [rep]: add representation of seating / methods to fetch seating state from web.
      */
-    public class CourseSection implements CourseSectionRef, HyperlinkBookIf {
+    public class CourseSection implements HyperlinkBookIf {
 
-        private final String sectionCode;
+        private final String sectionIdToken;
         private final CourseUtils.Semester semester;
         private final Professor professor;
         private final Set<CourseSectionBlock> blocks;
 
         private CourseSection(final Element sectionElement) throws MalformedXmlDataException {
-            this.sectionCode = XmlUtils.getMandatoryAttr(
+            this.sectionIdToken = XmlUtils.getMandatoryAttr(
                     sectionElement, SecXml.SECTION_CODE_ATTR
             ).getValue();
             this.semester = CourseUtils.Semester.decodeXmlAttr(XmlUtils.getMandatoryAttr(
@@ -200,14 +240,13 @@ public final class Course implements CreditValued, HyperlinkBookIf {
             return Course.this;
         }
 
-        @Override
-        public final String toString() {
-            return Course.this.toString() + " " + sectionCode;
+        public final String getSectionIdToken() {
+            return sectionIdToken;
         }
 
         @Override
-        public final boolean isLoaded() {
-            return true;
+        public final String toString() {
+            return Course.this.toString() + " " + sectionIdToken;
         }
 
         @Override
@@ -216,7 +255,7 @@ public final class Course implements CreditValued, HyperlinkBookIf {
                     .replace(QuerySpecifierTokens.COURSE.tnameQueryVal,
                             QuerySpecifierTokens.SECTION.tnameQueryVal)
                     + QuerySpecifierTokens.SECTION.tokenStub
-                    + sectionCode;
+                    + sectionIdToken;
         }
 
         public final CourseUtils.Semester getSemester() {
@@ -229,11 +268,6 @@ public final class Course implements CreditValued, HyperlinkBookIf {
 
         public final Set<CourseSectionBlock> getBlocks() {
             return blocks;
-        }
-
-        @Override
-        public final CourseSection dereference() {
-            return this;
         }
     }
 
@@ -278,6 +312,7 @@ public final class Course implements CreditValued, HyperlinkBookIf {
 
     public enum Xml implements XmlUtils.XmlConstant {
         COURSE_TAG ("Course"),
+        COURSE_CAMPUS_ATTR ("campus"),
         COURSE_FACULTY_ATTR ("faculty"),
         COURSE_CODE_ATTR ("code"),
         COURSE_CREDIT_ATTR ("credits"),
@@ -306,7 +341,7 @@ public final class Course implements CreditValued, HyperlinkBookIf {
     public enum SecXml implements XmlUtils.XmlConstant {
         COURSE_SECTION_TAG ("Section"),
         SECTION_CODE_ATTR ("code"),
-        SECTION_SEMESTER_ATTR ("semester"), // See [CourseUtils.Semester
+        SECTION_SEMESTER_ATTR ("semester"), // See [CourseUtils.Semester]
         SECTION_PROFESSOR_TAG("Instructor"),
         ;
         private final String value;
