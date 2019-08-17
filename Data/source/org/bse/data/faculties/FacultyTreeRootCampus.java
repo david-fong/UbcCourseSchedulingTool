@@ -25,7 +25,7 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         return getNameNoTitle() + getType().title;
     }
 
-    String getSectionIdToken();
+    String getCampusIdToken();
 
     @Override
     default String getXmlConstantValue() {
@@ -85,15 +85,15 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         //OKANAGAN  ("Okanagan", "OKA", OkanaganFaculties.class, "UBCO"),
         ;
         private final String name;
-        private final String sectionIdToken;
+        private final String campusIdToken;
         private final Class<? extends FacultyTreeNode> childrenClass;
         private final String urlQueryTokenVal;
         private final Map<String, FacultyTreeNode> squashedFacultyAbbrMap; // unmodifiable
 
-        <T extends Enum & FacultyTreeNode> UbcCampuses(String name, String sectionIdToken,
+        <T extends Enum & FacultyTreeNode> UbcCampuses(String name, String campusIdToken,
                                                        Class<T> childrenClass, String urlQueryTokenVal) {
             this.name = name;
-            this.sectionIdToken = sectionIdToken;
+            this.campusIdToken = campusIdToken;
             this.childrenClass = childrenClass;
             this.urlQueryTokenVal = urlQueryTokenVal;
 
@@ -102,11 +102,20 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
             this.squashedFacultyAbbrMap = Collections.unmodifiableMap(squashedFacultyAbbrMap);
         }
 
-        private void recursiveInitSquashedFacultyAbbrMap(final Map<String, FacultyTreeNode> map, final FacultyTreeNode scrub) {
+        private void recursiveInitSquashedFacultyAbbrMap(final Map<String, FacultyTreeNode> abbrMap, final FacultyTreeNode scrub) {
             if (scrub != null) {
                 for (FacultyTreeNode childNode : scrub.getChildren()) {
-                    map.putIfAbsent(childNode.getAbbreviation(), childNode);
-                    recursiveInitSquashedFacultyAbbrMap(map, childNode);
+                    final String childAbbr = childNode.getAbbreviation();
+                    assert !abbrMap.containsKey(childAbbr) : String.format(
+                            "Found two [%s]s going by the abbreviation \"%s\" - one"
+                            + " under the node \"%s\", and the other under the node \"%s\"."
+                            + " Requires fix before project deployment; please investigate.",
+                            FacultyTreeNode.class.getName(), childAbbr,
+                            abbrMap.get(childAbbr).getAbbreviation(),
+                            childNode.getAbbreviation()
+                    );
+                    abbrMap.put(childAbbr, childNode);
+                    recursiveInitSquashedFacultyAbbrMap(abbrMap, childNode);
                 }
             }
         }
@@ -122,8 +131,8 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         }
 
         @Override
-        public String getSectionIdToken() {
-            return sectionIdToken;
+        public String getCampusIdToken() {
+            return campusIdToken;
         }
 
         @Override
@@ -137,18 +146,18 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         }
 
         /**
-         * @param sectionIdSearchToken a String
-         * @return [null] if not found.
+         * @param campusIdSearchToken Ex "VAN" or "OKA".
+         * @return The [UbcCampuses] instance by the token ID [campusIdSearchToken] if it exists.
+         * @throws CampusNotFoundException If no [UbcCampuses] by the token ID [campusIdSearchToken] exists.
          */
-        public static UbcCampuses getCampusBySectionRefToken(String sectionIdSearchToken) throws CampusNotFoundException {
+        public static UbcCampuses getCampusByIdToken(String campusIdSearchToken) throws CampusNotFoundException {
             for (UbcCampuses campus : UbcCampuses.values()) {
-                if (campus.sectionIdToken.equals(sectionIdSearchToken)) {
+                if (campus.campusIdToken.equals(campusIdSearchToken)) {
                     return campus;
                 }
             }
-            throw new CampusNotFoundException(sectionIdSearchToken);
+            throw new CampusNotFoundException(campusIdSearchToken);
         }
-
     }
 
 }

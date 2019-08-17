@@ -16,7 +16,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  *
@@ -48,7 +52,7 @@ public final class Course implements CreditValued, HyperlinkBookIf {
         }
 
         try { // get faculty node:
-            this.facultyTreeNode = FacultyTreeRootCampus.UbcCampuses.getCampusBySectionRefToken(
+            this.facultyTreeNode = FacultyTreeRootCampus.UbcCampuses.getCampusByIdToken(
                     XmlUtils.getMandatoryAttr(courseElement, Xml.COURSE_CAMPUS_ATTR).getValue()
             ).getSquashedFacultyAbbrMap().get(
                     XmlUtils.getMandatoryAttr(courseElement, Xml.COURSE_FACULTY_ATTR).getValue()
@@ -109,7 +113,7 @@ public final class Course implements CreditValued, HyperlinkBookIf {
 
     @Override
     public String toString() {
-        return facultyTreeNode.getRootCampus().getSectionIdToken()
+        return facultyTreeNode.getRootCampus().getCampusIdToken()
                 + " " + facultyTreeNode.getAbbreviation()
                 + " " + courseCodeToken;
     }

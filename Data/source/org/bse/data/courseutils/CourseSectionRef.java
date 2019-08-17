@@ -69,7 +69,7 @@ public interface CourseSectionRef {
         public CourseSectionRefUnloaded(String refString) throws CampusNotFoundException {
             final String[] tokens = refString.split("\\s+");
             final FacultyTreeRootCampus campusToken = FacultyTreeRootCampus
-                    .UbcCampuses.getCampusBySectionRefToken(tokens[0]);
+                    .UbcCampuses.getCampusByIdToken(tokens[0]);
             this.facultyToken = campusToken.getSquashedFacultyAbbrMap().get(tokens[1]);
             this.courseToken  = tokens[2];
             this.sectionToken = tokens[3];

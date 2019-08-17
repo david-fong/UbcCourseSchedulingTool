@@ -1,19 +1,22 @@
 package org.bse.data;
 
 import org.bse.data.courseutils.Course;
+import org.bse.data.courseutils.CourseUtils.Semester;
 import org.bse.data.courseutils.CourseUtils.YearOfStudy;
+import org.bse.data.faculties.CampusNotFoundException;
 import org.bse.data.faculties.FacultyTreeRootCampus;
-import org.bse.data.schedule.Schedule;
 import org.bse.data.schedule.WorklistGroup;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * TODO [doc]: write documentation.
@@ -26,15 +29,13 @@ public final class Student implements XmlUtils.UserDataXml {
     private FacultyTreeRootCampus.UbcCampuses campus;
 
     /*
-    TODO [repr][Student]: Unless we keep data for sections from past years, this
-     will need to change to map to a set of [Course]s instead of a [Schedule].
-     Also, we need to investigate whether registering in any courses depend on
+    TODO [repr][Student]: investigate whether registering in any courses depend on
      whether the student got a certain mark for a prerequisite. This may require
      a wrapper class around [Course] that takes a [grade] constructor argument.
      I'd do it, but I'd feel bad about asking about this information from the user.
      */
-    private final Map<YearOfStudy, Schedule> previousSchedules;
-    private final Map<YearOfStudy, WorklistGroup> worklistGroups; // Worklists must not have the same name.
+    private final Map<YearOfStudy, Map<Semester, Set<Course>>> completedCoursesMap; // modifiable! be careful.
+    private final Map<YearOfStudy, WorklistGroup> worklistGroups; // modifiable! be careful.
 
     // For first time-creation. Subsequent constructions
     // upon application-start will be from saved xml data.
@@ -44,33 +45,40 @@ public final class Student implements XmlUtils.UserDataXml {
         this.lastName = lastName;
         this.currentYear = yearOfStudy;
         this.campus = campus;
-        this.previousSchedules = new EnumMap<>(YearOfStudy.class);
+        this.completedCoursesMap = new EnumMap<>(YearOfStudy.class);
         this.worklistGroups = new EnumMap<>(YearOfStudy.class);
     }
 
-    // TODO [xml:read][Student]
     // read cached student data.
     public Student(final Element studentElement) throws MalformedXmlDataException {
         this.firstName = XmlUtils.getMandatoryAttr(studentElement, Xml.FIRST_NAME_ATTR).getValue();
         this.lastName = XmlUtils.getMandatoryAttr(studentElement, Xml.LAST_NAME_ATTR).getValue();
         this.currentYear = YearOfStudy.decodeXmlAttr(XmlUtils.getMandatoryAttr(studentElement, Xml.YEAR_OF_STUDY_ATTR));
-        this.campus = null; // need to create enum.static decoder
+        try {
+            this.campus = FacultyTreeRootCampus.UbcCampuses.getCampusByIdToken(
+                    XmlUtils.getMandatoryAttr(studentElement, Xml.CAMPUS_ATTR).getValue()
+            );
+        } catch (CampusNotFoundException e) {
+            throw new MalformedXmlDataException(e);
+        }
 
-        this.previousSchedules = Collections.unmodifiableMap(new EnumMap<>(YearOfStudy.class)); // need to populate.
-        this.worklistGroups = Collections.unmodifiableMap(new EnumMap<>(YearOfStudy.class)); // need to populate.
-    }
+        this.completedCoursesMap = parseOutCompletedCoursesMap(
+                XmlUtils.getMandatoryUniqueChildByTag(studentElement, Xml.PREVIOUS_COURSES_TAG)
+        );
 
-    // TODO [xml:write][Student]
-    @Override
-    public Element toXml(final Document document) {
-        final Element studentElement = document.createElement(Xml.STUDENT_TAG.value);
-        studentElement.setAttribute(Xml.FIRST_NAME_ATTR.value, firstName);
-        studentElement.setAttribute(Xml.LAST_NAME_ATTR.value, lastName);
-        studentElement.setAttribute(Xml.YEAR_OF_STUDY_ATTR.value, currentYear.getXmlConstantValue());
-        studentElement.setAttribute(Xml.CAMPUS_ATTR.value, campus.getXmlConstantValue());
-        // previous schedules
-        // worklists
-        return studentElement;
+        // parse out [WorklistGroup] objects:
+        final Map<YearOfStudy, WorklistGroup> worklistGroups = new EnumMap<>(YearOfStudy.class);
+        final List<Element> worklistGroupElements = XmlUtils.getChildElementsByTagName(
+                XmlUtils.getMandatoryUniqueChildByTag(studentElement, Xml.WORKLIST_GROUPS_TAG),
+                WorklistGroup.Xml.WORKLIST_GROUP_TAG
+        );
+        for (Element worklistGroupElement : worklistGroupElements) {
+            final YearOfStudy WorklistGroupYear = YearOfStudy.decodeXmlAttr(
+                    XmlUtils.getMandatoryAttr(worklistGroupElement, Xml.YEAR_OF_STUDY_ATTR)
+            );
+            worklistGroups.put(WorklistGroupYear, new WorklistGroup(worklistGroupElement));
+        }
+        this.worklistGroups = worklistGroups;
     }
 
     public final String getFirstName() {
@@ -89,8 +97,8 @@ public final class Student implements XmlUtils.UserDataXml {
         return campus;
     }
 
-    public final Map<YearOfStudy, Schedule> getPreviousSchedules() {
-        return previousSchedules;
+    public final Map<YearOfStudy, Map<Semester, Set<Course>>> getCompletedCoursesMap() {
+        return completedCoursesMap;
     }
 
     public final Map<YearOfStudy, WorklistGroup> getWorklistGroups() {
@@ -106,17 +114,48 @@ public final class Student implements XmlUtils.UserDataXml {
     }
 
     public final Set<Course> getCompletedCourses() {
-        return null; // TODO:
+        return completedCoursesMap.values().stream()
+                .map(map -> map.values().stream())
+                .flatMap(Function.identity())
+                .reduce(new HashSet<>(), (a, b) -> {
+                    a.addAll(b);
+                    return a;
+                })
+                ; // TODO [impl:refine] find ways to cache this information.
+    }
+
+    // TODO [xml:read][Student.completedCoursesMap]
+    private static Map<YearOfStudy, Map<Semester, Set<Course>>> parseOutCompletedCoursesMap(final Element coursesMapElement) {
+        return new EnumMap<>(YearOfStudy.class);
+    }
+
+    @Override
+    public Element toXml(final Document document) {
+        final Element studentElement = document.createElement(Xml.STUDENT_TAG.value);
+        studentElement.setAttribute(Xml.FIRST_NAME_ATTR.value, firstName);
+        studentElement.setAttribute(Xml.LAST_NAME_ATTR.value, lastName);
+        studentElement.setAttribute(Xml.YEAR_OF_STUDY_ATTR.value, currentYear.getXmlConstantValue());
+        studentElement.setAttribute(Xml.CAMPUS_ATTR.value, campus.getXmlConstantValue());
+
+        // TODO [xml:write][Student.previousSchedules]
+        // previous schedules
+
+        final Element worklistGroupsElement = document.createElement(Xml.WORKLIST_GROUPS_TAG.value);
+        for (YearOfStudy yearOfStudy : worklistGroups.keySet()){
+            final Element worklistGroupElement = worklistGroups.get(yearOfStudy).toXml(document);
+            worklistGroupElement.setAttribute(Xml.YEAR_OF_STUDY_ATTR.value, yearOfStudy.getXmlConstantValue());
+            worklistGroupsElement.appendChild(worklistGroupElement);
+        }
+        return studentElement;
     }
 
 
 
-    // TODO [xml:spec][Student]
     public enum Xml implements XmlUtils.XmlConstant {
         STUDENT_TAG ("Student"),
         FIRST_NAME_ATTR ("firstName"),
         LAST_NAME_ATTR ("lastName"),
-        YEAR_OF_STUDY_ATTR ("currentYear"),
+        YEAR_OF_STUDY_ATTR ("yearOfStudy"),
         CAMPUS_ATTR ("campus"),
         PREVIOUS_COURSES_TAG ("PreviousCourses"),
         WORKLIST_GROUPS_TAG("Worklists"),
