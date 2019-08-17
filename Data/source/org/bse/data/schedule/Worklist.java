@@ -60,9 +60,9 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     }
 
     @Override
-    public final boolean conflictsWithAny(CourseSection section) {
-        // disables adding [CourseSection]s if locked:
-        return isLocked || super.conflictsWithAny(section);
+    public boolean addIfNoConflicts(CourseSection section) {
+        // short-circuits the operation (skips call to super) if locked.
+        return !isLocked && super.addIfNoConflicts(section);
     }
 
     /**

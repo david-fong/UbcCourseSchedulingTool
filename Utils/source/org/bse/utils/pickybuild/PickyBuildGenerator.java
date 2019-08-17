@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  *
  * @param <T> The type of items contained in generated [PickyBuild]s.
  */
-public final class PickyBuildGenerator<T> {
+public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
 
     private final PickyBuild<T> templateBuild;
     private final List<Set<T>> clauses;
@@ -28,8 +28,9 @@ public final class PickyBuildGenerator<T> {
      *     [generateAllFullPickyBuilds]. This field initializer is not defensively
      *     copied, so this collection's clauses, and any enclosed [T] items must not
      *     be modified after being passed to this constructor. Each entry in this
-     *     collection is a 'clause. It is allowed for union between any two of the
-     *     provided clauses to be non-empty.
+     *     collection is a 'clause. It is allowed for any two clauses to have shared
+     *     items (using address-based equality comparison). See spec of [PickyBuild.
+     *     addIfNoConflicts] for handling of such situations.
      */
     public PickyBuildGenerator(
             final PickyBuild<T> templateBuild,
@@ -46,7 +47,7 @@ public final class PickyBuildGenerator<T> {
 
     /**
      * TODO [test]:
-     * @return Never null. See constructor spec.
+     * @return Never [null]. See constructor spec.
      */
     public Set<PickyBuild<T>> generateAllFullPickyBuilds() {
         Set<PickyBuild<T>> soFar = new HashSet<>(guessNumResults());
@@ -63,7 +64,8 @@ public final class PickyBuildGenerator<T> {
      * @param clauseIdx The index of the clause in [this].[clauses] to add options
      *     from to all [PickyBuild]s collected so far in [soFar].
      * @param soFar All [PickyBuild]s containing one option from each clause in [this]
-     *     .[clauses] from index zero to index [clauseIdx] exclusive.
+     *     .[clauses] from index zero to index [clauseIdx] exclusive. Is not modified
+     *     by this operation in any way, and is no longer needed after this operation.
      * @return All [PickyBuild]s containing one option from each clause in [this]
      *     .[clauses] from index zero to index [clauseIdx] inclusive.
      */
@@ -75,7 +77,7 @@ public final class PickyBuildGenerator<T> {
         final Set<PickyBuild<T>> newSoFar = new HashSet<>();
         for (PickyBuild<T> buildInProgress : soFar) {
             for (T optionFromNextClause : clauses.get(clauseIdx + 1)) {
-                PickyBuild<T> optionCopy = buildInProgress.copy();
+                final PickyBuild<T> optionCopy = buildInProgress.copy();
                 if (optionCopy.addIfNoConflicts(optionFromNextClause)) {
                     newSoFar.add(optionCopy);
                 }

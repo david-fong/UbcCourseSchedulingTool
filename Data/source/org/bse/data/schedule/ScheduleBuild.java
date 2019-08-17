@@ -85,30 +85,17 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
      * The operation will fail with a return value of false if any scheduling conflicts
      * would arise as a result of adding [section] to this [Schedule].
      *
-     * @param section A [CourseSection] to test adding to this [Schedule].
-     * @return [true] if [section] can be added without conflicts.
-     */
-    @Override
-    public boolean conflictsWithAny(CourseSection section) {
-        return !courseSections.contains(section)
-                && courseSections.stream()
-                .noneMatch(section::overlapsWith);
-    }
-
-    /**
-     * The operation will fail with a return value of false if any scheduling conflicts
-     * would arise as a result of adding [section] to this [Schedule].
-     *
      * @param section A [CourseSection] to attempt to add to this [Schedule].
      * @return [true] if the operation was successful.
      */
     @Override
-    public final boolean addIfNoConflicts(CourseSection section) {
-        final boolean canAdd = conflictsWithAny(section);
-        if (canAdd) {
+    public boolean addIfNoConflicts(CourseSection section) {
+        if (courseSections.stream().anyMatch(section::overlapsWith)) {
+            return false;
+        } else {
             courseSections.add(section);
+            return true;
         }
-        return canAdd;
     }
 
 //    /**

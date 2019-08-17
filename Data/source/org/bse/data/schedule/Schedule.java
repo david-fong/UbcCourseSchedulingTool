@@ -54,15 +54,6 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
     }
 
     /**
-     * Defensively shallow-copies.
-     */
-    Schedule(Schedule other) {
-        this.courseSections = other.courseSections;
-        this.sttName = other.sttName;
-        this.sttSections = other.sttSections;
-    }
-
-    /**
      * @return An unmodifiable view of the [Set] of
      *     [CourseSection]s contained in this [Schedule].
      */

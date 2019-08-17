@@ -7,6 +7,7 @@ import org.bse.data.repr.faculties.CampusNotFoundException;
 import org.bse.data.repr.faculties.FacultyTreeNode;
 import org.bse.data.repr.faculties.FacultyTreeRootCampus;
 import org.bse.data.schedule.Schedule;
+import org.bse.utils.pickybuild.PickyBuildElement;
 import org.bse.utils.requirement.Requirement;
 import org.bse.utils.requirement.operators.matching.CreditValued;
 import org.bse.utils.requirement.operators.matching.MatchingRequirementIf;
@@ -202,7 +203,7 @@ public final class Course implements CreditValued, HyperlinkBookIf {
      *
      * TODO [rep]: add representation of seating / methods to fetch seating state from web.
      */
-    public class CourseSection implements HyperlinkBookIf {
+    public class CourseSection implements PickyBuildElement<CourseSection>, HyperlinkBookIf {
 
         private final String sectionIdToken;
         private final CourseUtils.Semester semester;
@@ -231,8 +232,9 @@ public final class Course implements CreditValued, HyperlinkBookIf {
         }
 
         public final boolean overlapsWith(CourseSection other) {
-            return semester == other.semester && blocks.stream().anyMatch(block ->
-                    other.blocks.stream().anyMatch(block::overlapsWith)
+            // *the equality comparison is an optimization - not essential.
+            return this == other || (semester == other.semester && blocks.stream()
+                    .anyMatch(block -> other.blocks.stream().anyMatch(block::overlapsWith))
             );
         }
 
@@ -247,6 +249,11 @@ public final class Course implements CreditValued, HyperlinkBookIf {
         @Override
         public final String toString() {
             return Course.this.toString() + " " + sectionIdToken;
+        }
+
+        @Override
+        public Set<Set<CourseSection>> getPickyBuildFriends() {
+            return Collections.emptySet();
         }
 
         @Override
@@ -279,6 +286,7 @@ public final class Course implements CreditValued, HyperlinkBookIf {
 
         private final Set<CourseSection> requiredLabOptions;
         private final Set<CourseSection> requiredTutorialOptions;
+        private final Set<Set<CourseSection>> pickyBuildFriends; // unmodifiable;
 
         private CourseLectureSection(final Element lectureElement) throws MalformedXmlDataException {
             super(lectureElement);
@@ -289,6 +297,7 @@ public final class Course implements CreditValued, HyperlinkBookIf {
             this.requiredTutorialOptions = getComplimentarySectionOptions(
                     XmlUtils.getOptionalUniqueChildByTag(lectureElement, Xml.TUTORIALS_TAG)
             );
+            this.pickyBuildFriends = Set.of(requiredLabOptions, requiredTutorialOptions);
         }
 
         // helper for xml constructor.
@@ -329,6 +338,11 @@ public final class Course implements CreditValued, HyperlinkBookIf {
          */
         public final Set<CourseSection> getRequiredTutorialOptions() {
             return requiredTutorialOptions;
+        }
+
+        @Override
+        public final Set<Set<CourseSection>> getPickyBuildFriends() {
+            return pickyBuildFriends;
         }
     }
 

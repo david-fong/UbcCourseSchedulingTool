@@ -7,7 +7,7 @@ package org.bse.utils.pickybuild;
  *
  * @param <T> The type of item that can be added to a [PickyBuild] implementation.
  */
-public interface PickyBuild<T> {
+public interface PickyBuild<T extends PickyBuildElement<T>> {
 
     /**
      * @return A copy [PickyBuild] of an implementation instance. Cloning depth must
@@ -32,16 +32,6 @@ public interface PickyBuild<T> {
      * qualities are guaranteed not to change as the result of any of the operations
      * specified in this interface. Attempts to add an item that has already been
      * added should return [true] without any changes to the implementation's state.
-     *
-     * @param item An item to check if it can be added to [this][PickyBuild] without
-     *     conflicting with any existing items.
-     * @return True if [item] does not conflict with any current contents.
-     */
-    boolean conflictsWithAny(final T item);
-
-    /**
-     * It is up to the implementation to determine what qualifies as a conflict.
-     * Return value must be consistent with that of [conflictsWithAny].
      *
      * @param item An item to add if doing so would not result in any conflicts with
      *     existing items in [this][PickyBuild].
