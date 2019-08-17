@@ -7,6 +7,8 @@
       <sourceFolder url="file://$MODULE_DIR$/genresource" type="java-resource" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/resource" type="java-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/source/org/bse/data/buildings" />
+      <excludeFolder url="file://$MODULE_DIR$/source/org/bse/data/streets" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

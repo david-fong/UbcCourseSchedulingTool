@@ -1,7 +1,7 @@
-package org.bse.data.repr.spider;
+package org.bse.data.spider;
 
 import org.bse.data.coursedata.CourseDataLocator.StagedDataPath;
-import org.bse.data.repr.faculties.FacultyTreeNode;
+import org.bse.data.faculties.FacultyTreeNode;
 import org.bse.utils.xml.XmlFileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

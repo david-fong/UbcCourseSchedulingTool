@@ -1,7 +1,7 @@
-package org.bse.data.repr.faculties.vancouver;
+package org.bse.data.faculties.vancouver;
 
-import org.bse.data.repr.courseutils.Course;
-import org.bse.data.repr.faculties.FacultyTreeNode;
+import org.bse.data.courseutils.Course;
+import org.bse.data.faculties.FacultyTreeNode;
 
 import java.util.HashMap;
 import java.util.Map;

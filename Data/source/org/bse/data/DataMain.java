@@ -33,7 +33,6 @@ public final class DataMain {
         }
         System.out.println(CourseDataLocator.StagedDataPath.PRE_DEPLOYMENT.path);
         System.out.println(CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path);
-
     }
 
 }

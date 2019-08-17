@@ -1,8 +1,8 @@
-package org.bse.data.repr;
+package org.bse.data;
 
-import org.bse.data.repr.courseutils.Course;
-import org.bse.data.repr.courseutils.CourseUtils.YearOfStudy;
-import org.bse.data.repr.faculties.FacultyTreeRootCampus;
+import org.bse.data.courseutils.Course;
+import org.bse.data.courseutils.CourseUtils.YearOfStudy;
+import org.bse.data.faculties.FacultyTreeRootCampus;
 import org.bse.data.schedule.Schedule;
 import org.bse.data.schedule.WorklistGroup;
 import org.bse.utils.xml.MalformedXmlDataException;

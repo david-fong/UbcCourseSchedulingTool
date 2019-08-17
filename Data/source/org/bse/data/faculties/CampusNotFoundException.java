@@ -1,4 +1,4 @@
-package org.bse.data.repr.faculties;
+package org.bse.data.faculties;
 
 /**
  *

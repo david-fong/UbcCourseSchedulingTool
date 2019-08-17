@@ -1,9 +1,9 @@
 package org.bse.data.schedule;
 
-import org.bse.data.repr.courseutils.Course.CourseSection;
-import org.bse.data.repr.courseutils.CourseSectionNotFoundException;
-import org.bse.data.repr.courseutils.CourseSectionRef;
-import org.bse.data.repr.faculties.FacultyCourseNotFoundException;
+import org.bse.data.courseutils.Course.CourseSection;
+import org.bse.data.courseutils.CourseSectionNotFoundException;
+import org.bse.data.courseutils.CourseSectionRef;
+import org.bse.data.faculties.FacultyCourseNotFoundException;
 import org.bse.utils.pickybuild.PickyBuild;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.w3c.dom.Element;

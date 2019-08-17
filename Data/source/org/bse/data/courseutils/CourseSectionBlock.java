@@ -1,7 +1,7 @@
-package org.bse.data.repr.courseutils;
+package org.bse.data.courseutils;
 
-import org.bse.data.repr.courseutils.CourseUtils.BlockTime;
-import org.bse.data.repr.courseutils.CourseUtils.WeekDay;
+import org.bse.data.courseutils.CourseUtils.BlockTime;
+import org.bse.data.courseutils.CourseUtils.WeekDay;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
@@ -20,7 +20,7 @@ public final class CourseSectionBlock {
     private final BlockTimeEnclosure timeEnclosure;
     // TODO [repr][CourseSectionBlock]: add representation for location (building).
 
-    public CourseSectionBlock(final Element blockElement) throws MalformedXmlDataException {
+    CourseSectionBlock(final Element blockElement) throws MalformedXmlDataException {
         this.isWaitlist = blockElement.getAttributeNode(Xml.OPTIONAL_WAITLIST_FLAG_ATTR.value) != null;
 
         this.dayOfWeek = WeekDay.decodeXmlAttr(
@@ -38,7 +38,7 @@ public final class CourseSectionBlock {
         this.timeEnclosure = new BlockTimeEnclosure(start, end);
     }
 
-    // *note: do not change visibility. may be used in GUI
+    // *note: do not change visibility. may be used in GUI.
     public boolean overlapsWith(CourseSectionBlock other) {
         if (dayOfWeek != other.dayOfWeek) {
             return false;

@@ -1,8 +1,8 @@
-package org.bse.data.repr.faculties;
+package org.bse.data.faculties;
 
 import org.bse.data.coursedata.CourseDataLocator;
-import org.bse.data.repr.HyperlinkBookIf;
-import org.bse.data.repr.courseutils.Course;
+import org.bse.data.HyperlinkBookIf;
+import org.bse.data.courseutils.Course;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlFileUtils;
 

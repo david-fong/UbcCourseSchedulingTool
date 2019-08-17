@@ -1,4 +1,4 @@
-package org.bse.data.repr;
+package org.bse.data;
 
 public interface HyperlinkBookIf {
 

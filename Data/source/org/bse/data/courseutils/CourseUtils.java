@@ -1,4 +1,4 @@
-package org.bse.data.repr.courseutils;
+package org.bse.data.courseutils;
 
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;

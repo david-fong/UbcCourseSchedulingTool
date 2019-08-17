@@ -1,4 +1,4 @@
-package org.bse.data.repr;
+package org.bse.data.courseutils;
 
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
@@ -24,7 +24,7 @@ public final class Professor {
     private final String firstName;
     private final String lastName;
 
-    public Professor(final Element profElement) throws MalformedXmlDataException {
+    Professor(final Element profElement) throws MalformedXmlDataException {
         this.firstName = XmlUtils.getMandatoryAttr(profElement, Xml.FIRST_NAME_ATTR).getValue();
         this.lastName  = XmlUtils.getMandatoryAttr(profElement, Xml.LAST_NAME_ATTR).getValue();
 

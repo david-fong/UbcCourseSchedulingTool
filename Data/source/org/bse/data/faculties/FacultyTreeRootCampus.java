@@ -1,8 +1,8 @@
-package org.bse.data.repr.faculties;
+package org.bse.data.faculties;
 
-import org.bse.data.repr.HyperlinkBookIf;
-import org.bse.data.repr.courseutils.Course;
-import org.bse.data.repr.faculties.vancouver.VancouverFaculties;
+import org.bse.data.HyperlinkBookIf;
+import org.bse.data.courseutils.Course;
+import org.bse.data.faculties.vancouver.VancouverFaculties;
 import org.bse.utils.xml.XmlUtils;
 
 import java.nio.file.Path;

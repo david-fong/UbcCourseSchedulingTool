@@ -1,15 +1,14 @@
-package org.bse.data.repr.courseutils;
+package org.bse.data.courseutils;
 
-import org.bse.data.repr.courseutils.Course.CourseSection;
-import org.bse.data.repr.faculties.CampusNotFoundException;
-import org.bse.data.repr.faculties.FacultyCourseNotFoundException;
-import org.bse.data.repr.faculties.FacultyTreeNode;
-import org.bse.data.repr.faculties.FacultyTreeRootCampus;
+import org.bse.data.courseutils.Course.CourseSection;
+import org.bse.data.faculties.CampusNotFoundException;
+import org.bse.data.faculties.FacultyCourseNotFoundException;
+import org.bse.data.faculties.FacultyTreeNode;
+import org.bse.data.faculties.FacultyTreeRootCampus;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,7 +66,7 @@ public interface CourseSectionRef {
             this(XmlUtils.getMandatoryAttr(refElement, Xml.SECTION_REF_TO_ATTR).getValue());
         }
 
-        private CourseSectionRefUnloaded(String refString) throws CampusNotFoundException {
+        public CourseSectionRefUnloaded(String refString) throws CampusNotFoundException {
             final String[] tokens = refString.split("\\s+");
             final FacultyTreeRootCampus campusToken = FacultyTreeRootCampus
                     .UbcCampuses.getCampusBySectionRefToken(tokens[0]);

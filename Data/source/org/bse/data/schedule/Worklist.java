@@ -1,7 +1,7 @@
 package org.bse.data.schedule;
 
-import org.bse.data.repr.courseutils.Course;
-import org.bse.data.repr.courseutils.Course.CourseSection;
+import org.bse.data.courseutils.Course;
+import org.bse.data.courseutils.Course.CourseSection;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;

@@ -1,11 +1,10 @@
-package org.bse.data.repr.courseutils;
+package org.bse.data.courseutils;
 
-import org.bse.data.repr.HyperlinkBookIf;
-import org.bse.data.repr.Professor;
-import org.bse.data.repr.Student;
-import org.bse.data.repr.faculties.CampusNotFoundException;
-import org.bse.data.repr.faculties.FacultyTreeNode;
-import org.bse.data.repr.faculties.FacultyTreeRootCampus;
+import org.bse.data.HyperlinkBookIf;
+import org.bse.data.Student;
+import org.bse.data.faculties.CampusNotFoundException;
+import org.bse.data.faculties.FacultyTreeNode;
+import org.bse.data.faculties.FacultyTreeRootCampus;
 import org.bse.data.schedule.Schedule;
 import org.bse.utils.pickybuild.PickyBuildElement;
 import org.bse.utils.requirement.Requirement;
@@ -17,7 +16,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import javax.swing.text.html.Option;
 import java.util.*;
 
 /**

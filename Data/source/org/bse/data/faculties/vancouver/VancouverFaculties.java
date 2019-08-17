@@ -1,38 +1,34 @@
-package org.bse.data.repr.faculties.vancouver;
+package org.bse.data.faculties.vancouver;
 
-import org.bse.data.repr.courseutils.Course;
-import org.bse.data.repr.faculties.FacultyTreeNode;
+import org.bse.data.courseutils.Course;
+import org.bse.data.faculties.FacultyTreeNode;
+import org.bse.data.faculties.FacultyTreeRootCampus;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import static org.bse.data.repr.faculties.FacultyTreeNode.FacultyTreeNodeType.DEPARTMENT;
+import static org.bse.data.faculties.FacultyTreeNode.FacultyTreeNodeType.FACULTY;
 
-public enum ScienceFaculties implements FacultyTreeNode {
+/**
+ * We will go by the hierarchy specified in the second link.
+ * https://www.ubc.ca/our-campuses/vancouver/directories/faculties-schools.html
+ * https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments
+ */
+public enum VancouverFaculties implements FacultyTreeNode {
     // TODO [data]: add entries as needed. prefer alphabetical order.
+    APSC (FACULTY, "Applied Science", AppliedScienceFaculties.class),
     // ...
-    CPSC (DEPARTMENT, "Computer Science"),
-    // ...
-    MATH (DEPARTMENT, "Mathematics"),
-    // ...
-    PHYS (DEPARTMENT, "Physics"),
+    SCIE (FACULTY, "Science", ScienceFaculties.class),
     // ...
     ;
     private final FacultyTreeNodeType type;
     private final String name;
     private final Class<? extends FacultyTreeNode> childrenClass;
-    private final Map<String, Course> courseCodeMap;
 
-    <T extends Enum & FacultyTreeNode> ScienceFaculties
+    <T extends Enum & FacultyTreeNode> VancouverFaculties
             (FacultyTreeNodeType type, String name, Class<T> childrenClass) {
         this.type = type;
         this.name = name;
         this.childrenClass = childrenClass;
-        this.courseCodeMap = new HashMap<>();
-    }
-
-    ScienceFaculties(FacultyTreeNodeType type, String name) {
-        this(type, name, null);
     }
 
     @Override
@@ -52,17 +48,17 @@ public enum ScienceFaculties implements FacultyTreeNode {
 
     @Override
     public FacultyTreeNode getParentNode() {
-        return VancouverFaculties.SCIE;
+        return FacultyTreeRootCampus.UbcCampuses.VANCOUVER;
     }
 
     @Override
     public FacultyTreeNode[] getChildren() {
-        return childrenClass == null ? null : childrenClass.getEnumConstants();
+        return childrenClass.getEnumConstants();
     }
 
     @Override
     public Map<String, Course> getCourseIdTokenToCourseMap() {
-        return courseCodeMap;
+        return null;
     }
 
 }

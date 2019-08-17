@@ -1,6 +1,6 @@
 package org.bse.data.schedule;
 
-import org.bse.data.repr.courseutils.CourseSectionRef;
+import org.bse.data.courseutils.CourseSectionRef;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public final class Schedule implements ScheduleIf<CourseSectionRef> {
 
-    public static final String STT_NAME_FOR_SCHEDULE_WITHOUT_AN_STT = "N/A";
+    static final String STT_NAME_FOR_SCHEDULE_WITHOUT_AN_STT = "N/A";
 
     private final Set<CourseSectionRef> courseSections; // unmodifiable.
     private final String sttName;
