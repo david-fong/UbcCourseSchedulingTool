@@ -28,10 +28,12 @@ public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
      *     [generateAllFullPickyBuilds]. This field initializer is not defensively
      *     copied, so this collection's clauses, and any enclosed [T] items must not
      *     be modified after being passed to this constructor. Each entry in this
-     *     collection is a 'clause. It is allowed for any two clauses to have shared
-     *     items (using address-based equality comparison). See spec of [PickyBuild::
-     *     addIfNoConflicts] for handling of such situations. Empty clauses are allowed
-     *     and will be ignored.
+     *     collection is a 'clause.
+     *   - It is allowed for clauses to have shared items (using == comparison).
+     *       See spec of [PickyBuild::addIfNoConflicts] for handling of such situations.
+     *   - Empty clauses are allowed and will be ignored.
+     *   - [conjunctiveNormalFormed] must not be [null]. If empty, then generating
+     *       builds will return [templateBuild] directly.
      */
     public PickyBuildGenerator(
             final PickyBuild<T> templateBuild,
@@ -39,8 +41,9 @@ public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
         this.templateBuild = templateBuild;
         this.clauses = Collections.unmodifiableList(
                 conjunctiveNormalFormed.stream()
-                        .map(Collections::unmodifiableSet)
-                        .sorted(Comparator.comparingInt(Set::size))
+                        .filter(clause -> !clause.isEmpty()) // ignore empty clauses.
+                        .map(Collections::unmodifiableSet) // don't trust anybody- not even yourself.
+                        .sorted(Comparator.comparingInt(Set::size)) // order more-restrictive clauses first.
                         .collect(Collectors.toList())
         );
         this.numClauses = clauses.size();
@@ -49,10 +52,13 @@ public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
     /**
      * TODO [test][PickyBuildGenerator]:
      *
-     * @return Never [null]. See constructor spec.
+     * @return An unmodifiable [Set]. Never [null]. See constructor spec.
      */
     public Set<PickyBuild<T>> generateAllFullPickyBuilds() {
-        return recursiveGenerateBuilds(0, Set.of(templateBuild));
+        return (clauses.isEmpty())
+                ? Set.of(templateBuild)
+                : Collections.unmodifiableSet(recursiveGenerateBuilds(0, Set.of(templateBuild)))
+                ;
     }
 
     /**
@@ -86,7 +92,10 @@ public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
 
                     // and if that build accepts that element, hold
                     // on to that build for the next recursive step.
-                    newSoFar.add(optionCopy);
+                    newSoFar.addAll(new PickyBuildGenerator<>(
+                            optionCopy, // <- the build with that element
+                            optionFromNextClause.getPickyBuildFriends() // <- make sure it has its friends.
+                    ).generateAllFullPickyBuilds());
                 }
             }
         }
