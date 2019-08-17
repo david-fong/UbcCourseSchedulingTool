@@ -6,22 +6,18 @@ import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A representation of a collection of [CourseSection]s.
- * COMPLETELY immutable from a public point of view,
- * where instances can only be created through XML. The
- * original XML will only be created manually by the spider.
- * For saving worklists, see [ScheduleBuild.toXml].
+ * A representation of a collection of [CourseSection]s. Completely immutable.
+ * Instances can only be created through XML. The original XML will only be created
+ * manually by the spider. For saving worklists, please see [ScheduleBuild.toXml].
  */
 public final class Schedule implements ScheduleIf<CourseSectionRef> {
 
     public static final String STT_NAME_FOR_SCHEDULE_WITHOUT_AN_STT = "N/A";
 
-    private final Set<CourseSectionRef> courseSections;
-    private final Set<CourseSectionRef> publicSectionsView; // unmodifiable.
+    private final Set<CourseSectionRef> courseSections; // unmodifiable.
     private final String sttName;
     private final Set<CourseSectionRef> sttSections; // unmodifiable.
 
@@ -41,26 +37,27 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
         }
 
         // manually-added section fields:
-        this.courseSections = CourseSectionRef.extractAndParseAll(manualSectionListElement);
-        this.publicSectionsView = Collections.unmodifiableSet(courseSections);
+        final Set<CourseSectionRef> courseSections = CourseSectionRef.extractAndParseAll(manualSectionListElement);
 
         // standard timetable section fields:
         if (sttSectionListElement != null) {
             this.sttName = XmlUtils.getMandatoryAttr(sttSectionListElement, Xml.STT_NAME_ATTR).getValue();
-            this.sttSections = CourseSectionRef.extractAndParseAll(sttSectionListElement);
+            this.sttSections = Collections.unmodifiableSet(
+                    CourseSectionRef.extractAndParseAll(sttSectionListElement)
+            );
         } else {
             this.sttName = STT_NAME_FOR_SCHEDULE_WITHOUT_AN_STT;
             this.sttSections = Collections.emptySet();
         }
-        this.courseSections.addAll(sttSections);
+        courseSections.addAll(sttSections);
+        this.courseSections = courseSections;
     }
 
     /**
      * Defensively shallow-copies.
      */
     Schedule(Schedule other) {
-        this.courseSections = new HashSet<>(other.getCourseSections());
-        this.publicSectionsView = Collections.unmodifiableSet(this.courseSections);
+        this.courseSections = other.courseSections;
         this.sttName = other.sttName;
         this.sttSections = other.sttSections;
     }
@@ -70,7 +67,7 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
      *     [CourseSection]s contained in this [Schedule].
      */
     public final Set<CourseSectionRef> getCourseSections() {
-        return publicSectionsView;
+        return courseSections;
     }
 
     public final boolean isBasedOffAnStt() {

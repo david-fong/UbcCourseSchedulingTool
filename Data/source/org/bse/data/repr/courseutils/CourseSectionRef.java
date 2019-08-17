@@ -27,10 +27,10 @@ public interface CourseSectionRef {
      * Used to unpack [Schedule] data created by the Spider, or [Worklist] data
      * created by the user and stored by the application.
      *
-     * @param host An Element expected to contain some number (perhaps zero) of
-     *     child [Element]s formatted according to the [CourseSectionRef]
-     *     [Element] format spec. If null, returns a modifiable empty [Set].
-     * @return An unmodifiable [Set] of all [CourseSectionRef]s successfully
+     * @param host An [Element] expected to contain some number (perhaps zero)
+     *     of child [Element]s formatted according to the [CourseSectionRef]
+     *     [Element] format spec. If [null], returns a modifiable empty [Set].
+     * @return An modifiable [Set] of all [CourseSectionRef]s successfully
      *     parsed from recognized [Element]s directly under [host].
      * @throws MalformedXmlDataException If any [Element]s by the [CourseSectionRef]
      *     tag name were found but did not follow the rest of the format spec.
@@ -49,7 +49,7 @@ public interface CourseSectionRef {
             throw new MalformedXmlDataException(e);
         }
 
-        return Collections.unmodifiableSet(sectionRefs);
+        return sectionRefs;
     }
 
 
