@@ -1,12 +1,14 @@
 package org.bse.data.schedule;
 
+import org.bse.data.repr.courseutils.Course;
 import org.bse.data.repr.courseutils.Course.CourseSection;
-import org.bse.data.repr.courseutils.CourseSectionRef;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import java.util.Set;
 
 /**
  * A mutable wrapper for a [Schedule] object. While this class
@@ -20,7 +22,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     private WorklistFavorability favorability = WorklistFavorability.NEUTRAL;
     // ^does not effect internal behaviour.
 
-    Worklist(Schedule otherSchedule, String name) {
+    Worklist(final ScheduleBuild otherSchedule, final String name) {
         super(otherSchedule);
         this.name = name;
 
@@ -31,13 +33,9 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
         }
     }
 
-    public Worklist(Element worklistElement) throws MalformedXmlDataException {
+    Worklist(final Element worklistElement) throws MalformedXmlDataException {
         super(worklistElement);
-        this.name = XmlUtils.getOptionalAttr(
-                worklistElement,
-                Xml.WORKLIST_NAME_ATTR,
-                Xml.WORKLIST_NAME_ATTR_DEFAULT.value
-        );
+        this.name = XmlUtils.getMandatoryAttr(worklistElement, Xml.WORKLIST_NAME_ATTR).getValue();
         this.isLocked = worklistElement.getAttribute(Xml.WORKLIST_IS_LOCKED_ATTR.value) != null;
         this.favorability = WorklistFavorability.decodeXmlAttr(
                 XmlUtils.getMandatoryAttr(
@@ -47,13 +45,18 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
         );
     }
 
+    Worklist(final Schedule schedule, final String name) throws MalformedXmlDataException {
+        super(schedule);
+        this.name = name;
+    }
+
     @Override
     public Worklist copy() {
         return new Worklist(this, name);
     }
 
     @Override
-    public final boolean conflictsWithAny(CourseSectionRef section) {
+    public final boolean conflictsWithAny(CourseSection section) {
         // disables adding [CourseSection]s if locked:
         return isLocked || super.conflictsWithAny(section);
     }
@@ -89,7 +92,17 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     @Override
     public Element toXml(final Document document) {
         final Element worklistElement = document.createElement(Xml.WORKLIST_TAG.value);
-        createImmutableCopy().populateXmlElement(document, worklistElement);
+        {
+            worklistElement.appendChild(createSectionListElement(
+                    document, getCourseSections(), Schedule.Xml.MANUAL_SECTION_LIST_TAG
+            ));
+
+            final Element sttSectionListElement = createSectionListElement(
+                    document, getEnclosedSttSections(), Schedule.Xml.STT_SECTION_LIST_TAG
+            );
+            sttSectionListElement.setAttribute(Schedule.Xml.STT_NAME_ATTR.getXmlConstantValue(), getEnclosedSttName());
+            worklistElement.appendChild(sttSectionListElement);
+        }
         worklistElement.setAttribute(Xml.WORKLIST_NAME_ATTR.value, name);
         if (isLocked) {
             worklistElement.setAttribute(Xml.WORKLIST_IS_LOCKED_ATTR.value, "");
@@ -97,6 +110,22 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
         worklistElement.setAttribute(Xml.WORKLIST_FAVORABILITY_ATTR.value, favorability.getXmlConstantValue());
         return worklistElement;
     }
+
+    // helper for toXml.
+    private static Element createSectionListElement(final Document document,
+                                                    Set<CourseSection> sectionObjects,
+                                                    Schedule.Xml listName) {
+        final Element sectionListElement = document.createElement(listName.getXmlConstantValue());
+        for (CourseSection sectionObject : sectionObjects) {
+            final Element sectionElement = document.createElement(Course.SecXml.COURSE_SECTION_TAG.getXmlConstantValue());
+            sectionElement.setAttribute(
+                    Course.SecXml.LECTURE_COMPLIMENTARY_SECTION_REF_ATTR.getXmlConstantValue(),
+                    sectionObject.toString()); // See [Schedule]'s xml constructor and [CourseSectionRef.extractAndParseAll]
+            sectionListElement.appendChild(sectionElement);
+        }
+        return sectionListElement;
+    }
+
 
 
     public enum WorklistFavorability implements XmlUtils.XmlConstant {
@@ -132,8 +161,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
 
     public enum Xml implements XmlUtils.XmlConstant {
         WORKLIST_TAG("Worklist"), // for user data. do not use for data from UBC's registration site.
-        WORKLIST_NAME_ATTR ("worklistName"), // optional for the [MANUAL_SECTION_LIST_TAG] element if it exists.
-        WORKLIST_NAME_ATTR_DEFAULT ("unnamed"),
+        WORKLIST_NAME_ATTR ("worklistName"),
         WORKLIST_IS_LOCKED_ATTR ("locked"), // parsing: true if attribute exists and false otherwise.
         WORKLIST_FAVORABILITY_ATTR ("favorability"), // parsing: see [WorklistFavorability.decodeXmlAttr]
         ;

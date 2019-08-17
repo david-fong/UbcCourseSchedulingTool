@@ -17,10 +17,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class WorklistGroup implements XmlUtils.UserDataXml {
 
     private static final String NAME_OF_COPY_SUFFIX = "~";
+    private static final String DEFAULT_WORKLIST_NAME = "unnamed";
 
     private final Map<String, Worklist> worklists; // values never null.
-    private final Set<String> backingNameSet; // unmodifiable.
+    private final Set<String> backingNameSet; // unmodifiable. synced to [worklists]' keys
 
+    // use when user has no saved worklist group yet.
     public WorklistGroup() {
         this.worklists = new ConcurrentHashMap<>();
         this.backingNameSet = Collections.unmodifiableSet(worklists.keySet());
@@ -41,7 +43,7 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
     }
 
     /**
-     * @param other A [Schedule] to add a new [Worklist] based on. Must not be null.
+     * @param other A [Schedule] to add a new [Worklist] based on. Must not be [null].
      * @param name A name for the new [Worklist]. Operation fails if another
      *     [Worklist] by the same name already exists in this [WorklistGroup].
      *     If [null], will attempt to create a name from [other] if it has one, and
@@ -50,30 +52,25 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
      * @return The new [Worklist] based on [other] if the operation was successful,
      *     and [null] otherwise.
      */
-    public Worklist addNewBasedOn(Schedule other, String name) {
+    public Worklist addNewBasedOn(final ScheduleBuild other, final String name) {
         final Worklist copy;
 
         if (other instanceof Worklist) {
             final Worklist otherWorklist = (Worklist)other;
-            if (name == null) {
-                name = otherWorklist.getName();
-                if (otherWorklist.getName().equals(Worklist.Xml.WORKLIST_NAME_ATTR_DEFAULT.getXmlConstantValue())) {
-                    name = other.getEnclosedSttName() + NAME_OF_COPY_SUFFIX; // always add when using STT's name.
-                }
-                name = safeNameCopy(name);
-            }
-            copy = new Worklist(other, name);
+            copy = new Worklist(other, name != null ? name : safeNameCopy(otherWorklist.getName()));
         } else {
-            if (name == null) {
-                name = safeNameCopy(Worklist.Xml.WORKLIST_NAME_ATTR_DEFAULT.getXmlConstantValue());
-            }
-            copy = new Worklist(other, name);
+            copy = new Worklist(other, name != null ? name : safeNameCopy(DEFAULT_WORKLIST_NAME));
         }
 
-        // [copy] if the previous value mapped from key was null,
-        // which should only be true if there was no such mapping.
-        return worklists.putIfAbsent(name, copy) == null ? null : copy;
+        if (worklists.containsKey(copy.getName())) {
+            return null;
+        } else {
+            worklists.put(copy.getName(), copy);
+            return copy;
+        }
     }
+
+    // TODO add [addNewBasedOn Schedule] that delegates to above method with new ScheduleBuild
 
     /**
      * @param other Another [WorklistGroup]. This operation will fail if [other]
@@ -133,7 +130,7 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
 
     @Override
     public Element toXml(final Document document) {
-        final Element worklistElement = document.createElement(Xml.WORKLIST_GROUP_TAG.xmlAttrVal);
+        final Element worklistElement = document.createElement(Xml.WORKLIST_GROUP_TAG.value);
         for (Worklist worklist : worklists.values()) {
             worklistElement.appendChild(worklist.toXml(document));
         }
@@ -163,15 +160,15 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
     public enum Xml implements XmlUtils.XmlConstant {
         WORKLIST_GROUP_TAG ("WorklistGroup"),
         ;
-        private final String xmlAttrVal;
+        private final String value;
 
-        Xml(String xmlAttrVal) {
-            this.xmlAttrVal = xmlAttrVal;
+        Xml(String value) {
+            this.value = value;
         }
 
         @Override
         public String getXmlConstantValue() {
-            return xmlAttrVal;
+            return value;
         }
     }
 

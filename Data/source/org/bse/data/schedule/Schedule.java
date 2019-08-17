@@ -3,7 +3,6 @@ package org.bse.data.schedule;
 import org.bse.data.repr.courseutils.CourseSectionRef;
 import org.bse.utils.xml.MalformedXmlDataException;
 import org.bse.utils.xml.XmlUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.Collections;
@@ -13,7 +12,9 @@ import java.util.Set;
 /**
  * A representation of a collection of [CourseSection]s.
  * COMPLETELY immutable from a public point of view,
- * where instances can only be created through XML.
+ * where instances can only be created through XML. The
+ * original XML will only be created manually by the spider.
+ * For saving worklists, see [ScheduleBuild.toXml].
  */
 public final class Schedule implements ScheduleIf<CourseSectionRef> {
 
@@ -22,7 +23,7 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
     private final String sttName;
     private final Set<CourseSectionRef> sttSections; // unmodifiable.
 
-    public Schedule(Element scheduleElement) throws MalformedXmlDataException {
+    public Schedule(final Element scheduleElement) throws MalformedXmlDataException {
         final Element sectionListElement
                 = XmlUtils.getOptionalUniqueChildByTag(
                         scheduleElement, Xml.MANUAL_SECTION_LIST_TAG
@@ -43,7 +44,7 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
 
         // standard timetable section fields:
         if (sttSectionListElement != null) {
-            this.sttName = XmlUtils.getMandatoryAttr(scheduleElement, Xml.STT_NAME_ATTR).getValue();
+            this.sttName = XmlUtils.getMandatoryAttr(sttSectionListElement, Xml.STT_NAME_ATTR).getValue();
             this.sttSections = CourseSectionRef.extractAndParseAll(sttSectionListElement);
         } else {
             this.sttName = "N/A";
@@ -93,30 +94,20 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
     /**
      * @return A [ScheduleBuild] suitable for use generating schedule builds
      *     containing all the schedules of [this][Schedule] at the time of the
-     *     method call.
+     *     method call. Returns [null] if a problem with de-referencing occurs.
      */
     public final ScheduleBuild createPickyBuildTemplate() {
-        return new ScheduleBuild(this);
-    }
-
-    /**
-     * @return An immutable snapshot of an implementing instance, WITHOUT ANY OF ITS
-     *     UNIQUE BEHAVIOUR. This may be called, for instance, when a student has
-     *     successfully registered into a [Worklist] (a subclass of [ScheduleBuild]),
-     *     and no longer requires any of its mutable behaviour.
-     */
-    // TODO: this will need to move up a class
-    public final Schedule createImmutableCopy() {
-        return new Schedule(this);
+        try {
+            return new ScheduleBuild(this);
+        } catch (MalformedXmlDataException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /*
     TODO [api][Schedule] methods to export contents to csv files, google calendar files.
      */
-
-    // TODO [xml:write][Schedule]
-    void populateXmlElement(final Document document, final Element unpopulatedScheduleElement) {
-    }
 
 
 
