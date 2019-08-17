@@ -233,7 +233,7 @@ public final class Course implements CreditValued, HyperlinkBookIf {
 
         public final boolean overlapsWith(CourseSection other) {
             // *the equality comparison is an optimization - not essential.
-            return this == other || (semester == other.semester && blocks.stream()
+            return this.equals(other) || (semester == other.semester && blocks.stream()
                     .anyMatch(block -> other.blocks.stream().anyMatch(block::overlapsWith))
             );
         }

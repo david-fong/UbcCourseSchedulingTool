@@ -13,6 +13,8 @@ public interface PickyBuildElement<I extends PickyBuildElement> {
      *     that this [PickyBuildElement] requires a [PickyBuild] to also accommodate
      *     for the build to be considered complete. Must never return [null]. May
      *     return an empty [Set] to signal that it has no friends (meIrl (jk jk)).
+     *     Follows same requirements and handling as the conjunctive-normal-formed
+     *     constructor argument for [PickyBuildGenerator].
      */
     Set<Set<I>> getPickyBuildFriends();
 

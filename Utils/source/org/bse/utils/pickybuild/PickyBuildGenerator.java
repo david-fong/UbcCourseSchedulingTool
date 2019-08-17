@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
 
     private final PickyBuild<T> templateBuild;
-    private final List<Set<T>> clauses;
+    private final List<Set<T>> clauses; // unmodifiable
     private final int numClauses;
 
     /**
@@ -29,8 +29,9 @@ public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
      *     copied, so this collection's clauses, and any enclosed [T] items must not
      *     be modified after being passed to this constructor. Each entry in this
      *     collection is a 'clause. It is allowed for any two clauses to have shared
-     *     items (using address-based equality comparison). See spec of [PickyBuild.
-     *     addIfNoConflicts] for handling of such situations.
+     *     items (using address-based equality comparison). See spec of [PickyBuild::
+     *     addIfNoConflicts] for handling of such situations. Empty clauses are allowed
+     *     and will be ignored.
      */
     public PickyBuildGenerator(
             final PickyBuild<T> templateBuild,
@@ -46,57 +47,50 @@ public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
     }
 
     /**
-     * TODO [test]:
+     * TODO [test][PickyBuildGenerator]:
+     *
      * @return Never [null]. See constructor spec.
      */
     public Set<PickyBuild<T>> generateAllFullPickyBuilds() {
-        Set<PickyBuild<T>> soFar = new HashSet<>(guessNumResults());
-        for (T option : clauses.get(0)) {
-            PickyBuild<T> buildSeedOption = templateBuild.copy();
-            if (buildSeedOption.addIfNoConflicts(option)) {
-                soFar.add(buildSeedOption);
-            }
-        }
-        return (clauses.size() == 1) ? soFar : recursiveGenerateBuilds(1, soFar);
+        return recursiveGenerateBuilds(0, Set.of(templateBuild));
     }
 
     /**
-     * @param clauseIdx The index of the clause in [this].[clauses] to add options
-     *     from to all [PickyBuild]s collected so far in [soFar].
-     * @param soFar All [PickyBuild]s containing one option from each clause in [this]
-     *     .[clauses] from index zero to index [clauseIdx] exclusive. Is not modified
+     * @param clauseIdx The index of the clause in [.clauses] to add options from to
+     *     all [PickyBuild]s collected so far in [soFar].
+     * @param soFar All [PickyBuild]s containing one option from each clause in
+     *     [clauses] from index zero to index [clauseIdx] EXCLUSIVE. Is not modified
      *     by this operation in any way, and is no longer needed after this operation.
-     * @return All [PickyBuild]s containing one option from each clause in [this]
-     *     .[clauses] from index zero to index [clauseIdx] inclusive.
+     * @return All [PickyBuild]s containing one option from each clause in [clauses]
+     *     from index zero to index [clauseIdx] INCLUSIVE. Important conceptual note:
+     *     the size of [PickyBuild]s in the returned collection will not necessarily
+     *     have incremented from the [PickyBuild] they were copied from. See the note
+     *     for [PickyBuild::addIfNoConflicts] on adding duplicates.
      */
-    private Set<PickyBuild<T>> recursiveGenerateBuilds
-            (final int clauseIdx, final Set<PickyBuild<T>> soFar) {
+    private Set<PickyBuild<T>> recursiveGenerateBuilds(final int clauseIdx, final Set<PickyBuild<T>> soFar) {
         if (soFar.size() == 0 || clauseIdx == numClauses) {
             return soFar;
         }
         final Set<PickyBuild<T>> newSoFar = new HashSet<>();
+
+        // for each build from the previous recursive operation that might
+        // not yet have an element from the clause for this recursive step,
         for (PickyBuild<T> buildInProgress : soFar) {
-            for (T optionFromNextClause : clauses.get(clauseIdx + 1)) {
+
+            // with each element from the clause for this recursive step,
+            for (T optionFromNextClause : clauses.get(clauseIdx)) {
                 final PickyBuild<T> optionCopy = buildInProgress.copy();
+
+                // try adding that element to that build,
                 if (optionCopy.addIfNoConflicts(optionFromNextClause)) {
+
+                    // and if that build accepts that element, hold
+                    // on to that build for the next recursive step.
                     newSoFar.add(optionCopy);
                 }
             }
         }
         return recursiveGenerateBuilds(clauseIdx + 1, newSoFar);
-    }
-
-    /**
-     * Helper for [generateAllFullPickyBuilds]
-     * to setup the result collection's initial capacity.
-     */
-    private int guessNumResults() {
-        final int percentReciprocal = 4;
-        return clauses.stream()
-                .mapToInt(Set::size)
-                .reduce(1, (a, b) -> a * b)
-                / percentReciprocal
-                ;
     }
 
 }

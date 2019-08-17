@@ -20,9 +20,9 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
     private static final String DEFAULT_WORKLIST_NAME = "unnamed";
 
     private final Map<String, Worklist> worklists; // values never null.
-    private final Set<String> backingNameSet; // unmodifiable. synced to [worklists]' keys
+    private final Set<String> backingNameSet; // unmodifiable. synced to [worklists]' keys.
 
-    // use when user has no saved worklist group yet.
+    // Use when user has no saved worklist group yet.
     public WorklistGroup() {
         this.worklists = new ConcurrentHashMap<>();
         this.backingNameSet = Collections.unmodifiableSet(worklists.keySet());
