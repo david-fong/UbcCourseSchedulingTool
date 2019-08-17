@@ -17,7 +17,7 @@ public interface PickyBuild<T> {
      *     must return the same value for any item to their [checkForConflictsWith]
      *     methods. Any other state-related information that has no bearings on these
      *     requirements is free to differ between a newborn clone and its parent.
-     *     Implementations must return an instance of their own type so build-generation
+     *     Implementations MUST return an instance of their own type so build-generation
      *     operations are ensured to return builds that are cast-safe to the type
      *     provided to the [PickyBuildGenerator] constructor as a template.
      */

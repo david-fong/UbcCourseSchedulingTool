@@ -8,6 +8,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -22,6 +23,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     private WorklistFavorability favorability = WorklistFavorability.NEUTRAL;
     // ^does not effect internal behaviour.
 
+    // Up-cast / copy constructor:
     Worklist(final ScheduleBuild otherSchedule, final String name) {
         super(otherSchedule);
         this.name = name;
@@ -33,6 +35,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
         }
     }
 
+    // Reconstruct from saved user-data:
     Worklist(final Element worklistElement) throws MalformedXmlDataException {
         super(worklistElement);
         this.name = XmlUtils.getMandatoryAttr(worklistElement, Xml.WORKLIST_NAME_ATTR).getValue();
@@ -45,8 +48,9 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
         );
     }
 
-    Worklist(final Schedule schedule, final String name) throws MalformedXmlDataException {
-        super(schedule);
+    // For users to create from scratch:
+    Worklist(final String name) {
+        super();
         this.name = name;
     }
 
@@ -63,6 +67,8 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
 
     /**
      * @param section A [CourseSection] to attempt to remove from this [Worklist].
+     *     This operation will fail if [section] is a [CourseSection] in this
+     *     [Worklist]'s STT sections.
      * @return [true] if the operation was successful and [false] otherwise.
      */
     public final boolean removeSection(CourseSection section) {
@@ -93,10 +99,13 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     public Element toXml(final Document document) {
         final Element worklistElement = document.createElement(Xml.WORKLIST_TAG.value);
         {
+            // Add xml data for non-STT sections:
+            final Set<CourseSection> nonSttSections = new HashSet<>(getCourseSections());
+            nonSttSections.removeAll(getEnclosedSttSections());
             worklistElement.appendChild(createSectionListElement(
-                    document, getCourseSections(), Schedule.Xml.MANUAL_SECTION_LIST_TAG
+                    document, nonSttSections, Schedule.Xml.MANUAL_SECTION_LIST_TAG
             ));
-
+            // Add xml data for STT sections:
             final Element sttSectionListElement = createSectionListElement(
                     document, getEnclosedSttSections(), Schedule.Xml.STT_SECTION_LIST_TAG
             );

@@ -16,6 +16,13 @@ import java.util.Set;
  * Used when generating schedules. While this class is decoupled from the [Schedule]
  * class (ie. does not directly inherit from it), its xml format spec is a superset
  * of the [Schedule] xml format spec.
+ *
+ * UBC's registration site allows users to remove a whole STT (if one exists) from a
+ * worklist. I don't want this in our implementation for two reasons: 1. Because the
+ * whole point of creating a worklist with an STT is to work with (and around) that STT.
+ * 2. We can go without it because our implementation is stronger: User's can create
+ * worklists based off other schedules (including STT's), whereas with UBC's registration
+ * site, you can only create empty worklists and you'd have to later ADD an STT to them.
  */
 public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<CourseSection> {
 
@@ -38,7 +45,7 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
         // No additional fields to parse for this class.
     }
 
-    // used when creating [ScheduleBuild] or [Worklist] based off a [Schedule].
+    // Used when creating a [ScheduleBuild] or a [Worklist] based off a [Schedule].
     ScheduleBuild(final Schedule schedule) throws MalformedXmlDataException {
         this.courseSections = new HashSet<>();
         for (CourseSectionRef ref : schedule.getCourseSections()) {
@@ -61,7 +68,13 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
         this.sttSections = Collections.unmodifiableSet(sttSections);
     }
 
-    // TODO: add empty constructor for user to create worklist from scratch.
+    // Used as super constructor when users decide to create a [Worklist] from scratch.
+    ScheduleBuild() {
+        this.courseSections = new HashSet<>();
+        this.publicSectionsView = Collections.unmodifiableSet(courseSections);
+        this.sttName = Schedule.STT_NAME_FOR_SCHEDULE_WITHOUT_AN_STT;
+        this.sttSections = Collections.emptySet();
+    }
 
     @Override
     public ScheduleBuild copy() {

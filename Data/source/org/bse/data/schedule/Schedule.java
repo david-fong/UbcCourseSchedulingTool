@@ -18,13 +18,15 @@ import java.util.Set;
  */
 public final class Schedule implements ScheduleIf<CourseSectionRef> {
 
+    public static final String STT_NAME_FOR_SCHEDULE_WITHOUT_AN_STT = "N/A";
+
     private final Set<CourseSectionRef> courseSections;
     private final Set<CourseSectionRef> publicSectionsView; // unmodifiable.
     private final String sttName;
     private final Set<CourseSectionRef> sttSections; // unmodifiable.
 
     public Schedule(final Element scheduleElement) throws MalformedXmlDataException {
-        final Element sectionListElement
+        final Element manualSectionListElement
                 = XmlUtils.getOptionalUniqueChildByTag(
                         scheduleElement, Xml.MANUAL_SECTION_LIST_TAG
         );
@@ -32,14 +34,14 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
                 = XmlUtils.getOptionalUniqueChildByTag(
                         scheduleElement, Xml.STT_SECTION_LIST_TAG
         );
-        if (sectionListElement == null && sttSectionListElement == null) {
+        if (manualSectionListElement == null && sttSectionListElement == null) {
             throw new MalformedXmlDataException("A schedule must have one or both of a"
                     + " manually-added-sections-list and a STT-based-sections-list, but"
                     + " neither were found for the given Element.");
         }
 
         // manually-added section fields:
-        this.courseSections = CourseSectionRef.extractAndParseAll(sectionListElement);
+        this.courseSections = CourseSectionRef.extractAndParseAll(manualSectionListElement);
         this.publicSectionsView = Collections.unmodifiableSet(courseSections);
 
         // standard timetable section fields:
@@ -47,7 +49,7 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
             this.sttName = XmlUtils.getMandatoryAttr(sttSectionListElement, Xml.STT_NAME_ATTR).getValue();
             this.sttSections = CourseSectionRef.extractAndParseAll(sttSectionListElement);
         } else {
-            this.sttName = "N/A";
+            this.sttName = STT_NAME_FOR_SCHEDULE_WITHOUT_AN_STT;
             this.sttSections = Collections.emptySet();
         }
         this.courseSections.addAll(sttSections);
@@ -71,11 +73,6 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
         return publicSectionsView;
     }
 
-    /**
-     * @return Whether this [CourseSection] is based off of an STT (Ie. a subset of
-     *     its [CourseSection]s cannot be removed. The value returned by this method
-     *     must never vary when called from the same instance multiple times.
-     */
     public final boolean isBasedOffAnStt() {
         return !sttSections.isEmpty();
     }

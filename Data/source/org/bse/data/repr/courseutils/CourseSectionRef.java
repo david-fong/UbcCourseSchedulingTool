@@ -21,8 +21,6 @@ import java.util.Set;
  */
 public interface CourseSectionRef {
 
-    boolean isLoaded();
-
     CourseSection dereference() throws FacultyCourseNotFoundException, CourseSectionNotFoundException;
 
     /**
@@ -76,11 +74,6 @@ public interface CourseSectionRef {
             this.facultyToken = campusToken.getSquashedFacultyAbbrMap().get(tokens[1]);
             this.courseToken  = tokens[2];
             this.sectionToken = tokens[3];
-        }
-
-        @Override
-        public boolean isLoaded() {
-            return false;
         }
 
         @Override

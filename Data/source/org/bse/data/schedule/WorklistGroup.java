@@ -43,6 +43,23 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
     }
 
     /**
+     * @param name The name to use for the new [Worklist]. This operation will fail
+     *     if another [Worklist] in this [WorklistGroup] already goes by the same
+     *     name. Must not be [null].
+     * @return The new [Worklist] that was added to this [WorklistGroup] or null if
+     *     the operation failed.
+     */
+    public Worklist addNewFromScratch(final String name) {
+        if (name == null || worklists.containsKey(name)) {
+            return null;
+        } else {
+            final Worklist newWorklist = new Worklist(name);
+            worklists.put(name, newWorklist);
+            return newWorklist;
+        }
+    }
+
+    /**
      * @param other A [Schedule] to add a new [Worklist] based on. Must not be [null].
      * @param name A name for the new [Worklist]. Operation fails if another
      *     [Worklist] by the same name already exists in this [WorklistGroup].
@@ -53,6 +70,9 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
      *     and [null] otherwise.
      */
     public Worklist addNewBasedOn(final ScheduleBuild other, final String name) {
+        if (name != null && worklists.containsKey(name)) {
+            return null; // fail-fast instead of wasting effort on unused construction.
+        }
         final Worklist copy;
 
         if (other instanceof Worklist) {
@@ -62,15 +82,18 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
             copy = new Worklist(other, name != null ? name : safeNameCopy(DEFAULT_WORKLIST_NAME));
         }
 
-        if (worklists.containsKey(copy.getName())) {
-            return null;
-        } else {
-            worklists.put(copy.getName(), copy);
-            return copy;
-        }
+        // at this point, name is guaranteed to work.
+        worklists.put(copy.getName(), copy);
+        return copy;
     }
 
-    // TODO add [addNewBasedOn Schedule] that delegates to above method with new ScheduleBuild
+    // like above method. name may be null.
+    public Worklist addNewBasedOn(final Schedule schedule, final String name) throws MalformedXmlDataException {
+        return addNewBasedOn(
+                new ScheduleBuild(schedule),
+                name != null ? name : safeNameCopy(schedule.getEnclosedSttName())
+        );
+    }
 
     /**
      * @param other Another [WorklistGroup]. This operation will fail if [other]
