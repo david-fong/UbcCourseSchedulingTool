@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 public final class CourseSectionBlock {
 
     private final boolean isWaitlist;
-    private final CourseUtils.WeekDay dayOfWeek;
+    private final CourseUtils.WeekDay weekDay;
     private final BlockRepetition repetitionType;
     private final BlockTimeEnclosure timeEnclosure;
     // TODO [repr][CourseSectionBlock]: add representation for location (building).
@@ -21,7 +21,7 @@ public final class CourseSectionBlock {
     CourseSectionBlock(final Element blockElement) throws MalformedXmlDataException {
         this.isWaitlist = blockElement.getAttributeNode(Xml.OPTIONAL_WAITLIST_FLAG_ATTR.value) != null;
 
-        this.dayOfWeek = CourseUtils.WeekDay.decodeXmlAttr(
+        this.weekDay = CourseUtils.WeekDay.decodeXmlAttr(
                 XmlUtils.getMandatoryAttr(blockElement, Xml.DAY_OF_WEEK_ATTR)
         );
         this.repetitionType = BlockRepetition.decodeXmlAttr(
@@ -38,7 +38,7 @@ public final class CourseSectionBlock {
 
     // *note: do not change visibility. may be used in GUI.
     public boolean overlapsWith(CourseSectionBlock other) {
-        if (dayOfWeek != other.dayOfWeek) {
+        if (weekDay != other.weekDay) {
             return false;
         } else if (repetitionType.mayOverlapWith(other.repetitionType)) {
             return this.timeEnclosure.overlapsWith(other.timeEnclosure);
@@ -51,8 +51,8 @@ public final class CourseSectionBlock {
         return isWaitlist;
     }
 
-    public CourseUtils.WeekDay getDayOfWeek() {
-        return dayOfWeek;
+    public CourseUtils.WeekDay getWeekDay() {
+        return weekDay;
     }
 
     public BlockRepetition getRepetitionType() {

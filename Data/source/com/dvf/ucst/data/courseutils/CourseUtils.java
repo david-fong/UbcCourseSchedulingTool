@@ -4,6 +4,18 @@ import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * Utility enums for time-related constants at UBC.
  */
@@ -59,19 +71,37 @@ public final class CourseUtils {
      * Has a [Session] and a [Term].
      */
     public enum Semester {
-        WINTER_S1 (Session.WINTER, Term.TERM_ONE, "W1"),
-        WINTER_S2 (Session.WINTER, Term.TERM_TWO, "W2"),
-        SUMMER_S1 (Session.SUMMER, Term.TERM_ONE, "S1"),
-        SUMMER_S2 (Session.SUMMER, Term.TERM_TWO, "S2"),
+        SUMMER_S1 (Session.SUMMER, Term.TERM_ONE, "S1", Month.MAY, 1),
+        SUMMER_S2 (Session.SUMMER, Term.TERM_TWO, "S2", Month.JULY, 0),
+        WINTER_S1 (Session.WINTER, Term.TERM_ONE, "W1", Month.SEPTEMBER, 0),
+        WINTER_S2 (Session.WINTER, Term.TERM_TWO, "W2", Month.JANUARY, 0),
         ;
         public final Session session;
         public final Term term;
         public final String xmlAttrVal;
+        private final Month startMonth;
+        private final int startWeek;
 
-        Semester(Session session, Term term, String xmlAttrVal) {
+        Semester(Session session, Term term, String xmlAttrVal, Month startMonth, int startWeek) {
             this.session = session;
             this.term = term;
             this.xmlAttrVal = xmlAttrVal;
+            this.startMonth = startMonth;
+            this.startWeek = startWeek;
+        }
+
+        /**
+         * All month days for the dates returned by this method from the same instance
+         * will fall in the same week.
+         * @param year
+         * @param weekDay
+         * @return
+         */
+        public LocalDate getApproxClassStartDay(final int year, final WeekDay weekDay) {
+            return LocalDate.of(year, startMonth, 1)
+                    .with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY))
+                    .plus(startWeek, ChronoUnit.WEEKS)
+                    .with(TemporalAdjusters.nextOrSame(weekDay.dayOfWeek));
         }
 
         /**
@@ -86,6 +116,24 @@ public final class CourseUtils {
                 }
             }
             throw MalformedXmlDataException.invalidAttrVal(attr);
+        }
+
+        public static Semester getCurrentSemester(final LocalDate date) {
+            final Map<LocalDate, Semester> dateSemesterMap = new HashMap<>();
+            final List<LocalDate> semesterLoop = Arrays.stream(values())
+                    .map(semester -> {
+                        final LocalDate semesterDate = semester.getApproxClassStartDay(date.getYear(), WeekDay.MONDAY);
+                        dateSemesterMap.put(semesterDate, semester);
+                        return semesterDate;
+                    })
+                    .sorted().collect(Collectors.toList());
+            semesterLoop.add(semesterLoop.get(0).plus(1, ChronoUnit.YEARS));
+            for (int i = 0; i < values().length; i++) {
+                if (date.compareTo(semesterLoop.get(i)) >= 0 && date.compareTo(semesterLoop.get(i + 1)) < 0) {
+                    return dateSemesterMap.get(semesterLoop.get(i));
+                }
+            }
+            throw new RuntimeException("Unable to get current semester. Should never reach here.");
         }
     }
 
@@ -144,9 +192,11 @@ public final class CourseUtils {
         FRIDAY ("fri"),
         ;
         private final String xmlAttrVal;
+        private final DayOfWeek dayOfWeek;
 
         WeekDay(String xmlAttrVal) {
             this.xmlAttrVal = xmlAttrVal;
+            this.dayOfWeek = DayOfWeek.of(ordinal() + 1);
         }
 
         @Override

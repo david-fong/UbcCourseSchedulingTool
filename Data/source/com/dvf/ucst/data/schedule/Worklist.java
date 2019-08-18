@@ -10,6 +10,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -130,9 +131,12 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
             for (CourseSectionBlock block : section.getBlocks()) {
                 final EnumMap<GoogleCalCsvColumns, String> row = new EnumMap<>(GoogleCalCsvColumns.class);
                 row.put(GoogleCalCsvColumns.SUBJECT, section.getUserFullSectionIdString());
-                //row.put(GoogleCalCsvColumns.START_DATE, ); // TODO: this will depend on semester.
+                row.put(GoogleCalCsvColumns.START_DATE, GoogleCalCsvColumns.DATE_FORMAT.format(
+                        section.getSemester().getApproxClassStartDay(
+                                LocalDate.now().getYear(), block.getWeekDay())
+                ));
                 row.put(GoogleCalCsvColumns.START_TIME, block.getStartTime().googleCalCsvString);
-                row.put(GoogleCalCsvColumns.END_TIME, block.getEndTime().googleCalCsvString);
+                row.put(GoogleCalCsvColumns.END_TIME,   block.getEndTime().googleCalCsvString);
                 //row.put(GoogleCalCsvColumns.LOCATION, block.getLocation());
                 row.put(GoogleCalCsvColumns.DESCRIPTION, section.getParentCourse().getCourseDescription());
                 rows.add(row);
@@ -141,7 +145,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
         return GoogleCalCsvColumns.getCalendarString(INCLUDED_GOOGLE_CALENDAR_COLUMNS, rows);
     }
     private static final List<GoogleCalCsvColumns> INCLUDED_GOOGLE_CALENDAR_COLUMNS = List.of(
-            GoogleCalCsvColumns.SUBJECT, /*GoogleCalCsvColumns.START_DATE,*/
+            GoogleCalCsvColumns.SUBJECT, GoogleCalCsvColumns.START_DATE,
             GoogleCalCsvColumns.START_TIME, GoogleCalCsvColumns.END_TIME,
             /*GoogleCalCsvColumns.LOCATION, */GoogleCalCsvColumns.DESCRIPTION
     );

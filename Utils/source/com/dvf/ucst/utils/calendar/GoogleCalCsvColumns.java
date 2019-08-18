@@ -1,5 +1,7 @@
 package com.dvf.ucst.utils.calendar;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,8 @@ public enum GoogleCalCsvColumns {
     PRIVATE ("Private"), // unused.
     ;
     private final String name;
+
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
 
     GoogleCalCsvColumns(String name) {
         this.name = String.format("\"%s\"", name);
