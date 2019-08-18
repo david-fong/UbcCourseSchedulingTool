@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * TODO [doc]: write documentation.
+ * A central collection of user data.
  */
 public final class Student implements XmlUtils.UserDataXml {
 

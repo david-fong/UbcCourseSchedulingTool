@@ -12,7 +12,7 @@ Ex. [Electives for CPEN](https://www.ece.ubc.ca/sites/default/files/CPEN%20-%202
 ---
 
 ### :cd: Program Behaviour:
-(Please see [lower-level procedure (WIP)](Core/source/org/bse/core/registration/scheduler/SchedulerMonkey.java))
+(Please see [lower-level procedure (WIP)](Core/source/com/dvf/ucst/core/registration/scheduler/SchedulerMonkey.java))
 
 1. Get a collection of course requirements imposed on the user.
 1. Fetch data on each of those course's prereqs and coreqs, and its available sections' restricted seating.
@@ -36,7 +36,7 @@ Ex. [Electives for CPEN](https://www.ece.ubc.ca/sites/default/files/CPEN%20-%202
   - Matching requirements that require a test subject to contain matches of candidates
 
 ### :spider: Data Data Data:
-- Please see [Spider.java](Data/source/org/bse/data/repr/spider/Spider.java).
+- Please see [Spider.java](Data/source/com/dvf/ucst/data/spider/Spider.java).
 
 ---
 

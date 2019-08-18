@@ -63,8 +63,8 @@ public final class XmlUtils {
 
     /**
      *
-     * @param host
-     * @return
+     * @param host An [Element]
+     * @return All [Element]s that are direct children of [host].
      */
     public static List<Element> getChildElementsOf(Element host) {
         final NodeList nodeList = host.getChildNodes();

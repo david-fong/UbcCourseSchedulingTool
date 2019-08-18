@@ -90,12 +90,10 @@ public final class CreditMatchThreshReq<T extends CreditValued> extends Abstract
 
     @Override
     public long getNumBarelyPassingCombinations() {
-        // TODO: change this to use math with averages.
         return numBarelyPassingCombinations;
     }
     private int recursiveCountCombos(final int threshold, final int startIdx) {
         int numPassing = 0;
-        // TODO: think about how to add another conditional to further avoid unnecessary work.
         if (threshold <= 0) {
             numPassing++;
         } else {

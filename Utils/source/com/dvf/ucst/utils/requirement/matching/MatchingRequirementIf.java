@@ -30,6 +30,7 @@ public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
      *     should be included that include any more match-items than are absolutely
      *     necessary to satisfy the implementing [MatchingRequirementIf]. This number
      *     can be cached in implementations since [Requirement]s must be immutable.
+     *     Must return [null] if any combination passes [this][MatchingRequirementIf].
      */
     Set<Set<T>> getAllBarelyPassingCombinations();
 
@@ -52,7 +53,7 @@ public interface MatchingRequirementIf<T> extends Requirement<Set<T>> {
 
         @Override
         public Set<Set<T>> getAllBarelyPassingCombinations() {
-            return null; // TODO: not sure what to do here...
+            return null;
         }
 
         @Override

@@ -10,7 +10,7 @@
     <Prerequisites>
         <MatchReqRoot testSubjectType="CourseRef">
             <CountMTR threshold="1">
-                <CourseRef value="APSC 160"/>
+                <Candidate name="APSC 160"/>
             </CountMTR>
         </MatchReqRoot>
     </Prerequisites>
@@ -19,7 +19,7 @@
         <MatchReqRoot testSubjectType="CourseRef">
             <LogicAndMR>
                 <CreditMTR threshold="5">
-                    <CourseRef value="CPEN 211"/>
+                    <Candidate name="CPEN 211"/>
                 </CreditMTR>
             </LogicAndMR>
         </MatchReqRoot>

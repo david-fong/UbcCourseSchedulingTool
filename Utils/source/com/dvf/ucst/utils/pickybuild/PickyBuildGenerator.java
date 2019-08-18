@@ -50,8 +50,6 @@ public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
     }
 
     /**
-     * TODO [test][PickyBuildGenerator]:
-     *
      * @return An unmodifiable [Set]. Never [null]. See constructor spec.
      */
     public Set<PickyBuild<T>> generateAllFullPickyBuilds() {

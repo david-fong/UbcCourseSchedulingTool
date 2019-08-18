@@ -41,13 +41,10 @@ public class RequireOpResult<T> {
 
 
     /**
-     * TODO: design how information in the 'item' parameter given to
-     *   Requirement.requireOf() can be specified as requiring future
-     *   information to be judged fully.
      */
     public enum ReqOpOutcome {
         FAILED_REQ,
-        INDETERMINATE,
+        //INDETERMINATE,
         PASSED_REQ,
         ;
     }

@@ -5,7 +5,7 @@ import com.dvf.ucst.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
 
 /**
- * TODO [doc]: write documentation.
+ * Utility enums for time-related constants at UBC.
  */
 public final class CourseUtils {
 

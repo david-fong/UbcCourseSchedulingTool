@@ -21,7 +21,6 @@ public class VariadicOrReq<T> extends VariadicLogicalReq<T> {
         super(children);
     }
 
-    // TODO: make this account for the possibility of an [INDETERMINATE] result status.
     @Override
     public final ReqOpOutcome requireOf(final T testSubject) {
         boolean success = this.getChildren().stream()
