@@ -1,5 +1,7 @@
 package com.dvf.ucst.data.schedule;
 
+import com.dvf.ucst.data.courseutils.CourseSectionBlock;
+import com.dvf.ucst.utils.calendar.GoogleCalCsvColumns;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
 import com.dvf.ucst.data.courseutils.Course;
@@ -8,8 +10,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A mutable wrapper for a [Schedule] object. While this class
@@ -119,6 +120,31 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
         worklistElement.setAttribute(Xml.WORKLIST_FAVORABILITY_ATTR.value, favorability.getXmlConstantValue());
         return worklistElement;
     }
+
+    /**
+     * Create a GoogleCalendar-compatible .csv String.
+     */
+    public final String toGoogleCalendarCsvString() {
+        final List<EnumMap<GoogleCalCsvColumns, String>> rows = new ArrayList<>();
+        for (final CourseSection section : getCourseSections()) {
+            for (CourseSectionBlock block : section.getBlocks()) {
+                final EnumMap<GoogleCalCsvColumns, String> row = new EnumMap<>(GoogleCalCsvColumns.class);
+                row.put(GoogleCalCsvColumns.SUBJECT, section.getUserFullSectionIdString());
+                //row.put(GoogleCalCsvColumns.START_DATE, ); // TODO: this will depend on semester.
+                row.put(GoogleCalCsvColumns.START_TIME, block.getStartTime().googleCalCsvString);
+                row.put(GoogleCalCsvColumns.END_TIME, block.getEndTime().googleCalCsvString);
+                //row.put(GoogleCalCsvColumns.LOCATION, block.getLocation());
+                row.put(GoogleCalCsvColumns.DESCRIPTION, section.getParentCourse().getCourseDescription());
+                rows.add(row);
+            }
+        }
+        return GoogleCalCsvColumns.getCalendarString(INCLUDED_GOOGLE_CALENDAR_COLUMNS, rows);
+    }
+    private static final List<GoogleCalCsvColumns> INCLUDED_GOOGLE_CALENDAR_COLUMNS = List.of(
+            GoogleCalCsvColumns.SUBJECT, /*GoogleCalCsvColumns.START_DATE,*/
+            GoogleCalCsvColumns.START_TIME, GoogleCalCsvColumns.END_TIME,
+            /*GoogleCalCsvColumns.LOCATION, */GoogleCalCsvColumns.DESCRIPTION
+    );
 
     // helper for toXml.
     private static Element createSectionListElement(final Document document,

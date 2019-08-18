@@ -90,10 +90,6 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
         }
     }
 
-    /*
-    TODO [api][Schedule] methods to export contents to csv files, google calendar files.
-     */
-
 
 
     // TODO [xml:spec]

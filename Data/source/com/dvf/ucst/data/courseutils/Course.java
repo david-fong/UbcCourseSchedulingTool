@@ -1,6 +1,7 @@
 package com.dvf.ucst.data.courseutils;
 
 import com.dvf.ucst.data.HyperlinkBookIf;
+import com.dvf.ucst.data.SectionIdString;
 import com.dvf.ucst.data.Student;
 import com.dvf.ucst.data.faculties.CampusNotFoundException;
 import com.dvf.ucst.data.schedule.Schedule;
@@ -25,7 +26,7 @@ import java.util.Set;
 /**
  *
  */
-public final class Course implements CreditValued, HyperlinkBookIf {
+public final class Course implements CreditValued, HyperlinkBookIf, SectionIdString {
 
     private static final String LAB_SECTION_ID_TOKEN_PREFIX = "L";
     private static final String TUTORIAL_SECTION_ID_TOKEN_PREFIX = "T";
@@ -112,10 +113,21 @@ public final class Course implements CreditValued, HyperlinkBookIf {
     }
 
     @Override
-    public String toString() {
+    public final String getSystemFullSectionIdString() {
         return facultyTreeNode.getRootCampus().getCampusIdToken()
                 + " " + facultyTreeNode.getAbbreviation()
                 + " " + courseCodeToken;
+    }
+
+    @Override
+    public final String getUserFullSectionIdString() {
+        return facultyTreeNode.getAbbreviation()
+                + " " + courseCodeToken;
+    }
+
+    @Override
+    public String toString() {
+        return getSystemFullSectionIdString();
     }
 
     @Override
@@ -205,7 +217,7 @@ public final class Course implements CreditValued, HyperlinkBookIf {
      *
      * TODO [rep]: add representation of seating / methods to fetch seating state from web.
      */
-    public class CourseSection implements PickyBuildElement<CourseSection>, HyperlinkBookIf {
+    public class CourseSection implements PickyBuildElement<CourseSection>, HyperlinkBookIf, SectionIdString {
 
         private final String sectionIdToken;
         private final CourseUtils.Semester semester;
@@ -265,6 +277,18 @@ public final class Course implements CreditValued, HyperlinkBookIf {
                             QuerySpecifierTokens.SECTION.tnameQueryVal)
                     + QuerySpecifierTokens.SECTION.tokenStub
                     + sectionIdToken;
+        }
+
+        @Override
+        public final String getSystemFullSectionIdString() {
+            return getParentCourse().getSystemFullSectionIdString()
+                    + " " + sectionIdToken;
+        }
+
+        @Override
+        public final String getUserFullSectionIdString() {
+            return getParentCourse().getUserFullSectionIdString()
+                    + " " + sectionIdToken;
         }
 
         public final CourseUtils.Semester getSemester() {

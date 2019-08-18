@@ -192,6 +192,7 @@ public final class CourseUtils {
         public final int minute;
         public final String _12hrTimeString;
         public final String _24hrTimeString;
+        public final String googleCalCsvString;
 
         BlockTime() {
             this.hour = (ordinal() / 2) + EARLIEST_BLOCK_HOUR;
@@ -201,6 +202,7 @@ public final class CourseUtils {
             final String amPm = (hour - 12) < 0 ? "am" : "pm";
             this._12hrTimeString = String.format("%2d:%02d%s", _12hr, minute, amPm);
             this._24hrTimeString = String.format("%02d:%02d", hour, minute);
+            this.googleCalCsvString = String.format("%02d:%02d %s", _12hr, minute, amPm.toUpperCase());
         }
 
         public boolean isBefore(BlockTime other) {
