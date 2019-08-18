@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="CoreMain" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="org.bse.core.CoreMain" />
+    <option name="MAIN_CLASS_NAME" value="com.dvf.ucst.core.CoreMain" />
     <module name="Core" />
     <option name="VM_PARAMETERS" value="-enableassertions --module-path &quot;${PATH_TO_FX}&quot; --add-modules &quot;javafx.graphics,&quot;" />
     <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />

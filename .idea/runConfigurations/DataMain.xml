@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="DataMain" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="org.bse.data.DataMain" />
+    <option name="MAIN_CLASS_NAME" value="com.dvf.ucst.data.DataMain" />
     <module name="Data" />
     <option name="VM_PARAMETERS" value="-enableassertions" />
     <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
