@@ -1,7 +1,7 @@
-package com.dvf.ucst.utils.requirement.operators.logicalmatching;
+package com.dvf.ucst.utils.requirement.logicalmatching;
 
-import com.dvf.ucst.utils.requirement.operators.logical.VariadicAndReq;
-import com.dvf.ucst.utils.requirement.operators.matching.MatchingRequirementIf;
+import com.dvf.ucst.utils.requirement.logical.VariadicAndReq;
+import com.dvf.ucst.utils.requirement.matching.MatchingRequirementIf;
 
 import java.util.Collections;
 import java.util.HashSet;

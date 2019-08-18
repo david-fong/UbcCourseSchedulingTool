@@ -1,4 +1,4 @@
-package com.dvf.ucst.utils.requirement.operators.matching;
+package com.dvf.ucst.utils.requirement.matching;
 
 import com.dvf.ucst.utils.requirement.Requirement;
 

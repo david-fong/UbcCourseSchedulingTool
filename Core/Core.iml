@@ -8,8 +8,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="library" name="javafx-sdk-12.0" level="application" />
-    <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Utils" />
     <orderEntry type="module" module-name="Data" />
+    <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

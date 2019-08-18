@@ -1,4 +1,4 @@
-package com.dvf.ucst.utils.requirement.operators.logical;
+package com.dvf.ucst.utils.requirement.logical;
 
 import com.dvf.ucst.utils.requirement.Requirement;
 
@@ -21,7 +21,7 @@ abstract class VariadicLogicalReq<T> implements Requirement<T> {
         this.children = Collections.unmodifiableSet(children);
     }
 
-    protected final Set<Requirement<T>> getChildren() {
+    final Set<Requirement<T>> getChildren() {
         return children;
     }
 

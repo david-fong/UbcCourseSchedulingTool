@@ -9,12 +9,11 @@
       <sourceFolder url="file://$MODULE_DIR$/resource" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/source/com/dvf/ucst/data/buildings" />
       <excludeFolder url="file://$MODULE_DIR$/source/com/dvf/ucst/data/streets" />
-      <excludeFolder url="file://$MODULE_DIR$/source/org/bse/data/buildings" />
-      <excludeFolder url="file://$MODULE_DIR$/source/org/bse/data/streets" />
     </content>
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="Utils" />
     <orderEntry type="library" name="org.jsoup:jsoup:1.12.1" level="application" />
+    <orderEntry type="library" name="junit-5.5.1" level="application" />
+    <orderEntry type="module" module-name="Utils" />
+    <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

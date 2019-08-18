@@ -1,0 +1,14 @@
+package com.dvf.ucst.utils.requirement.logicalmatching;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class LogicalAndMatchReqTest {
+
+    @Test
+    void test() {
+
+    }
+
+}

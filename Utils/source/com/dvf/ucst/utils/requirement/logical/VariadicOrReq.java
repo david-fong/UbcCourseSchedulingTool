@@ -1,9 +1,8 @@
-package com.dvf.ucst.utils.requirement.operators.logical;
+package com.dvf.ucst.utils.requirement.logical;
 
 import com.dvf.ucst.utils.requirement.RequireOpResult.ReqOpOutcome;
 import com.dvf.ucst.utils.requirement.Requirement;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,14 +10,14 @@ import static com.dvf.ucst.utils.requirement.RequireOpResult.ReqOpOutcome.FAILED
 import static com.dvf.ucst.utils.requirement.RequireOpResult.ReqOpOutcome.PASSED_REQ;
 
 /**
- * Requires all candidate requirements to pass against a test subject in order to
- * return with a passing status.
+ * Requires only one candidate requirement to pass against a test subject in
+ * order to return with a passing status.
  *
  * @param <T>
  */
-public class VariadicAndReq<T> extends VariadicLogicalReq<T> {
+public class VariadicOrReq<T> extends VariadicLogicalReq<T> {
 
-    public VariadicAndReq(Set<? extends Requirement<T>> children) {
+    public VariadicOrReq(Set<? extends Requirement<T>> children) {
         super(children);
     }
 
@@ -26,13 +25,13 @@ public class VariadicAndReq<T> extends VariadicLogicalReq<T> {
     @Override
     public final ReqOpOutcome requireOf(final T testSubject) {
         boolean success = this.getChildren().stream()
-                .allMatch(childReq -> childReq.requireOf(testSubject) == PASSED_REQ);
+                .anyMatch(childReq -> childReq.requireOf(testSubject) == PASSED_REQ);
         return success ? PASSED_REQ : FAILED_REQ;
     }
 
     @Override
-    public VariadicAndReq<T> copy() {
-        return new VariadicAndReq<>(getChildren().stream()
+    public VariadicOrReq<T> copy() {
+        return new VariadicOrReq<>(getChildren().stream()
                 .map(Requirement::copy)
                 .collect(Collectors.toSet())
         );
@@ -40,11 +39,9 @@ public class VariadicAndReq<T> extends VariadicLogicalReq<T> {
 
     @Override
     public final Requirement<T> excludingPassingTermsFor(final T givens) {
-        Set<Requirement<T>> nonPassingTerms = getChildren().stream()
-                .map(term -> term.excludingPassingTermsFor(givens))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        return nonPassingTerms.isEmpty() ? null : new VariadicAndReq<>(nonPassingTerms);
+        final boolean anyMatch = getChildren().stream()
+                .anyMatch(childReq -> childReq.excludingPassingTermsFor(givens) == null);
+        return anyMatch ? null : this;
     }
 
 }
