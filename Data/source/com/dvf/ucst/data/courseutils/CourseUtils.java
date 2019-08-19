@@ -70,7 +70,7 @@ public final class CourseUtils {
      * Used in [CourseSectionBlock].
      * Has a [Session] and a [Term].
      */
-    public enum Semester {
+    public enum Semester implements XmlUtils.XmlConstant {
         SUMMER_S1 (Session.SUMMER, Term.TERM_ONE, "S1", Month.MAY, 1),
         SUMMER_S2 (Session.SUMMER, Term.TERM_TWO, "S2", Month.JULY, 0),
         WINTER_S1 (Session.WINTER, Term.TERM_ONE, "W1", Month.SEPTEMBER, 0),
@@ -78,7 +78,7 @@ public final class CourseUtils {
         ;
         public final Session session;
         public final Term term;
-        public final String xmlAttrVal;
+        private final String xmlAttrVal;
         private final Month startMonth;
         private final int startWeek;
 
@@ -90,12 +90,18 @@ public final class CourseUtils {
             this.startWeek = startWeek;
         }
 
+        @Override
+        public String getXmlConstantValue() {
+            return xmlAttrVal;
+        }
+
         /**
          * All month days for the dates returned by this method from the same instance
          * will fall in the same week.
-         * @param year
-         * @param weekDay
-         * @return
+         * @param year A year like "2019".
+         * @param weekDay The [WeekDay] to get the approximate first day of class for.
+         * @return A [LocalDate] with the given [year] at the beginning of [this]
+         *     [Semester] on the given [WeekDay].
          */
         public LocalDate getApproxClassStartDay(final int year, final WeekDay weekDay) {
             return LocalDate.of(year, startMonth, 1)
