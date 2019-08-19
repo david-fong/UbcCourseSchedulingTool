@@ -54,11 +54,7 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
 
     @Override
     default String getRegistrationSiteUrl() {
-        return HyperlinkBookIf.REGISTRATION_HOME
-                + HyperlinkBookIf.QuerySpecifierTokens.TNAME_QUERY_TOKEN_STUB
-                + HyperlinkBookIf.QuerySpecifierTokens.CAMPUS.tnameQueryVal
-                + HyperlinkBookIf.QuerySpecifierTokens.CAMPUS.tokenStub
-                + getAbbreviation();
+        return RegistrationSubjAreaQuery.getUrl(this);
     }
 
     /**

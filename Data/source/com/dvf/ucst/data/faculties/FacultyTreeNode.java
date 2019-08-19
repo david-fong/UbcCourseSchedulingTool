@@ -56,11 +56,7 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
 
     @Override
     default String getRegistrationSiteUrl() {
-        return getRootCampus().getRegistrationSiteUrl()
-                .replace(QuerySpecifierTokens.CAMPUS.tnameQueryVal,
-                        QuerySpecifierTokens.FACULTY.tnameQueryVal)
-                + QuerySpecifierTokens.FACULTY.tokenStub
-                + getAbbreviation();
+        return RegistrationSubjAreaQuery.getUrl(this);
     }
 
 

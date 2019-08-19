@@ -33,9 +33,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
 
     private final FacultyTreeNode facultyTreeNode;
     private final int creditValue;
-    private final String courseCodeToken;
+    private final String courseIdToken;
     private final String descriptionString;
-    private final String registrationUrlString;
 
     // reqs are non-null:
     private final Requirement<Student> studentReqs;
@@ -68,14 +67,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         this.creditValue = Integer.parseInt(XmlUtils.getMandatoryAttr(
                 courseElement, Xml.COURSE_CREDIT_ATTR).getValue());
 
-        this.courseCodeToken = XmlUtils.getMandatoryAttr(
+        this.courseIdToken = XmlUtils.getMandatoryAttr(
                 courseElement, Xml.COURSE_CODE_ATTR).getValue();
-
-        this.registrationUrlString = facultyTreeNode.getRegistrationSiteUrl()
-                .replace(QuerySpecifierTokens.FACULTY.tnameQueryVal,
-                        QuerySpecifierTokens.COURSE.tnameQueryVal) // TODO [style] is there a nicer, more reusable way to do this?
-                + QuerySpecifierTokens.COURSE.tokenStub
-                + courseCodeToken;
 
         assert creditValue >= 0 : "credit value must be equal to or greater than zero";
 
@@ -112,17 +105,21 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         return creditValue;
     }
 
+    public final String getCourseIdToken() {
+        return courseIdToken;
+    }
+
     @Override
     public final String getSystemFullSectionIdString() {
         return facultyTreeNode.getRootCampus().getCampusIdToken()
                 + " " + facultyTreeNode.getAbbreviation()
-                + " " + courseCodeToken;
+                + " " + courseIdToken;
     }
 
     @Override
     public final String getUserFullSectionIdString() {
         return facultyTreeNode.getAbbreviation()
-                + " " + courseCodeToken;
+                + " " + courseIdToken;
     }
 
     @Override
@@ -132,7 +129,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
 
     @Override
     public String getRegistrationSiteUrl() {
-        return registrationUrlString;
+        return RegistrationSubjAreaQuery.getUrl(this);
     }
 
     public final Requirement<Student> getStudentReqs() {
@@ -272,11 +269,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
 
         @Override
         public String getRegistrationSiteUrl() {
-            return Course.this.getRegistrationSiteUrl()
-                    .replace(QuerySpecifierTokens.COURSE.tnameQueryVal,
-                            QuerySpecifierTokens.SECTION.tnameQueryVal)
-                    + QuerySpecifierTokens.SECTION.tokenStub
-                    + sectionIdToken;
+            return RegistrationSubjAreaQuery.getUrl(this);
         }
 
         @Override
