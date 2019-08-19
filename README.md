@@ -5,10 +5,14 @@
 
 Create a program (and wrapping desktop application) where a user can provide their program of study, and a collection of courses they have completed, and be returned with a collection of Worklists for their upcoming session that meet all their program requirements. As stated in this project's repo description, "One does not simply register for courses at UBC"- *but*, it shouldn't have to be that way. There are really exciting developments and efforts being made by UBC in this area [(The Scheduling Project)](https://facultystaff.students.ubc.ca/enrolment-services/scheduling-records-systems-management/scheduling-services/scheduling-project) that perhaps this project can supplement as a mature proof-of-concept for scheduling automation.
 
+For me, there are two looming frustrations:
+
 1. UBC has all the information needed to validate a worklist. They could automate it, but they haven't yet. Efforts have been made with great results by others [Ex. UBCScheduler by Yichen](https://yichen.dev/UBCScheduler/), but not to the extent of effort that *this* projects sets out for.
 1. Sources of course requirements are inconsistent. For the CPEN program, one is incomplete [(UBC's main site)](https://you.ubc.ca/ubc_programs/computer-engineering/), one is mixed with courses that are only for ELEC students- due to CPEN being lumped up with it as ECE [(The ECE electives document)](https://www.ece.ubc.ca/sites/default/files/CPEN%20-%202018%20May.pdf), one could use a css update [(the ECE department's site)](https://www.ece.ubc.ca/academic-programs/undergraduate/programs/computer-engineering-program), one on top of that is *incredibly, incredibly* cluttered [(UBC's degree navigator)](https://degree-navigator.as.it.ubc.ca "link broken"). **None of them completely agree with each other**. This is a problem that needs to be solved by effort and communication- not by algorithms. It is not a goal for this project to solve, but remains as much of a hope as for the other goals that it will be brought attention to.
 
-That is the public face of the goal- but there is also a personal side: I want to practice managing a Java project after being a participant in one during my first COOP term, and to struggle through the process of searching for libraries, choosing them, and learning how to use them. This is in opposition to how my school assignments spoon-feed me structure. Through this, I hope to thoroughly challenge myself, demonstrate my ability to learn independently, and in the process create something that can help many people. My head is in the clouds- but [wouldn't it be lovely](https://www.youtube.com/watch?v=q5fW7sERw7I&t=4m24s)?
+That is the public face of the goal- but there is also a personal side: I want to practice managing a Java project after being a participant in one during my first COOP term, and to struggle through the process of searching for libraries, choosing them, and learning how to use them. This is something I don't get to do at school or at work. It is something I am really enjoying- to work through the design and representation of the data-structures and algorithms, and to do so to solve a problem not because someone will mark me on it, or because I will get paid, but simply because I want to take this problem on. I hope to thoroughly challenge myself, demonstrate my ability to think and learn independently, and in the process create something that can help many people. There are two more goals- ones that scare me and will challenge me the most when they kick off: to work on a project with a team of friends, and to learn how to use git to work on a team project.
+
+My head is in the clouds- but [wouldn't it be lovely](https://www.youtube.com/watch?v=q5fW7sERw7I&t=4m24s)?
 
 ### :file_folder: Google Drive Folder: [link](https://drive.google.com/drive/folders/1BmgHv7Mdu5VeI8_ZaramyXntM39VEjx8 "open for collaborators")
 
@@ -43,7 +47,8 @@ That is the public face of the goal- but there is also a personal side: I want t
   - Matching requirements that require a test subject to contain matches of candidates
 
 ### :spider: Data Data Data:
-- Please see [Spider.java](Data/source/com/dvf/ucst/data/spider/Spider.java).
+- Please see [`The Spiders`](Data/source/com/dvf/ucst/data/spider/Spider.java) for the classes which will pull registration data on Courses, their Sections, and STT's from UBC's public pages on their registration site.
+- See [`The FacultyNodes`](Data/source/com/dvf/ucst/data/faculties) for the constants that define the URL's for all the necessary UBC registration site pages that the Spiders will pull from, and that define the file structure for the local cache of that data in xml format.
 
 ---
 
