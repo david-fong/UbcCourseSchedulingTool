@@ -50,7 +50,8 @@ public interface PickyBuild<E extends PickyBuildElement<E>> {
 
     /**
      * @param others A [Collection] of other [PickyBuildElement]s.
-     * @return Whether any contents of [others] are already in [this] [PickyBuild].
+     * @return Whether any contents of [others] are already in [this] [PickyBuild]
+     *     (according to ::equals comparison).
      */
     boolean containsAny(final Collection<E> others);
 

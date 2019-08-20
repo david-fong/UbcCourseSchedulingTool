@@ -91,7 +91,9 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
      */
     @Override
     public boolean addIfNoConflicts(final CourseSection section) {
-        if (publicSectionsView.stream().anyMatch(section::overlapsWith)) {
+        if (publicSectionsView.contains(section)) {
+            return true;
+        } else if (publicSectionsView.stream().anyMatch(section::overlapsWith)) {
             return false;
         } else {
             courseSections.add(section);
