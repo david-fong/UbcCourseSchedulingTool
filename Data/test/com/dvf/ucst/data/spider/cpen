@@ -1,0 +1,360 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!--[if IEMobile 7]><html class="iem7 oldie" lang="en"><![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="ie7 oldie" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="ie8 oldie" lang="en"><![endif]-->
+<!--[if (IE 9)&!(IEMobile)]><html class="ie9" lang="en"><![endif]-->
+<!--[[if (gt IE 9)|(gt IEMobile 7)]><!--><html lang="en"><!--<![endif]-->
+<!--
+ * UBC CLF (Common Look and Feel) v7.0.2
+ * Copyright 2012 The University of British Columbia
+ * UBC Communications and Marketing
+ * http://brand.ubc.ca/clf
+ */
+-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>CPEN - Computer Engineering - UBC Student Services</title>
+<meta name="viewport" content="width=device-width">
+<meta name="description" content="">
+<meta name="author" content="">
+<!-- Stylesheets -->
+<link href="/static/ubcclf/7.0.2/css/ubc-clf-full.min.css" rel="stylesheet">
+<link href="/static/courseschedule/stylesheets/unit.css" rel="stylesheet">
+<link href="/static/courseschedule/stylesheets/unit-responsive.css" rel="stylesheet">
+<link href="/static/courseschedule/stylesheets/unit-print.css" rel="stylesheet">
+<!--[if lte IE 7]>
+<link href="/static/ubcclf/7.0.2/css/font-awesome-ie7.css" rel="stylesheet">
+<![endif]-->
+<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+  <script src="/static/ubcclf/7.0.2/js/html5.js"></script>
+<![endif]-->
+
+<!-- Fav and touch icons -->
+<link rel="shortcut icon" href="/static/ubcclf/7.0.2/img/favicon.ico">
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/ubcclf/7.0.2/img/apple-touch-icon-144-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/ubcclf/7.0.2/img/apple-touch-icon-114-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/ubcclf/7.0.2/img/apple-touch-icon-72-precomposed.png">
+<link rel="apple-touch-icon-precomposed" href="/static/ubcclf/7.0.2/img/apple-touch-icon-57-precomposed.png">
+<script src="/static/shared/scripts/jquery-1.8.1.min.js"></script>
+</head>
+<body>
+
+<script type="text/javascript" src="/static/courseschedule/scripts/ttpopup.js"></script>
+
+<div id="ttpopup" onmouseover="overdiv=1;"  onmouseout="overdiv=0; setTimeout('hideLayer()',1000)">
+pop up description layer
+</div>
+    <div class="container">
+        <!-- UBC Global Utility Menu -->
+        <div class="collapse expand" id="ubc7-global-menu">
+            <div id="ubc7-search" class="expand">
+                <div id="ubc7-search-box">
+                    <form class="form-search" method="get" action="http://www.ubc.ca/search/refine/" role="search">
+                        <input type="search" name="q" placeholder="Search Course Schedule" class="input-xlarge search-query">
+                        <input type="hidden" name="label" value="Search Course Schedule" />
+                        <input type="hidden" name="site" value="courses.students.ubc.ca" />
+                        <button type="submit" class="btn">Search</button>
+                    </form>
+                </div>
+            </div>
+            <div id="ubc7-global-header" class="expand">
+                <!-- Global Utility Header from CDN -->
+            </div>
+        </div>
+        <!-- End of UBC Global Utility Menu -->
+        <!-- UBC Header -->
+        <header id="ubc7-header" class="row-fluid expand" role="banner">
+            <div class="span1">
+                <div id="ubc7-logo">
+                    <a href="http://www.ubc.ca" title="The University of British Columbia (UBC)">The University of British Columbia</a>
+                </div>
+            </div>
+            <div class="span2">
+                <div id="ubc7-apom">
+                    <a href="https://cdn.ubc.ca/clf/ref/aplaceofmind" title="UBC a place of mind">UBC - A Place of Mind</a>
+                </div>
+            </div>
+            <div class="span9" id="ubc7-wordmark-block">
+                <div id="ubc7-wordmark">
+
+
+                      <a href="http://www.ubc.ca" title="The University of British Columbia (UBC)">The University of British Columbia
+                        <span class="ubc7-campus" id="ubc7-vancouver-campus">Vancouver campus </span>
+                      </a>
+
+
+                </div>
+                <div id="ubc7-global-utility">
+                    <button type="button" data-toggle="collapse" data-target="#ubc7-global-menu"><span>UBC Search</span></button>
+                    <noscript><a id="ubc7-global-utility-no-script" href="http://www.ubc.ca/" title="UBC Search">UBC Search</a></noscript>
+                </div>
+            </div>
+        </header>
+        <!-- End of UBC Header -->
+        <!-- UBC Unit Identifier -->
+        <div id="ubc7-unit" class="row-fluid expand">
+            <div class="span12">
+                <!-- Mobile Menu Icon -->
+                <div class="navbar">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target="#ubc7-unit-navigation">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                </div>
+                <!-- Read more about Course Schedule Treatment on http://brand.ubc.ca/clf -->
+                <!-- No Faculty Treatment --><!--<div id="ubc7-unit-name" class="ubc7-single-element"> -->
+                <div id="ubc7-unit-name">
+
+                   <a href="/cs/courseschedule?pname=welcome&tname=welcome" title="Course Schedule"><span id="ubc7-unit-faculty">Student Service Centre</span><span id="ubc7-unit-identifier">Course Schedule</span></a>
+
+
+                </div>
+            </div>
+        </div>
+        <!-- End of UBC Unit Identifier -->
+
+
+        <!-- UBC Unit Navigation --> <div id='ubc7-unit-menu' class='navbar expand' role='navigation'> <div class='navbar-inner expand'><div class='container'><div class='nav-collapse collapse' id='ubc7-unit-navigation'><ul class='nav'> <li class='dropdown Browse'>  <div class='btn-group'>  <a class='btn' data-toggle='dropdown' >Browse  <div class='ubc7-arrow down-arrow'></div></a>  <ul class='dropdown-menu'> <li class='Standard_Timetables' ><a href='/cs/courseschedule?pname=stt&amp;tname=stt' title='Standard Timetables'>Standard Timetables</a></li> <li class='Browse_Courses' ><a href='/cs/courseschedule?pname=subjarea&amp;tname=subj-all-departments' title='Courses'>Courses</a></li> <li class='Browse_Specializations' ><a href='/cs/courseschedule?pname=spec&amp;tname=spec' title='Specializations'>Specializations</a></li>  </ul>  </div>  </li>  <li class='dropdown Search'>  <div class='btn-group'>  <a class='btn' data-toggle='dropdown' >Search  <div class='ubc7-arrow down-arrow'></div></a>  <ul class='dropdown-menu'> <li class='Search_Courses' ><a href='/cs/courseschedule?pname=subjarea&amp;tname=sectsearch' title='Courses'>Courses</a></li> <li class='Search_Instructor' ><a href='/cs/courseschedule?pname=instsearch&amp;tname=instsearch' title='Instructor'>Instructor</a></li>  </ul>  </div>  </li>  <li class='dropdown Help'>  <div class='btn-group'>  <a class='btn'  data-toggle='dropdown'>Help  <div class='ubc7-arrow down-arrow'></div></a>  <ul class='dropdown-menu'>  <li class='Quick_Help'><a href='/static/courseschedule/cs_quick_help.htm' title='Quick Help' target='_blank'>Quick Help</a></li>  <li class='Glossary'><a href='/static/courseschedule/cs_glossary.htm' title='Glossary' target='_blank'>Glossary</a></li>  <li class='Planning_UBCV'><a href='http://www.calendar.ubc.ca/vancouver/planning.cfm' title='Course Planning - Vancouver' target='_blank'>Course Planning - Vancouver</a></li>  <li class='Planning_UBCO'><a href='http://www.calendar.ubc.ca/okanagan/index.cfm?tree=18,0,0,0' title='Course Planning - Okanagan' target='_blank'>Course Planning - Okanagan</a></li>  </ul>  </div>  </li> </ul> <div id='cwl' class='pull-right'><form action='/cs/secure/login' method='GET'> <input type='IMAGE' name='IMGSUBMIT' value='IMGSUBMIT' src='https://www.auth.cwl.ubc.ca/CWL_login_button.gif' WIDTH='76' HEIGHT='25' ALT='CWL Login' BORDER='0' /> </form> </div></div><!-- /.nav-collapse -->  </div>  </div><!-- /navbar-inner -->  </div><!-- /navbar -->  <!-- End of UBC Unit Navigation -->
+
+
+
+
+            <!-- UBC Unit Breadcrumbs --> <ul class='breadcrumb expand'> <li><a href=/cs/courseschedule?pname=welcome&amp;tname=welcome title='Course Schedule'>Course Schedule</a> <span class='divider'>/</span> </li> <li><a href="/cs/courseschedule?pname=subjarea&amp;tname=subj-all-departments">Browse Courses</a> <span class='divider'>/</span> </li><li class='active' >CPEN</li> <div class='pull-right'> <div class='btn-group'><button class='btn btn-primary' data-toggle='dropdown'>Campus: UBC Vancouver</button>  <button class='btn btn-primary dropdown-toggle' data-toggle='dropdown'><i class='icon-chevron-down'></i></button> <ul class='dropdown-menu'> <li class='active' ><a href='/cs/courseschedule?tname=subj-department&campuscd=UBC&dept=CPEN&pname=subjarea' title='UBC'>UBC Vancouver</a></li> <li><a href='/cs/courseschedule?tname=subj-department&campuscd=UBCO&dept=CPEN&pname=subjarea' title='UBCO'>UBC Okanagan</a></li> </ul></div><div class='btn-group'><button class='btn btn-primary' data-toggle='dropdown'>Session: 2019 Winter</button>  <button class='btn btn-primary dropdown-toggle' data-toggle='dropdown'><i class='icon-chevron-down'></i></button> <ul class='dropdown-menu'> <li><a href='/cs/courseschedule?tname=subj-department&sessyr=2019&sesscd=S&dept=CPEN&pname=subjarea' title='2019 Summer'>2019 Summer</a></li> <li><a href='/cs/courseschedule?tname=subj-department&sessyr=2018&sesscd=W&dept=CPEN&pname=subjarea' title='2018 Winter'>2018 Winter</a></li> <li class='active' ><a href='/cs/courseschedule?tname=subj-department&sessyr=2019&sesscd=W&dept=CPEN&pname=subjarea' title='2019 Winter'>2019 Winter</a></li> </ul></div></div> </ul> <!-- End of UBC Unit Breadcrumbs -->
+
+
+
+
+        <!-- Content Area -->
+        <div class="content expand" role="main">
+        <br/>
+          <!-- Main Content-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <a class="btn btn-small btn-disabled pull-right margin-left" title="Not logged in">Save To Worklist</a>
+
+
+
+<h5>Subject Code - CPEN (Computer Engineering)</h5>
+<!-- Start of new description of Department, present in Archives -->
+<p>
+
+</p>
+
+<div class="pagination ">
+<ul>
+<li><a class="filterSelection" onclick='filterTable("mainTable", new String("<All>"), new Array(0,1));'>All</a></li>
+
+<li><a class="filterSelection" onclick='filterTable("mainTable", new String("^CPEN2"), new Array(0,1));'>2</a></li>
+
+<li><a class="filterSelection" onclick='filterTable("mainTable", new String("^CPEN3"), new Array(0,1));'>3</a></li>
+
+<li><a class="filterSelection" onclick='filterTable("mainTable", new String("^CPEN4"), new Array(0,1));'>4</a></li>
+
+<li><a class="filterSelection" onclick='filterTable("mainTable", new String("^CPEN5"), new Array(0,1));'>5</a></li>
+
+<li><a class="filterSelection" onclick='filterTable("mainTable", new String("^CPEN6"), new Array(0,1));'>6</a></li>
+
+</ul></div>
+
+
+<table class="sortable table table-striped" id="mainTable">
+<thead>
+<tr>
+  <th>Course</th>
+  <th>Title</th>
+</tr></thead>
+<tbody>
+
+     <tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=211>CPEN 211</a></td><td>Introduction to Microcomputers</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=221>CPEN 221</a></td><td>Principles of Software Construction</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=223>CPEN 223</a></td><td>Software Design for Engineers</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=281>CPEN 281</a></td><td>Technical Communication</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=291>CPEN 291</a></td><td>Computer Engineering Design Studio I</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=311>CPEN 311</a></td><td>Digital Systems Design</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=312>CPEN 312</a></td><td>Digital Systems and Microcomputers</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=321>CPEN 321</a></td><td>Software Engineering</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=331>CPEN 331</a></td><td>Operating Systems</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=333>CPEN 333</a></td><td>System Software Engineering</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=391>CPEN 391</a></td><td>Computer Engineering Design Studio II</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=400A>CPEN 400A</a></td><td>Topics in Computer Engineering - BLDG MDRN WEBAPP</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=400D>CPEN 400D</a></td><td>Topics in Computer Engineering - DEEP LEARNING</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=400N>CPEN 400N</a></td><td>Topics in Computer Engineering - CMPTR NETWK II</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=400V>CPEN 400V</a></td><td>Topics in Computer Engineering - RESRCH EXPRIENCE</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=411>CPEN 411</a></td><td>Computer Architecture</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=412>CPEN 412</a></td><td>Microcomputer Systems Design</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=421>CPEN 421</a></td><td>Software Project Management</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=422>CPEN 422</a></td><td>Software Testing and Analysis</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=431>CPEN 431</a></td><td>Design of Distributed Software Applications</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=432>CPEN 432</a></td><td>Real-time System Design</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=442>CPEN 442</a></td><td>Introduction to Computer Security</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=481>CPEN 481</a></td><td>Economic Analysis of Engineering Projects</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=491>CPEN 491</a></td><td>Computer Engineering Capstone Design Project</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=499A>CPEN 499A</a></td><td>Undergraduate Thesis - UNDERGRAD THESIS</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=499B>CPEN 499B</a></td><td>Undergraduate Thesis - UNDERGRAD THESIS</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=502>CPEN 502</a></td><td>Architecture for Learning Systems</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=511>CPEN 511</a></td><td>Advanced Computer Architecture</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=512>CPEN 512</a></td><td>Parallel and Reconfigurable Computing</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=513>CPEN 513</a></td><td>CAD Algorithms for Integrated Circuits</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=522>CPEN 522</a></td><td>Software Verification and Testing</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=523>CPEN 523</a></td><td>Software Project Management</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=524>CPEN 524</a></td><td>Principles of Mobile Application Development and Analysis</td></a></tr><tr class=section2><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=541>CPEN 541</a></td><td>Human Interface Technologies</td></a></tr><tr class=section1><td><a href=/cs/courseschedule?pname=subjarea&amp;tname=subj-course&amp;dept=CPEN&amp;course=542>CPEN 542</a></td><td>Cybersecurity</td></a></tr>
+
+</tbody></table>
+
+
+
+          <!-- end of Main Content -->
+
+        &nbsp;
+        </div>
+        <!-- End of Content Area -->
+
+
+
+       <!-- Footer Area Unit Menu - Mobile Only --><div id='ubc7-unit-alternate-navigation' class='navbar expand visible-phone' role='navigation'> <div class='navbar-inner expand'><div class='container'><div class='nav-collapse collapse'><ul class='nav'> <li class='dropdown Browse'>  <div class='btn-group'>  <a class='btn' data-toggle='dropdown' >Browse  <div class='ubc7-arrow down-arrow'></div></a>  <ul class='dropdown-menu'> <li class='Standard_Timetables' ><a href='/cs/courseschedule?pname=stt&amp;tname=stt' title='Standard Timetables'>Standard Timetables</a></li> <li class='Browse_Courses' ><a href='/cs/courseschedule?pname=subjarea&amp;tname=subj-all-departments' title='Courses'>Courses</a></li> <li class='Browse_Specializations' ><a href='/cs/courseschedule?pname=spec&amp;tname=spec' title='Specializations'>Specializations</a></li>  </ul>  </div>  </li>  <li class='dropdown Search'>  <div class='btn-group'>  <a class='btn' data-toggle='dropdown' >Search  <div class='ubc7-arrow down-arrow'></div></a>  <ul class='dropdown-menu'> <li class='Search_Courses' ><a href='/cs/courseschedule?pname=subjarea&amp;tname=sectsearch' title='Courses'>Courses</a></li> <li class='Search_Instructor' ><a href='/cs/courseschedule?pname=instsearch&amp;tname=instsearch' title='Instructor'>Instructor</a></li>  </ul>  </div>  </li>  <li class='dropdown Help'>  <div class='btn-group'>  <a class='btn'  data-toggle='dropdown'>Help  <div class='ubc7-arrow down-arrow'></div></a>  <ul class='dropdown-menu'>  <li class='Quick_Help'><a href='/static/courseschedule/cs_quick_help.htm' title='Quick Help' target='_blank'>Quick Help</a></li>  <li class='Glossary'><a href='/static/courseschedule/cs_glossary.htm' title='Glossary' target='_blank'>Glossary</a></li>  <li class='Planning_UBCV'><a href='http://www.calendar.ubc.ca/vancouver/planning.cfm' title='Course Planning - Vancouver' target='_blank'>Course Planning - Vancouver</a></li>  <li class='Planning_UBCO'><a href='http://www.calendar.ubc.ca/okanagan/index.cfm?tree=18,0,0,0' title='Course Planning - Okanagan' target='_blank'>Course Planning - Okanagan</a></li>  </ul>  </div>  </li> </ul> <div id='cwl' class='pull-right'><form action='/cs/secure/login' method='GET'> <input type='IMAGE' name='IMGSUBMIT' value='IMGSUBMIT' src='https://www.auth.cwl.ubc.ca/CWL_login_button.gif' WIDTH='76' HEIGHT='25' ALT='CWL Login' BORDER='0' /> </form> </div></div><!-- /.nav-collapse -->  </div>  </div><!-- /navbar-inner -->  </div><!-- /navbar -->  <!-- End of Footer Area Unit Menu -->
+
+
+
+         <div id="dwindow" style="position: fixed; background-color: rgb(235, 235, 235); display: none;border-width:medium;border-style:solid; z-index:99;">
+            <div><p id="dwindowTitle" class='formHeader' align='left' style='margin-top:0;margin-bottom:0'><b>Comments</b></p></div>
+            <div>
+            <table><tr><td id="helpContent">&nbsp;</td></tr></table>
+            </div>
+          </div>
+
+          <div class="fullscreen" id="processingOverlay" style="display:none">
+                        <div class="centerbox" id="processingText">
+                        <div style="text-align: center;"><b>Please wait while your request is processed - this may take up to a minute to complete.</b></div>
+                        <table align="center"><tr><td>
+                        <div style="font-size:6pt;padding:2px;border:solid black 1px">
+                        <span id="box1">&nbsp; &nbsp;</span>
+                        <span id="box2">&nbsp; &nbsp;</span>
+                        <span id="box3">&nbsp; &nbsp;</span>
+                        <span id="box4">&nbsp; &nbsp;</span>
+                        <span id="box5">&nbsp; &nbsp;</span>
+                        <span id="box6">&nbsp; &nbsp;</span>
+                        <span id="box7">&nbsp; &nbsp;</span>
+                        <span id="box8">&nbsp; &nbsp;</span>
+                        <span id="box9">&nbsp; &nbsp;</span>
+                        <span id="box10">&nbsp; &nbsp;</span>
+                        <span id="box11">&nbsp; &nbsp;</span>
+                        </div>
+                        </td></tr>
+                        </table>
+
+                        </div>
+                    </div>
+
+        <footer id="ubc7-footer" class="expand" role="contentinfo">
+            <div class="row-fluid expand" id="ubc7-unit-footer">
+                <div class="span10" id="ubc7-unit-address">
+
+
+                    <div id="ubc7-address-location">
+                        <span id="ubc7-address-city">Vancouver | Kelowna</span>, <span id="ubc7-address-province" title="British Columbia">BC</span> <span id="ubc7-address-country">Canada</span>
+                    </div>
+
+                      <div id="ubc7-address"><a href="https://www.askme.ubc.ca/" target="_blank">Contact Us</a></div>
+
+
+                </div>
+                <div class="span2">
+                    <strong>Find us on</strong>
+                    <div id="ubc7-unit-social-icons">
+                        <a href="https://www.facebook.com/universityofbc?fref=ts" title="Facebook icon"><i class="icon-facebook-sign"></i></a>&nbsp;
+                        <a href="https://twitter.com/ubc " title="Twitter icon"><i class="icon-twitter-sign"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row-fluid expand ubc7-back-to-top">
+                <div class="span2">
+                    <a href="#" title="Back to top">Back to top <div class="ubc7-arrow up-arrow grey"></div></a>
+                </div>
+            </div>
+            <div class="row-fluid expand" id="ubc7-global-footer">
+                <div class="span5" id="ubc7-signature"><a href="http://www.ubc.ca/" title="The University of British Columbia (UBC)">The University of British Columbia</a></div>
+                <div class="span7" id="ubc7-footer-menu">
+                </div>
+            </div>
+            <div class="row-fluid expand" id="ubc7-minimal-footer">
+                <div class="span12">
+                    <ul>
+                        <li><a href="https://cdn.ubc.ca/clf/ref/emergency" title="Emergency Procedures">Emergency Procedures</a> <span class="divider">|</span></li>
+                        <li><a href="https://cdn.ubc.ca/clf/ref/terms" title="Terms of Use">Terms of Use</a> <span class="divider">|</span></li>
+                        <li><a href="https://cdn.ubc.ca/clf/ref/copyright" title="UBC Copyright">Copyright</a> <span class="divider">|</span></li>
+                        <li><a href="https://cdn.ubc.ca/clf/ref/accessibility" title="Accessibility">Accessibility</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+    </div> <!-- /container -->
+    <!-- Placed javascript at the end for faster loading -->
+    <script src="/static/ubcclf/7.0.2/js/ubc-clf.min.js"></script>
+
+    <script language="JavaScript" src="/static/shared/scripts/tablesorter.js"></script>
+    <script language="JavaScript" src="/static/shared/scripts/tablefilter.js"></script>
+    <script language="JavaScript" src="/static/courseschedule/scripts/simplePopup.js"></script>
+    <script language="JavaScript" src="/static/courseschedule/scripts/dhtml_pos.js"></script>
+    <script type="text/javascript" src="/static/courseschedule/scripts/unit.js"></script>
+    <script type="text/javascript" src="/static/courseschedule/scripts/validate.js"></script>
+    <script type="text/javascript" src="/static/courseschedule/scripts/columnsToRows.js"></script>
+    <script type="text/javascript">
+      <!-- // Automatic redirection based on form selection
+      function redirect_header() {
+        goTo = document.form_header.select_links.options[document.form_header.select_links.selectedIndex].value;
+        if (goTo != "") {
+          location = goTo;
+        }
+      }
+      // -->
+    </script>
+    <script type="text/javascript" src="/static/shared/scripts/coursesanalytics.js"></script>
+        <script type="text/javascript">
+            var progressEnd = 11;           // set to number of progress <span>'s.
+            var progressColor = '#002145';  // set to progress bar color
+            var progressInterval = 200;     // set to time between updates (milli-seconds)
+            var color = progressColor;
+
+            var progressAt = progressEnd;
+            var progressTimer;
+
+            function progress_update() {
+                    progressAt++;
+                    if (progressAt > progressEnd) {
+                      progressAt = 1;
+                      if (color == progressColor) {
+                        color = 'transparent';
+                      } else {
+                        color = progressColor;
+                      }
+                    }
+                    document.getElementById('box'+progressAt).style.backgroundColor = color;
+                    progressTimer = setTimeout('progress_update()',progressInterval);
+            }
+            progress_update();              // start progress bar
+        </script>
+</body>
+</html>

@@ -18,8 +18,8 @@ import java.nio.file.Path;
  */
 public final class Spider {
 
-    protected static Document fetchDocument(URI uri) throws IOException {
-        return Jsoup.connect(uri.toASCIIString()).get();
+    protected static Document fetchDocument(String url) throws IOException {
+        return Jsoup.connect(url).get();
     }
 
     /**

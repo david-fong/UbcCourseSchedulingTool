@@ -7,7 +7,6 @@ import org.w3c.dom.Attr;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
@@ -112,7 +111,7 @@ public final class CourseUtils {
 
         /**
          * @param attr An [Attr] object. Must not be [null].
-         * @return A [Semester] whose [xmlAttrVal] is equal to [attr.getValue].
+         * @return A [Semester] whose [xmlAttrVal] is equal to [attr::getValue].
          * @throws MalformedXmlDataException if no such [Semester] can be found.
          */
         public static Semester decodeXmlAttr(final Attr attr) throws MalformedXmlDataException {
