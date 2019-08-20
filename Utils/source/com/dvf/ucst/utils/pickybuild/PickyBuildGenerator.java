@@ -39,12 +39,12 @@ public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
             final PickyBuild<T> templateBuild,
             final Set<Set<T>> conjunctiveNormalFormed) {
         this.templateBuild = templateBuild;
-        this.clauses = Collections.unmodifiableList(
-                conjunctiveNormalFormed.stream()
-                        .filter(clause -> !clause.isEmpty()) // ignore empty clauses.
-                        .map(Collections::unmodifiableSet) // don't trust anybody- not even yourself.
-                        .sorted(Comparator.comparingInt(Set::size)) // order more-restrictive clauses first.
-                        .collect(Collectors.toList())
+        this.clauses = Collections.unmodifiableList(conjunctiveNormalFormed.stream()
+                .filter(clause -> !clause.isEmpty()) // ignore empty clauses.
+                .filter(clause -> !templateBuild.containsAny(clause)) // filter out satisfied clauses to defend from infinite loops
+                .map(Collections::unmodifiableSet) // don't trust anybody- not even yourself.
+                .sorted(Comparator.comparingInt(Set::size)) // order more-restrictive clauses first.
+                .collect(Collectors.toList())
         );
         this.numClauses = clauses.size();
     }

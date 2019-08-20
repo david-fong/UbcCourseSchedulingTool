@@ -1,5 +1,7 @@
 package com.dvf.ucst.utils.pickybuild;
 
+import java.util.Collection;
+
 /**
  * A collection where items cannot be added if they would conflict with entries that
  * have already been added. It is up to the implementation to determine what qualifies
@@ -45,5 +47,11 @@ public interface PickyBuild<E extends PickyBuildElement<E>> {
      * @return True if [item] can be added without conflicts.
      */
     boolean addIfNoConflicts(final E item);
+
+    /**
+     * @param others A [Collection] of other [PickyBuildElement]s.
+     * @return Whether any contents of [others] are already in [this] [PickyBuild].
+     */
+    boolean containsAny(final Collection<E> others);
 
 }

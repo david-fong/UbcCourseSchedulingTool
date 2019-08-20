@@ -8,6 +8,7 @@ import com.dvf.ucst.utils.pickybuild.PickyBuild;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import org.w3c.dom.Element;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -89,13 +90,18 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
      * @return [true] if the operation was successful.
      */
     @Override
-    public boolean addIfNoConflicts(CourseSection section) {
-        if (courseSections.stream().anyMatch(section::overlapsWith)) {
+    public boolean addIfNoConflicts(final CourseSection section) {
+        if (publicSectionsView.stream().anyMatch(section::overlapsWith)) {
             return false;
         } else {
             courseSections.add(section);
             return true;
         }
+    }
+
+    @Override
+    public boolean containsAny(final Collection<CourseSection> others) {
+        return others.stream().anyMatch(publicSectionsView::contains);
     }
 
 //    /**
