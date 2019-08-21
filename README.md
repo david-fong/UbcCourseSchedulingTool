@@ -3,9 +3,9 @@
 
 ### :mortar_board: The goal:
 
-Create a program (and wrapping desktop application) where a user can provide their program of study, and a collection of courses they have completed, and be returned with a collection of Worklists for their upcoming session that meet all their program requirements. As stated in this project's repo description, "One does not simply register for courses at UBC"- *but*, it shouldn't have to be that way. There are really exciting developments and efforts being made by UBC in this area [(The Scheduling Project)](https://facultystaff.students.ubc.ca/enrolment-services/scheduling-records-systems-management/scheduling-services/scheduling-project) that perhaps this project can supplement as a mature proof-of-concept for scheduling automation.
+Create a program (and wrapping desktop application) where a user can provide their program of study, and a collection of courses they have completed, and be returned with a collection of Worklists for their upcoming session that meet all their program requirements. As stated in this project's repo description, "One does not simply register for courses at UBC"- *but*, it shouldn't have to be that way. UBC is working on a project to reduce scheduling conflicts and walking distances between classes [(The Scheduling Project)](https://facultystaff.students.ubc.ca/enrolment-services/scheduling-records-systems-management/scheduling-services/scheduling-project) that perhaps this project can supplement as a mature proof-of-concept for scheduling automation.
 
-For me, there are two looming frustrations:
+For me, there are two leading frustrations:
 
 1. UBC has all the information needed to validate a worklist. They could automate it, but they haven't yet. Efforts have been made with great results by others [Ex. UBCScheduler by Yichen](https://yichen.dev/UBCScheduler/), but not to the extent of effort that *this* projects sets out for.
 1. Sources of course requirements are inconsistent. For the CPEN program, one is incomplete [(UBC's main site)](https://you.ubc.ca/ubc_programs/computer-engineering/), one is mixed with courses that are only for ELEC students- due to CPEN being lumped up with it as ECE [(The ECE electives document)](https://www.ece.ubc.ca/sites/default/files/CPEN%20-%202018%20May.pdf), one could use a css update [(the ECE department's site)](https://www.ece.ubc.ca/academic-programs/undergraduate/programs/computer-engineering-program), one on top of that is *incredibly, incredibly* cluttered [(UBC's degree navigator)](https://degree-navigator.as.it.ubc.ca "link broken"). **None of them completely agree with each other**. This is a problem that needs to be solved by effort and communication- not by algorithms. It is not a goal for this project to solve, but remains as much of a hope as for the other goals that it will be brought attention to.
@@ -47,8 +47,8 @@ My head is in the clouds- but [wouldn't it be lovely](https://www.youtube.com/wa
   - Matching requirements that require a test subject to contain matches of candidates
 
 ### :spider: Data Data Data:
-- Please see [`The Spiders`](Data/source/com/dvf/ucst/data/spider/Spider.java) for the classes which will pull registration data on Courses, their Sections, and STT's from UBC's public pages on their registration site.
-- See [`The FacultyNodes`](Data/source/com/dvf/ucst/data/faculties) for the constants that define the URL's for all the necessary UBC registration site pages that the Spiders will pull from, and that define the file structure for the local cache of that data in xml format.
+- Please see [`The Spiders`](Core/source/com/dvf/ucst/core/spider/Spider.java) for the classes which will pull registration data on Courses, their Sections, and STT's from UBC's public pages on their registration site.
+- See [`The FacultyNodes`](Core/source/com/dvf/ucst/core/faculties) for the constants that define the URL's for all the necessary UBC registration site pages that the Spiders will pull from, and that define the file structure for the local cache of that data in xml format.
 
 ---
 

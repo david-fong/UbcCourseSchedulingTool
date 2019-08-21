@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AppMain" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.dvf.ucst.app.AppMain" />
+    <module name="App" />
+    <option name="VM_PARAMETERS" value="-enableassertions --module-path &quot;${PATH_TO_FX}&quot; --add-modules &quot;javafx.graphics,&quot;" />
+    <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
