@@ -2,7 +2,7 @@ package com.dvf.ucst.core.spider;
 
 import com.dvf.ucst.core.coursedata.CourseDataLocator.StagedDataPath;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
-import com.dvf.ucst.utils.xml.XmlFileUtils;
+import com.dvf.ucst.utils.xml.XmlIoUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -62,7 +62,7 @@ public final class Spider {
                 try (final DirectoryStream<Path> fileStream = Files.newDirectoryStream(courseXmlPath, XML_FILE_FILTER)) {
                     fileStream.forEach(file -> {
                         String fileName = file.getFileName().toString();
-                        fileName = fileName.substring(0, fileName.length() - XmlFileUtils.XML_EXTENSION_STRING.length());
+                        fileName = fileName.substring(0, fileName.length() - XmlIoUtils.XML_EXTENSION_STRING.length());
                         faculty.getCourseIdTokenToCourseMap().putIfAbsent(fileName, null);
                     });
                 } catch (IOException e) {
@@ -74,6 +74,6 @@ public final class Spider {
 
     private static final DirectoryStream.Filter<Path> XML_FILE_FILTER = entry ->
             Files.isDirectory(entry) && entry.getFileName()
-                    .toString().endsWith(XmlFileUtils.XML_EXTENSION_STRING);
+                    .toString().endsWith(XmlIoUtils.XML_EXTENSION_STRING);
 
 }

@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 
 /**
@@ -23,7 +24,7 @@ import java.nio.file.Path;
  * Reduces the interface for reading and writing xml files to using [Document]s and
  * [File]s.
  */
-public final class XmlFileUtils {
+public final class XmlIoUtils {
 
     public static final String XML_EXTENSION_STRING = ".xml";
     private static final DocumentBuilder DOC_BUILDER;
@@ -48,6 +49,8 @@ public final class XmlFileUtils {
         }
     }
 
+
+
     /**
      * Reads a file that is assumed to contain valid xml, and returns a [Document]
      * view of the contents of that file, or null if the file did not contain not
@@ -57,13 +60,19 @@ public final class XmlFileUtils {
      * @param filePath The path to the file to read from. Must not be null.
      * @return [null] if the file could not be read into a [Document].
      */
-    public static Document readXmlFromFile(Path filePath) {
-        try {
-            return DOC_BUILDER.parse(filePath.toFile());
-        } catch (SAXException | IOException e) {
-            throw new RuntimeException(e);
-        }
+    public static Document readXmlFromFile(Path filePath) throws IOException, SAXException {
+        return DOC_BUILDER.parse(filePath.toFile());
     }
+
+    /**
+     * @param url A valid [URL] to a page carrying html content.
+     * @return A [Document] of the fetched HTML.
+     */
+    public static Document fetchHtmlFromUrl(final URL url) throws IOException, SAXException {
+        return DOC_BUILDER.parse(url.openStream());
+    }
+
+
 
     /**
      * This does not create an actual file - only

@@ -4,8 +4,10 @@ import com.dvf.ucst.core.HyperlinkBookIf;
 import com.dvf.ucst.core.coursedata.CourseDataLocator;
 import com.dvf.ucst.core.courseutils.Course;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
-import com.dvf.ucst.utils.xml.XmlFileUtils;
+import com.dvf.ucst.utils.xml.XmlIoUtils;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -79,9 +81,11 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
         } else {
             final Path coursePath = CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path.resolve(
                     getRootAnchoredPathToInfo(SubDirectories.COURSE_XML_DATA)
-            ).resolve(codeString + XmlFileUtils.XML_EXTENSION_STRING);
+            ).resolve(codeString + XmlIoUtils.XML_EXTENSION_STRING);
             try {
-                course = new Course(XmlFileUtils.readXmlFromFile(coursePath));
+                course = new Course(XmlIoUtils.readXmlFromFile(coursePath));
+            } catch (SAXException | IOException e) {
+                throw new RuntimeException("could not get xml from file", e);
             } catch (MalformedXmlDataException e) {
                 throw new RuntimeException("corrupted xml course data", e);
             }
