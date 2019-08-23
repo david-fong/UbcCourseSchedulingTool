@@ -1,5 +1,5 @@
 rootProject.name = 'ucst'
-include 'app'
-include 'core'
-include 'utils'
+include 'ucst-app'
+include 'ucst-core'
+include 'ucst-utils'
 

@@ -1,4 +1,4 @@
-package com.dvf.ucst.data.buildings;
+package com.dvf.ucst.core.buildings;
 
 public class Building {
 

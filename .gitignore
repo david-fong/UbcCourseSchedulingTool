@@ -1,15 +1,9 @@
+# Build-automation files:
+/.gradle/
 
-# Intellij IDEA:
-/.idea/dictionaries
+# IDE-related files:
 /.idea/edaphic/
-/.idea/workspace.*
-/.idea/uiDesigner.*
-
-# Project Compilation Output:
-/out/
-
-# Project/Module Dependencies:
-/lib/
-
-# Generated resources:
-Data/genresource/
+/.idea/dictionaries/
+/.idea/$CACHE_FILE$
+/.idea/$PRODUCT_WORKSPACE_FILE$
+/.idea/workspace.xml
