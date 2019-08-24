@@ -1,16 +1,24 @@
 plugins {
     id 'java'
+    id 'idea'
 }
 
 group 'ucst'
 version '0.0.0'
 
-sourceCompatibility = 1.9
+allprojects {
+    sourceCompatibility = 1.9
+    plugins.withType(JavaPlugin) {
+        dependencies {
+            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
+            testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.1'
+        }
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
 }

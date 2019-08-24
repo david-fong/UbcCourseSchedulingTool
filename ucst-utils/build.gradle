@@ -5,12 +5,9 @@ plugins {
 group 'ucst'
 version '0.0.0'
 
-sourceCompatibility = 1.9
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
