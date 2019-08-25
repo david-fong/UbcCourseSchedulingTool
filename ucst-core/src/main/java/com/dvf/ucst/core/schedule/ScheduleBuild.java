@@ -106,16 +106,6 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
         return others.stream().anyMatch(publicSectionsView::contains);
     }
 
-//    /**
-//     * @return An immutable snapshot of an implementing instance, WITHOUT ANY OF ITS
-//     *     UNIQUE BEHAVIOUR. This may be called, for instance, when a student has
-//     *     successfully registered into a [Worklist] (a subclass of [ScheduleBuild]),
-//     *     and no longer requires any of its mutable behaviour.
-//     */
-//    public final Schedule createImmutableCopy() {
-//        return new Schedule(this);
-//    }
-
     @Override
     public final Set<CourseSection> getCourseSections() {
         return publicSectionsView;

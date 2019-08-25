@@ -12,14 +12,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A collection of [Worklist]s with distinct names. Contents can be added,
- * duplicated, removed, and renamed.
+ * duplicated, removed, and renamed. GUI wrappers for this controller can
+ * provide live-feedback to users on [Worklist] name-validity based on the
+ * two used criteria:
+ * 1) [Worklist] names for [Worklist]s in the same [WorklistGroup] must be
+ *    unique (enforced by [WorklistGroup]). See [::getNames]
+ * 2) [Worklist] names follow the format specified by [Worklist.PERMITTED_NAME_TESTER].
+ *
  */
 public final class WorklistGroup implements XmlUtils.UserDataXml {
 
     private static final String NAME_OF_COPY_SUFFIX = "~";
     private static final String DEFAULT_WORKLIST_NAME = "unnamed";
 
-    private final Map<String, Worklist> worklists; // values never null.
+    private final Map<String, Worklist> worklists; // values are never null.
     private final Set<String> backingNameSet; // unmodifiable. synced to [worklists]' keys.
 
     // Use when user has no saved worklist group yet.
@@ -32,10 +38,14 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
         this.worklists = new ConcurrentHashMap<>();
         this.backingNameSet = Collections.unmodifiableSet(worklists.keySet());
 
-        for (Element worklistElement : XmlUtils.getChildElementsByTagName(worklistGroupElement, Worklist.Xml.WORKLIST_TAG)) {
+        for (final Element worklistElement
+                : XmlUtils.getChildElementsByTagName(worklistGroupElement, Worklist.Xml.WORKLIST_TAG)
+        ) {
             final Worklist worklist = new Worklist(worklistElement);
             if (worklists.containsKey(worklist.getName())) {
-                throw new MalformedXmlDataException("Corrupted data: worklists must have unique names");
+                throw new MalformedXmlDataException("Corrupted data:"
+                        + "worklists in the same group must have unique names"
+                );
             } else {
                 worklists.put(worklist.getName(), worklist);
             }
@@ -43,18 +53,30 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
     }
 
     /**
-     * @param name The name to use for the new [Worklist]. This operation will fail
-     *     if another [Worklist] in this [WorklistGroup] already goes by the same
-     *     name. Must not be [null].
-     * @return The new [Worklist] that was added to this [WorklistGroup] or null if
+     * @param name The name to use for the new [Worklist]. May be [null]. If [null],
+     *     a generic name will be used and the operation is guaranteed to succeed.
+     *     Otherwise, this operation will fail if another [Worklist] in this
+     *     [WorklistGroup] already goes by the same name.
+     * @return The new [Worklist] that was added to this [WorklistGroup] or [null] if
      *     the operation failed.
      */
     public Worklist addNewFromScratch(final String name) {
-        if (name == null || worklists.containsKey(name)) {
+        if (worklists.containsKey(name)) {
             return null;
         } else {
-            final Worklist newWorklist = new Worklist(name);
-            worklists.put(name, newWorklist);
+            final Worklist newWorklist;
+            try {
+                newWorklist = new Worklist(name != null ? name : safeNameCopy(DEFAULT_WORKLIST_NAME));
+            } catch (Worklist.MalformedWorklistNameArgumentException e) {
+                assert name != null : String.format(
+                        "The generic name \"%s\" needs to work no matter what."
+                                + " Please change either the generic name generator or"
+                                + " the name format checker so that this is fixed.",
+                        safeNameCopy(DEFAULT_WORKLIST_NAME)
+                );
+                return null;
+            }
+            worklists.put(newWorklist.getName(), newWorklist);
             return newWorklist;
         }
     }
@@ -70,16 +92,25 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
      *     and [null] otherwise.
      */
     public Worklist addNewBasedOn(final ScheduleBuild other, final String name) {
-        if (name != null && worklists.containsKey(name)) {
+        if (name != null && backingNameSet.contains(name)) {
             return null; // fail-fast instead of wasting effort on unused construction.
         }
         final Worklist copy;
 
-        if (other instanceof Worklist) {
-            final Worklist otherWorklist = (Worklist)other;
-            copy = new Worklist(other, name != null ? name : safeNameCopy(otherWorklist.getName()));
-        } else {
-            copy = new Worklist(other, name != null ? name : safeNameCopy(DEFAULT_WORKLIST_NAME));
+        try {
+            if (other instanceof Worklist) {
+                copy = new Worklist(other, name != null ? name : safeNameCopy(((Worklist)other).getName()));
+            } else {
+                copy = new Worklist(other, name != null ? name : safeNameCopy(DEFAULT_WORKLIST_NAME));
+            }
+        } catch (Worklist.MalformedWorklistNameArgumentException e) {
+            assert name != null : String.format(
+                    "The generic name \"%s\" needs to work no matter what."
+                            + " Please change either the generic name generator or"
+                            + " the name format checker so that this is fixed.",
+                    safeNameCopy(DEFAULT_WORKLIST_NAME)
+            );
+            return null;
         }
 
         // at this point, name is guaranteed to work.
@@ -103,7 +134,7 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
      *     same as that of any other [Worklist] already in this [WorklistGroup]. If
      *     the operation failed, returns [null] instead.
      */
-    public Worklist createCopyOf(Worklist other) {
+    public Worklist createCopyOf(final Worklist other) {
         if (isFromThis(other)) {
             return addNewBasedOn(other, null);
         } else {
@@ -121,7 +152,7 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
      *     and [newName] is not already the name of another [Worklist] in this
      *     [WorklistGroup] and null otherwise.
      */
-    public Worklist rename(Worklist worklist, String newName) {
+    public Worklist rename(final Worklist worklist, final String newName) {
         if (isFromThis(worklist) && !worklist.isLocked() && !worklists.containsKey(newName)) {
             worklists.remove(worklist.getName(), worklist);
             return addNewBasedOn(worklist, newName);
@@ -135,7 +166,7 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
      *     is not from this [WorklistGroup].
      * @return [true] if [worklist] is in this [WorklistGroup] and was removed.
      */
-    public boolean remove(Worklist worklist) {
+    public boolean remove(final Worklist worklist) {
         if (isFromThis(worklist) && !worklist.isLocked()) {
             return worklists.remove(worklist.getName(), worklist);
         } else {
@@ -166,7 +197,7 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
      *     the [NAME_OF_COPY_SUFFIX] appended to it as are needed so there are
      *     no conflicts with [Worklist]s already in this [WorklistGroup].
      */
-    private String safeNameCopy(String name) {
+    private String safeNameCopy(final String name) {
         String safeName = name;
         while (worklists.containsKey(safeName)) {
             safeName += NAME_OF_COPY_SUFFIX;
@@ -174,7 +205,7 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
         return safeName;
     }
 
-    private boolean isFromThis(Worklist worklist) {
+    private boolean isFromThis(final Worklist worklist) {
         return worklists.get(worklist.getName()) == worklist;
     }
 
