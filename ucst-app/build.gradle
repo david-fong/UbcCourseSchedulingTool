@@ -21,6 +21,7 @@ dependencies {
     implementation project(':ucst-core')
 }
 
-//application {
-//    mainClassName = '$modulename/com.dvf.ucst.app.AppMain'
-//}
+application {
+    mainClassName = 'com.dvf.ucst.app.AppMain'
+    applicationDefaultJvmArgs += ['']
+}

@@ -4,9 +4,8 @@ import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.Month;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
@@ -133,6 +132,7 @@ public final class CourseUtils {
                     })
                     .sorted().collect(Collectors.toList());
             semesterLoop.add(semesterLoop.get(0).plus(1, ChronoUnit.YEARS));
+
             for (int i = 0; i < values().length; i++) {
                 if (date.compareTo(semesterLoop.get(i)) >= 0 && date.compareTo(semesterLoop.get(i + 1)) < 0) {
                     return dateSemesterMap.get(semesterLoop.get(i));
@@ -140,52 +140,49 @@ public final class CourseUtils {
             }
             throw new RuntimeException("Unable to get current semester. Should never reach here.");
         }
-    }
 
-    public enum Session {
-        WINTER ("Winter"),
-        SUMMER ("Summer"),
-        ;
-        public final String label;
+        public enum Session {
+            WINTER ("Winter"),
+            SUMMER ("Summer"),
+            ;
+            public final String label;
 
-        Session(String label) {
-            this.label = label;
+            Session(String label) {
+                this.label = label;
+            }
+
+            @Override
+            public String toString() {
+                return label;
+            }
         }
 
-        @Override
-        public String toString() {
-            return label;
-        }
-    }
+        public enum Term {
+            TERM_ONE,
+            TERM_TWO,
+            ;
+            public final int value;
+            public final String label;
 
-    /**
-     * A term in a Session. Either 1 or 2.
-     */
-    public enum Term {
-        TERM_ONE,
-        TERM_TWO,
-        ;
-        public final int value;
-        public final String label;
+            Term() {
+                this.value = ordinal() + 1;
+                this.label = "Term " + this.value;
+            }
 
-        Term() {
-            this.value = ordinal() + 1;
-            this.label = "Term " + this.value;
-        }
+            /**
+             * @param val Should be 1 or 2.
+             * @return returns null if an unexpected value is given.
+             */
+            public static Term getTermByValue(int val) {
+                val--;
+                return (val > 0 && val < values().length)
+                        ? values()[val - 1] : null;
+            }
 
-        /**
-         * @param val Should be 1 or 2.
-         * @return returns null if an unexpected value is given.
-         */
-        public static Term getTermByValue(int val) {
-            val--;
-            return (val > 0 && val < values().length)
-                    ? values()[val - 1] : null;
-        }
-
-        @Override
-        public String toString() {
-            return label;
+            @Override
+            public String toString() {
+                return label;
+            }
         }
     }
 
@@ -214,7 +211,7 @@ public final class CourseUtils {
          * @return A [WeekDay] whose [getXmlConstantValue] is equal to [attr.getValue].
          * @throws MalformedXmlDataException if no such [WeekDay] can be found.
          */
-        public static WeekDay decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
+        public static WeekDay decodeXmlAttr(final Attr attr) throws MalformedXmlDataException {
             for (WeekDay weekDay : WeekDay.values()) {
                 if (weekDay.xmlAttrVal.equals(attr.getValue())) {
                     return weekDay;
@@ -224,40 +221,44 @@ public final class CourseUtils {
         }
     }
 
-    private static final int EARLIEST_BLOCK_HOUR = 7;
+
+
+    /**
+     * Utilities for the UBC Timezone.
+     */
+    public static final ZoneId UBC_TIMEZONE_ID = ZoneId.of("America/Vancouver");
+
+    public static ZonedDateTime getCurrentUbcDateTime() {
+        return ZonedDateTime.now(UBC_TIMEZONE_ID);
+    }
 
     public enum BlockTime implements XmlUtils.XmlConstant {
-        T0700, T0730,
-        T0800, T0830,
-        T0900, T0930,
-        T1000, T1030,
-        T1100, T1130,
-        T1200, T1230,
-        T1300, T1330,
-        T1400, T1430,
-        T1500, T1530,
-        T1600, T1630,
-        T1700, T1730,
-        T1800, T1830,
-        T1900, T1930,
-        T2000, T2030,
+        T0700, T0730, T0800, T0830,
+        T0900, T0930, T1000, T1030,
+        T1100, T1130, T1200, T1230,
+        T1300, T1330, T1400, T1430,
+        T1500, T1530, T1600, T1630,
+        T1700, T1730, T1800, T1830,
+        T1900, T1930, T2000, T2030,
         T2100, T2130,
         ;
-        public final int hour;
-        public final int minute;
-        public final String _12hrTimeString;
-        public final String _24hrTimeString;
-        public final String googleCalCsvString;
+        private static final int EARLIEST_BLOCK_HOUR = 7;
+        private static final DateTimeFormatter MY_12_HOUR_CLOCK_FORMATTER;
+        private static final DateTimeFormatter MY_24_HOUR_CLOCK_FORMATTER;
+        static {
+            MY_12_HOUR_CLOCK_FORMATTER = DateTimeFormatter.ofPattern("h:mma");
+            MY_24_HOUR_CLOCK_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+        }
+        private final OffsetTime time;
 
         BlockTime() {
-            this.hour = (ordinal() / 2) + EARLIEST_BLOCK_HOUR;
-            this.minute = (ordinal() % 2 == 0) ? 0 : 30;
-
-            final int _12hr = (hour - 12) < 0 ? hour : hour - 12;
-            final String amPm = (hour - 12) < 0 ? "am" : "pm";
-            this._12hrTimeString = String.format("%2d:%02d%s", _12hr, minute, amPm);
-            this._24hrTimeString = String.format("%02d:%02d", hour, minute);
-            this.googleCalCsvString = String.format("%02d:%02d %s", _12hr, minute, amPm.toUpperCase());
+            final int hour   = (ordinal() / 2) + EARLIEST_BLOCK_HOUR;
+            final int minute = (ordinal() % 2 == 0) ? 0 : 30;
+            this.time = ZonedDateTime.of(
+                    0, 0, 0,
+                    hour, minute, 0, 0,
+                    UBC_TIMEZONE_ID
+            ).toOffsetDateTime().toOffsetTime();
         }
 
         public boolean isBefore(BlockTime other) {
@@ -266,6 +267,18 @@ public final class CourseUtils {
 
         public boolean isAfter(BlockTime other) {
             return ordinal() > other.ordinal();
+        }
+
+        public OffsetTime getTime() {
+            return time;
+        }
+
+        public String get12HourTimeString() {
+            return time.format(MY_12_HOUR_CLOCK_FORMATTER).toLowerCase();
+        }
+
+        public String get24HrTimeString() {
+            return time.format(MY_24_HOUR_CLOCK_FORMATTER);
         }
 
         /**
@@ -287,7 +300,7 @@ public final class CourseUtils {
          */
         @Override
         public String getXmlConstantValue() {
-            return _24hrTimeString;
+            return get24HrTimeString();
         }
     }
 

@@ -3,7 +3,7 @@ package com.dvf.ucst.core.courseutils;
 import com.dvf.ucst.core.courseutils.CourseUtils.Semester;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
@@ -26,6 +26,17 @@ class CourseUtilsTest {
                     dateToExpectedEntry.getValue()
             );
         }
+    }
+
+    @Test
+    void blockTimeAndTimezoneTest() {
+        System.out.println("Timezone ID:     " + CourseUtils.UBC_TIMEZONE_ID);
+        final ZoneId hkId = ZoneId.of("Hongkong");
+        System.out.println(ZonedDateTime.of(LocalDateTime.now(), hkId)); // not the behaviour we want.
+        System.out.println(LocalDateTime.now().atZone(hkId)); // also not the behaviour we want.
+        System.out.println(ZonedDateTime.now(hkId)); // <- this is it, chief.
+        System.out.println(ZonedDateTime.now(hkId).toOffsetDateTime());
+        System.out.println(ZonedDateTime.now(CourseUtils.UBC_TIMEZONE_ID).toOffsetDateTime().toOffsetTime()); // <- use this for times.
     }
 
 }

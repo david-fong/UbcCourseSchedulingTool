@@ -34,8 +34,8 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
      * Permits non-contiguous intermediate spaces.
      * Permits numbers and punctuation marks.
      */
-    public static final Predicate<String> PERMITTED_NAME_TESTER
-            = Pattern.compile("\\p{Alpha}([ ]?\\p{Graph})*").asMatchPredicate();
+    private static final Pattern PERMITTED_NAME_PATTERN = Pattern.compile("\\p{Alpha}([ ]?\\p{Graph})*");
+    public static final Predicate<String> PERMITTED_NAME_TESTER = PERMITTED_NAME_PATTERN.asPredicate();
 
     private final String name;
     private boolean isLocked = false;
@@ -181,15 +181,16 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
         final List<EnumMap<GoogleCalCsvColumns, String>> rows = new ArrayList<>();
         for (final CourseSection section : getCourseSections()) {
             for (final CourseSectionBlock block : section.getBlocks()) {
-                final String startDateString = GoogleCalCsvColumns.DATE_FORMAT.format(
+                final String startDateString = GoogleCalCsvColumns.DATE_FORMATTER.format(
                         section.getSemester().getApproxClassStartDay(
-                                LocalDate.now().getYear(), block.getWeekDay())
+                                LocalDate.now().getYear(), block.getWeekDay()
+                        )
                 );
                 final EnumMap<GoogleCalCsvColumns, String> row = new EnumMap<>(GoogleCalCsvColumns.class);
                 row.put(GoogleCalCsvColumns.SUBJECT,    section.getUserFullSectionIdString());
                 row.put(GoogleCalCsvColumns.START_DATE, startDateString);
-                row.put(GoogleCalCsvColumns.START_TIME, block.getStartTime().googleCalCsvString);
-                row.put(GoogleCalCsvColumns.END_TIME,   block.getEndTime().googleCalCsvString);
+                row.put(GoogleCalCsvColumns.START_TIME, block.getStartTime().getTime().format(GoogleCalCsvColumns.TIME_FORMATTER));
+                row.put(GoogleCalCsvColumns.END_TIME,   block.getEndTime().getTime().format(GoogleCalCsvColumns.TIME_FORMATTER));
                 //row.put(GoogleCalCsvColumns.LOCATION, block.getLocation());
                 row.put(GoogleCalCsvColumns.DESCRIPTION, section.getParentCourse().getCourseDescription());
                 rows.add(row);
@@ -252,9 +253,9 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
          * @return A [WorklistFavorability] whose [xmlAttrVal] is equal to [attr.getValue].
          * @throws MalformedXmlDataException if no such [WorklistFavorability] can be found.
          */
-        public static WorklistFavorability decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
+        public static WorklistFavorability decodeXmlAttr(final Attr attr) throws MalformedXmlDataException {
             for (WorklistFavorability favorability : WorklistFavorability.values()) {
-                if (favorability.xmlAttrVal.equals(attr.getValue())) {
+                if (favorability.getXmlConstantValue().equals(attr.getValue())) {
                     return favorability;
                 }
             }

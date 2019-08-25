@@ -105,15 +105,16 @@ public final class CourseSectionBlock {
          *     Never returns [null]. If [attr] is [null], returns [EVERY_WEEK] by default.
          * @throws MalformedXmlDataException if no such [BlockRepetition] can be found.
          */
-        private static BlockRepetition decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
+        private static BlockRepetition decodeXmlAttr(final Attr attr) throws MalformedXmlDataException {
             if (attr == null) {
                 return EVERY_WEEK;
             }
-            try {
-                return BlockRepetition.valueOf(attr.getValue());
-            } catch (IllegalArgumentException e) {
-                throw MalformedXmlDataException.invalidAttrVal(attr);
+            for (BlockRepetition blockRepetition : BlockRepetition.values()) {
+                if (blockRepetition.xmlAttrVal.equals(attr.getValue())) {
+                    return blockRepetition;
+                }
             }
+            throw MalformedXmlDataException.invalidAttrVal(attr);
         }
     }
 

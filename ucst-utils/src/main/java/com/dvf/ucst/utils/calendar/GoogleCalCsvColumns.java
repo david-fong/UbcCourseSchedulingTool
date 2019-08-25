@@ -2,6 +2,7 @@ package com.dvf.ucst.utils.calendar;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -11,27 +12,22 @@ import java.util.StringJoiner;
  * Allows simple calendar data to be stored in .csv format and imported to Google
  * Calendars. See the below link for the spec.
  * https://support.google.com/calendar/answer/37118?hl=en#format_csv
- *
- * iCalendar: an internet standard for calendar data that allows repeated events.
- * This is a good alternative to what we are doing, but it's too complicated for
- * me to want to use it.
- * https://github.com/ical4j/ical4j/wiki/Examples
- * http://ical4j.github.io/docs/ical4j/api/3.0.4/
  */
 public enum GoogleCalCsvColumns {
     SUBJECT ("Subject"), // FACULTY COURSE_ID SECTION_ID
     START_DATE ("Start Date"), // MM/DD/YYYY
-    END_DATE ("End Date"), // unused.
+    END_DATE ("End Date"),
     START_TIME ("Start Time"), // HH:MM (AM|PM)
     END_TIME ("End Time"), // HH:MM (AM|PM)
-    ALL_DAY_EVENT ("All Day Event"), // unused.
+    ALL_DAY_EVENT ("All Day Event"),
     DESCRIPTION ("Description"),
     LOCATION ("Location"),
-    PRIVATE ("Private"), // unused.
+    PRIVATE ("Private"),
     ;
     private final String name;
 
-    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
+    public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
+    public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm a");
 
     GoogleCalCsvColumns(String name) {
         this.name = String.format("\"%s\"", name);
@@ -54,6 +50,7 @@ public enum GoogleCalCsvColumns {
     public static String getCalendarString(final List<GoogleCalCsvColumns> headings,
                                            final List<EnumMap<GoogleCalCsvColumns, String>> rows) {
         final StringBuilder csv = new StringBuilder(); {
+            // Initialize output with specified table header in given column order:
             final StringJoiner headerRow = new StringJoiner(",", "", "\n");
             for (final GoogleCalCsvColumns heading : headings) {
                 headerRow.add(heading.name);
@@ -62,6 +59,7 @@ public enum GoogleCalCsvColumns {
         }
         for (final Map<GoogleCalCsvColumns, String> row : rows) {
             final StringJoiner rowString = new StringJoiner(",", "", "\n");
+            // Add each row, placing values in the order of the table header columns:
             for (final GoogleCalCsvColumns heading : headings) {
                 rowString.add(cleanColumnValue(row.get(heading)));
             }
