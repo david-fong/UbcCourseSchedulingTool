@@ -21,9 +21,9 @@ My head is in the clouds- but [wouldn't it be lovely](https://www.youtube.com/wa
 ### :cd: High-level Algorithm Description:
 
 1. Begin with complex program requirements imposed on the user such as those in the [The ECE electives document](https://www.ece.ubc.ca/sites/default/files/CPEN%20-%202018%20May.pdf), and a set of user-preferences such as "Earliest class time", or "Make sure there is a lunch break everyday".
-1. Weed out courses where the user doesn't meet the course's requirements (ie. prereqs, coreqs, student-reqs). Allow the user to select unusable courses to override to still consider in further operations. See [`Requirement::requireOf`](Utils/source/com/dvf/ucst/utils/requirement/Requirement.java).
-1. Create a collection of all combinations of Courses that satisfy the complex program requirements. See [`MatchingRequirementIf::getAllBarelyPassingCombinations`](Utils/source/com/dvf/ucst/utils/requirement/matching/MatchingRequirementIf.java).
-1. Create a collection of all conflict-free Worklists (containing *CourseSections* and not their *Courses*) for each of the previously generated Course combinations by trying all combinations of their CourseSections together (short circuiting upon encountering conflicts to avoid wasteful computation). See [`PickyBuildGenerator::generateAllFullPickyBuilds`](Utils/source/com/dvf/ucst/utils/pickybuild/PickyBuildGenerator.java).
+1. Weed out courses where the user doesn't meet the course's requirements (ie. prereqs, coreqs, student-reqs). Allow the user to select unusable courses to override to still consider in further operations. See [`Requirement::requireOf`](ucst-utils/src/main/java/com/dvf/ucst/utils/requirement/Requirement.java).
+1. Create a collection of all combinations of Courses that satisfy the complex program requirements. See [`MatchingRequirementIf::getAllBarelyPassingCombinations`](ucst-utils/src/main/java/com/dvf/ucst/utils/requirement/matching/MatchingRequirementIf.java).
+1. Create a collection of all conflict-free Worklists (containing *CourseSections* and not their *Courses*) for each of the previously generated Course combinations by trying all combinations of their CourseSections together (short circuiting upon encountering conflicts to avoid wasteful computation). See [`PickyBuildGenerator::generateAllFullPickyBuilds`](ucst-utils/src/main/java/com/dvf/ucst/utils/pickybuild/PickyBuildGenerator.java).
 1. Sort the conflict-free Worklists by their adherence to the user's preferences.
 
 ### :monkey: Data Structures:
@@ -47,8 +47,8 @@ My head is in the clouds- but [wouldn't it be lovely](https://www.youtube.com/wa
   - Matching requirements that require a test subject to contain matches of candidates
 
 ### :spider: Data Data Data:
-- Please see [`The Spiders`](Core/source/com/dvf/ucst/core/spider/Spider.java) for the classes which will pull registration data on Courses, their Sections, and STT's from UBC's public pages on their registration site.
-- See [`The FacultyNodes`](Core/source/com/dvf/ucst/core/faculties) for the constants that define the URL's for all the necessary UBC registration site pages that the Spiders will pull from, and that define the file structure for the local cache of that data in xml format.
+- Please see [`The Spiders`](ucst-core/src/main/java/com/dvf/ucst/core/spider/Spider.java) for the classes which will pull registration data on Courses, their Sections, and STT's from UBC's public pages on their registration site.
+- See [`The FacultyNodes`](ucst-core/src/main/java/com/dvf/ucst/core/faculties) for the constants that define the URL's for all the necessary UBC registration site pages that the Spiders will pull from, and that define the file structure for the local cache of that data in xml format.
 
 ---
 

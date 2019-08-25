@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-    id "org.openjfx.javafxplugin" version '0.0.8'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 group 'ucst'
@@ -21,6 +21,6 @@ dependencies {
     implementation project(':ucst-core')
 }
 
-application {
-    mainClassName = 'AppMain'
-}
+//application {
+//    mainClassName = '$modulename/com.dvf.ucst.app.AppMain'
+//}
