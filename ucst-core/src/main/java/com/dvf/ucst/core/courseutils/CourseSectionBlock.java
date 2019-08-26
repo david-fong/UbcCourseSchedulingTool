@@ -1,5 +1,6 @@
 package com.dvf.ucst.core.courseutils;
 
+import com.dvf.ucst.core.courseutils.UbcTimeUtils.BlockTime;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
@@ -27,10 +28,10 @@ public final class CourseSectionBlock {
         this.repetitionType = BlockRepetition.decodeXmlAttr(
                 blockElement.getAttributeNode(Xml.OPTIONAL_REPEAT_TYPE_ATTR.value)
         );
-        final CourseUtils.BlockTime start = CourseUtils.BlockTime.decodeXmlAttr(
+        final BlockTime start = BlockTime.decodeXmlAttr(
                 XmlUtils.getMandatoryAttr(blockElement, Xml.BEGIN_TIME_ATTR)
         );
-        final CourseUtils.BlockTime end = CourseUtils.BlockTime.decodeXmlAttr(
+        final BlockTime end = BlockTime.decodeXmlAttr(
                 XmlUtils.getMandatoryAttr(blockElement, Xml.END_TIME_ATTR)
         );
         this.timeEnclosure = new BlockTimeEnclosure(start, end);
@@ -59,11 +60,11 @@ public final class CourseSectionBlock {
         return repetitionType;
     }
 
-    public CourseUtils.BlockTime getStartTime() {
+    public BlockTime getStartTime() {
         return timeEnclosure.begin;
     }
 
-    public CourseUtils.BlockTime getEndTime() {
+    public BlockTime getEndTime() {
         return timeEnclosure.end;
     }
 
@@ -71,15 +72,15 @@ public final class CourseSectionBlock {
 
     private static final class BlockTimeEnclosure {
 
-        private final CourseUtils.BlockTime begin;
-        private final CourseUtils.BlockTime end;
+        private final BlockTime begin;
+        private final BlockTime end;
 
-        private BlockTimeEnclosure(CourseUtils.BlockTime begin, CourseUtils.BlockTime end) {
+        private BlockTimeEnclosure(BlockTime begin, BlockTime end) {
             this.begin = begin;
             this.end = end;
         }
 
-        private boolean overlapsWith(BlockTimeEnclosure other) {
+        private boolean overlapsWith(final BlockTimeEnclosure other) {
             return begin.isBefore(other.end) && end.isAfter(other.begin);
         }
     }
