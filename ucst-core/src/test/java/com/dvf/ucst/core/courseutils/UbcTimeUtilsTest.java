@@ -13,6 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class UbcTimeUtilsTest {
 
     private static final BlockTime OUTSIDE = OUTSIDE_REGULAR_CLASS_TIME; // for sake of brevity.
+    private static final BlockTime FIRST_BLOCK = BlockTime.values()[0];
+    private static final BlockTime LAST_BLOCK = BlockTime.values()[OUTSIDE.ordinal() - 1];
 
     @Test
     void timeSandbox() {
@@ -29,22 +31,53 @@ class UbcTimeUtilsTest {
 
     @Test
     void currentBlockTime() {
-        final OffsetTime preFirstBlockTime = BlockTime.values()[0].getTime().minusSeconds(1);
+        final OffsetTime preFirstBlockTime = FIRST_BLOCK.getTime().minusNanos(1);
+        final OffsetTime preEndOfDay = OUTSIDE_REGULAR_CLASS_TIME.getTime().minusNanos(1);
         final Map<LocalTime, BlockTime> timeToExpectedBlockMap = Map.of(
                 LocalTime.of( 5, 26), OUTSIDE,
                 LocalTime.of(preFirstBlockTime.getHour(), preFirstBlockTime.getMinute()), OUTSIDE,
                 LocalTime.of( 8,  0), T0800,
                 LocalTime.of( 8,  1), T0800,
                 LocalTime.of( 8, 59), T0830,
-                LocalTime.of( 9,  0), T0900,
                 LocalTime.of(12, 17), T1200,
                 LocalTime.of(12, 30), T1230,
                 LocalTime.of(17, 42), T1730,
+                LocalTime.of(preEndOfDay.getHour(), preEndOfDay.getMinute()), LAST_BLOCK,
                 LocalTime.of(OUTSIDE.getTime().getHour(), OUTSIDE.getTime().getMinute()), OUTSIDE
         );
         for (final Map.Entry<LocalTime, BlockTime> timeToExpectedBlockEntry : timeToExpectedBlockMap.entrySet()) {
             final OffsetTime inputTime = timeToExpectedBlockEntry.getKey().atOffset(getUbcTimezoneOffset());
-            assertEquals(getCurrentBlockTime(inputTime), timeToExpectedBlockEntry.getValue());
+            assertEquals(
+                    timeToExpectedBlockEntry.getValue(),
+                    getCurrentBlockTime(inputTime),
+                    "given time: " + timeToExpectedBlockEntry.getKey()
+            );
+        }
+    }
+
+    @Test
+    void nextBlockTime() {
+        final OffsetTime preFirstBlockTime = BlockTime.values()[0].getTime().minusNanos(1);
+        final OffsetTime preEndOfDay = OUTSIDE_REGULAR_CLASS_TIME.getTime().minusNanos(1);
+        final Map<LocalTime, BlockTime> timeToExpectedBlockMap = Map.of(
+                LocalTime.of( 5, 26), FIRST_BLOCK,
+                LocalTime.of(preFirstBlockTime.getHour(), preFirstBlockTime.getMinute()), FIRST_BLOCK,
+                LocalTime.of( 8,  0), T0830,
+                LocalTime.of( 8,  1), T0830,
+                LocalTime.of( 8, 59), T0900,
+                LocalTime.of(12, 17), T1230,
+                LocalTime.of(12, 30), T1300,
+                LocalTime.of(17, 42), T1800,
+                LocalTime.of(preEndOfDay.getHour(), preEndOfDay.getMinute()), OUTSIDE,
+                LocalTime.of(OUTSIDE.getTime().getHour(), OUTSIDE.getTime().getMinute()), FIRST_BLOCK
+        );
+        for (final Map.Entry<LocalTime, BlockTime> timeToExpectedBlockEntry : timeToExpectedBlockMap.entrySet()) {
+            final OffsetTime inputTime = timeToExpectedBlockEntry.getKey().atOffset(getUbcTimezoneOffset());
+            assertEquals(
+                    timeToExpectedBlockEntry.getValue(),
+                    getNextBlockTime(inputTime),
+                    "given time: " + timeToExpectedBlockEntry.getKey()
+            );
         }
     }
 

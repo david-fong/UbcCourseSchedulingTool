@@ -22,8 +22,8 @@ class CourseUtilsTest {
         );
         for (final Map.Entry<LocalDate, Semester> dateToExpectedEntry : datesToExpectedMap.entrySet()) {
             assertEquals(
-                    getCurrentSemester(dateToExpectedEntry.getKey()),
-                    dateToExpectedEntry.getValue()
+                    dateToExpectedEntry.getValue(),
+                    getCurrentSemester(dateToExpectedEntry.getKey())
             );
         }
     }

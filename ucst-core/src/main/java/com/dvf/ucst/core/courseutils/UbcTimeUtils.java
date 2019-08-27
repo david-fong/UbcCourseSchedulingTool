@@ -44,7 +44,7 @@ public final class UbcTimeUtils {
         T2000, T2030, T2100, T2130,
         OUTSIDE_REGULAR_CLASS_TIME,
         ;
-        private static final int EARLIEST_BLOCK_HOUR = 7; // anchors first enum.
+        private static final int EARLIEST_BLOCK_HOUR = 8; // anchors first enum.
         private static final DateTimeFormatter MY_12_HOUR_CLOCK_FORMATTER = DateTimeFormatter.ofPattern("h:mma");
         private static final DateTimeFormatter MY_24_HOUR_CLOCK_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
