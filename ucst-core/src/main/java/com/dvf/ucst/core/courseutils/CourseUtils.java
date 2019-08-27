@@ -4,8 +4,9 @@ import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
 
-import java.time.*;
-import java.time.format.DateTimeFormatter;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
@@ -104,7 +105,7 @@ public final class CourseUtils {
         public LocalDate getApproxClassStartDay(final int year, final WeekDay weekDay) {
             return LocalDate.of(year, startMonth, 1)
                     .with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY))
-                    .plus(startWeek, ChronoUnit.WEEKS)
+                    .plusWeeks(startWeek)
                     .with(TemporalAdjusters.nextOrSame(weekDay.dayOfWeek));
         }
 
@@ -223,85 +224,5 @@ public final class CourseUtils {
 
 
 
-    /**
-     * Utilities for the UBC Timezone.
-     */
-    public static final ZoneId UBC_TIMEZONE_ID = ZoneId.of("America/Vancouver");
-
-    public static ZonedDateTime getCurrentUbcDateTime() {
-        return ZonedDateTime.now(UBC_TIMEZONE_ID);
-    }
-
-    public enum BlockTime implements XmlUtils.XmlConstant {
-        T0700, T0730, T0800, T0830,
-        T0900, T0930, T1000, T1030,
-        T1100, T1130, T1200, T1230,
-        T1300, T1330, T1400, T1430,
-        T1500, T1530, T1600, T1630,
-        T1700, T1730, T1800, T1830,
-        T1900, T1930, T2000, T2030,
-        T2100, T2130,
-        ;
-        private static final int EARLIEST_BLOCK_HOUR = 7;
-        private static final DateTimeFormatter MY_12_HOUR_CLOCK_FORMATTER;
-        private static final DateTimeFormatter MY_24_HOUR_CLOCK_FORMATTER;
-        static {
-            MY_12_HOUR_CLOCK_FORMATTER = DateTimeFormatter.ofPattern("h:mma");
-            MY_24_HOUR_CLOCK_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
-        }
-        private final OffsetTime time;
-
-        BlockTime() {
-            final int hour   = (ordinal() / 2) + EARLIEST_BLOCK_HOUR;
-            final int minute = (ordinal() % 2 == 0) ? 0 : 30;
-            this.time = ZonedDateTime.of(
-                    0, 0, 0,
-                    hour, minute, 0, 0,
-                    UBC_TIMEZONE_ID
-            ).toOffsetDateTime().toOffsetTime();
-        }
-
-        public boolean isBefore(BlockTime other) {
-            return ordinal() < other.ordinal();
-        }
-
-        public boolean isAfter(BlockTime other) {
-            return ordinal() > other.ordinal();
-        }
-
-        public OffsetTime getTime() {
-            return time;
-        }
-
-        public String get12HourTimeString() {
-            return time.format(MY_12_HOUR_CLOCK_FORMATTER).toLowerCase();
-        }
-
-        public String get24HrTimeString() {
-            return time.format(MY_24_HOUR_CLOCK_FORMATTER);
-        }
-
-        /**
-         * @param attr An [Attr] object. Must not be [null].
-         * @return A [BlockTime] whose [getXmlConstantValue] is equal to [attr.getValue].
-         * @throws MalformedXmlDataException if no such [BlockTime] can be found.
-         */
-        public static BlockTime decodeXmlAttr(Attr attr) throws MalformedXmlDataException {
-            for (BlockTime blockTime : BlockTime.values()) {
-                if (blockTime.getXmlConstantValue().equals(attr.getValue())) {
-                    return blockTime;
-                }
-            }
-            throw MalformedXmlDataException.invalidAttrVal(attr);
-        }
-
-        /**
-         * @return A zero-padded time string in 24-hour format such as "15:27" (3:27pm).
-         */
-        @Override
-        public String getXmlConstantValue() {
-            return get24HrTimeString();
-        }
-    }
 
 }

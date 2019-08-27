@@ -3,13 +3,13 @@ package com.dvf.ucst.core.courseutils;
 import com.dvf.ucst.core.courseutils.CourseUtils.Semester;
 import org.junit.jupiter.api.Test;
 
-import java.time.*;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 import static com.dvf.ucst.core.courseutils.CourseUtils.Semester.*;
 import static com.dvf.ucst.core.courseutils.CourseUtils.WeekDay.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CourseUtilsTest {
 
@@ -22,21 +22,10 @@ class CourseUtilsTest {
         );
         for (final Map.Entry<LocalDate, Semester> dateToExpectedEntry : datesToExpectedMap.entrySet()) {
             assertEquals(
-                    getCurrentSemester(dateToExpectedEntry.getKey()),
-                    dateToExpectedEntry.getValue()
+                    dateToExpectedEntry.getValue(),
+                    getCurrentSemester(dateToExpectedEntry.getKey())
             );
         }
-    }
-
-    @Test
-    void blockTimeAndTimezoneTest() {
-        System.out.println("Timezone ID:     " + CourseUtils.UBC_TIMEZONE_ID);
-        final ZoneId hkId = ZoneId.of("Hongkong");
-        System.out.println(ZonedDateTime.of(LocalDateTime.now(), hkId)); // not the behaviour we want.
-        System.out.println(LocalDateTime.now().atZone(hkId)); // also not the behaviour we want.
-        System.out.println(ZonedDateTime.now(hkId)); // <- this is it, chief.
-        System.out.println(ZonedDateTime.now(hkId).toOffsetDateTime());
-        System.out.println(ZonedDateTime.now(CourseUtils.UBC_TIMEZONE_ID).toOffsetDateTime().toOffsetTime()); // <- use this for times.
     }
 
 }
