@@ -1,6 +1,5 @@
 package com.dvf.ucst.core.spider;
 
-import com.dvf.ucst.core.courseutils.CourseWip;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
 
 import java.util.ArrayList;

@@ -37,6 +37,8 @@ public final class CourseSectionBlock {
         this.timeEnclosure = new BlockTimeEnclosure(start, end);
     }
 
+    // TODO [xml:write.setup][CourseSectionBlockWip]: Add constructor taking [CourseSectionBlockWip]
+
     // *note: do not change visibility. may be used in GUI.
     public boolean overlapsWith(CourseSectionBlock other) {
         if (weekDay != other.weekDay) {

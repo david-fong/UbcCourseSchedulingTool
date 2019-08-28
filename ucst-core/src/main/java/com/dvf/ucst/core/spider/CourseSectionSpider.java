@@ -1,8 +1,8 @@
 package com.dvf.ucst.core.spider;
 
 import com.dvf.ucst.core.courseutils.Course;
-import com.dvf.ucst.core.courseutils.CourseWip.CourseSectionWip;
-import com.dvf.ucst.core.courseutils.CourseWip.CourseSectionWip.CourseLectureSectionWip;
+import com.dvf.ucst.core.spider.CourseWip.CourseSectionWip;
+import com.dvf.ucst.core.spider.CourseWip.CourseSectionWip.CourseLectureSectionWip;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;

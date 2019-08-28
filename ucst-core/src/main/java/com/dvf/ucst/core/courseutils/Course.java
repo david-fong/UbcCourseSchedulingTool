@@ -32,8 +32,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     private static final String TUTORIAL_SECTION_ID_TOKEN_PREFIX = "T";
 
     private final FacultyTreeNode facultyTreeNode;
-    private final int creditValue;
     private final String courseIdToken;
+    private final int creditValue;
     private final String descriptionString;
 
     // reqs are non-null:
@@ -98,8 +98,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         return facultyTreeNode;
     }
 
-    public final String getCourseDescription() {
-        return descriptionString;
+    public final String getCourseIdToken() {
+        return courseIdToken;
     }
 
     @Override
@@ -107,8 +107,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         return creditValue;
     }
 
-    public final String getCourseIdToken() {
-        return courseIdToken;
+    public final String getCourseDescription() {
+        return descriptionString;
     }
 
     @Override
