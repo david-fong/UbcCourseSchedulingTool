@@ -92,6 +92,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         this.lectureSections = Collections.unmodifiableSet(lectureSections);
     }
 
+    // TODO [xml:write.setup][CourseWip]: Add constructor taking [CourseWip]
+
     public final FacultyTreeNode getFacultyTreeNode() {
         return facultyTreeNode;
     }
@@ -242,6 +244,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
             this.blocks = Collections.unmodifiableSet(blocks);
         }
 
+        // TODO [xml:write.setup][CourseSectionWip]: Add private constructor taking [CourseSectionWip]
+
         public final boolean overlapsWith(CourseSection other) {
             // *the equality comparison is an optimization - not essential.
             return this.equals(other) || (semester == other.semester && blocks.stream()
@@ -310,17 +314,20 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         private CourseLectureSection(final Element lectureElement) throws MalformedXmlDataException {
             super(lectureElement);
 
-            this.requiredLabOptions = getComplimentarySectionOptions(
+            this.requiredLabOptions = getComplimentarySectionOptionsFromElement(
                     XmlUtils.getOptionalUniqueChildByTag(lectureElement, Xml.LABS_TAG)
             );
-            this.requiredTutorialOptions = getComplimentarySectionOptions(
+            this.requiredTutorialOptions = getComplimentarySectionOptionsFromElement(
                     XmlUtils.getOptionalUniqueChildByTag(lectureElement, Xml.TUTORIALS_TAG)
             );
             this.pickyBuildFriends = Set.of(requiredLabOptions, requiredTutorialOptions);
         }
 
-        // helper for xml constructor.
-        private Set<CourseSection> getComplimentarySectionOptions(final Element optionsElement) throws MalformedXmlDataException {
+        // TODO [xml:write.setup][CourseLectureSectionWip]: Add private constructor taking [CourseLectureSectionWip]
+
+        // helper for xml constructor. Throws RuntimeException if a referenced lab/tutorial is not found.
+        private Set<CourseSection> getComplimentarySectionOptionsFromElement(final Element optionsElement)
+                throws MalformedXmlDataException {
             if (optionsElement == null) {
                 return Collections.emptySet();
             } else {
@@ -363,6 +370,12 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         public final Set<Set<CourseSection>> getPickyBuildFriends() {
             return pickyBuildFriends;
         }
+    }
+
+    public static boolean isSectionIdTokenForLectureSection(final String sectionIdToken) {
+        return !sectionIdToken.startsWith(LAB_SECTION_ID_TOKEN_PREFIX)
+                && !sectionIdToken.startsWith(TUTORIAL_SECTION_ID_TOKEN_PREFIX);
+        // return sectionIdToken.matches("^\\p{Digit}.*");
     }
 
 

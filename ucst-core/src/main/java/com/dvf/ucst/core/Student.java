@@ -147,6 +147,7 @@ public final class Student implements XmlUtils.UserDataXml {
     }
 
 
+
     /**
      * Wrapper around a [Course].
      */
