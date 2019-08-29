@@ -20,15 +20,18 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
 
     @Override
     default String getNameWithTitle() {
-        // Here the title is a suffix instead of a prefix:
+        // Here, the title is a suffix instead of a prefix:
         return getNameNoTitle() + getType().title;
     }
 
     String getCampusIdToken();
 
+    String getUrlQueryTokenVal();
+
     @Override
     default String getXmlConstantValue() {
-        return getNameNoTitle();
+        // the method used to decode in [UbcCampuses::getCampusByIdToken] must match this.
+        return getCampusIdToken();
     }
 
     @Override
@@ -53,7 +56,7 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
 
     @Override
     default String getRegistrationSiteUrl() {
-        return RegistrationSubjAreaQuery.getUrl(this);
+        return RegistrationSubjAreaQuery.getCampusUrl(this);
     }
 
     /**
@@ -131,6 +134,11 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         }
 
         @Override
+        public String getUrlQueryTokenVal() {
+            return urlQueryTokenVal;
+        }
+
+        @Override
         public FacultyTreeNode[] getChildren() {
             return childrenClass.getEnumConstants();
         }
@@ -141,13 +149,14 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         }
 
         /**
-         * @param campusIdSearchToken Ex "VAN" or "OKA".
+         * @param campusIdSearchToken Ex. "VAN" or "OKA".
          * @return The [UbcCampuses] instance by the token ID [campusIdSearchToken] if it exists.
          * @throws CampusNotFoundException If no [UbcCampuses] by the token ID [campusIdSearchToken] exists.
          */
-        public static UbcCampuses getCampusByIdToken(String campusIdSearchToken) throws CampusNotFoundException {
-            for (UbcCampuses campus : UbcCampuses.values()) {
-                if (campus.campusIdToken.equals(campusIdSearchToken)) {
+        public static UbcCampuses getCampusByIdToken(final String campusIdSearchToken) throws CampusNotFoundException {
+            for (final UbcCampuses campus : UbcCampuses.values()) {
+                // [::getCampusIdToken] is used here to match with [::getXmlConstantValue]
+                if (campus.getCampusIdToken().equals(campusIdSearchToken)) {
                     return campus;
                 }
             }

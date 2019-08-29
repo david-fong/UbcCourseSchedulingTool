@@ -28,46 +28,76 @@ public interface HyperlinkBookIf {
         PNames(String pName) {
             this.registrationSiteUrl = REGISTRATION_HOME + "?pname=" + pName;
         }
+
+        String getRegistrationSiteUrl() {
+            return registrationSiteUrl;
+        }
     }
 
-    // pname=subjarea
+    // "...&pname=subjarea..."
     enum RegistrationSubjAreaQuery {
         CAMPUS ("campuscd", "subj-all-departments"),
         FACULTY ("dept", "subj-department"),
         COURSE ("course", "subj-course"),
         SECTION ("section", "subj-section")
         ;
-        public final String tokenStub;
-        public final String tnameQuery;
+        private final String queryTokenStub;
+        private final String tnameQuery;
 
-        RegistrationSubjAreaQuery(String name, String tnameQueryVal) {
-            this.tokenStub = String.format("&%s=", name);
+        RegistrationSubjAreaQuery(final String name, final String tnameQueryVal) {
+            this.queryTokenStub = String.format("&%s=", name);
             this.tnameQuery = TNAME_QUERY_TOKEN_STUB + tnameQueryVal;
         }
 
-        public static String getUrl(final FacultyTreeRootCampus campus) {
-            return PNames.BROWSE_COURSES.registrationSiteUrl
-                    + CAMPUS.tnameQuery
-                    + CAMPUS.tokenStub + campus.getAbbreviation();
+        String makeQueryToken(final String value) {
+            return queryTokenStub + value;
         }
 
-        public static String getUrl(final FacultyTreeNode faculty) {
-            return PNames.BROWSE_COURSES.registrationSiteUrl
-                    + FACULTY.tnameQuery
-                    + FACULTY.tokenStub + faculty.getAbbreviation();
+        String getTnameQuery() {
+            return tnameQuery;
         }
 
-        public static String getUrl(final Course course) {
-            return PNames.BROWSE_COURSES.registrationSiteUrl
-                    + COURSE.tnameQuery
-                    + COURSE.tokenStub + course.getCourseIdToken();
+        public static String getCampusUrl(final FacultyTreeRootCampus campus) {
+            return PNames.BROWSE_COURSES.getRegistrationSiteUrl()
+                    + CAMPUS.getTnameQuery()
+                    + CAMPUS.makeQueryToken(campus.getUrlQueryTokenVal());
         }
 
-        public static String getUrl(final Course.CourseSection section) {
-            return PNames.BROWSE_COURSES.registrationSiteUrl
-                    + SECTION.tnameQuery
-                    + COURSE.tokenStub + section.getParentCourse().getCourseIdToken()
-                    + SECTION.tokenStub + section.getSectionIdToken();
+        public static String getFacultyUrl(final FacultyTreeNode faculty) {
+            return deepenCampusUrlToFacultyUrl(faculty.getRegistrationSiteUrl(), faculty.getAbbreviation());
+        }
+
+        public static String getCourseUrl(final Course course) {
+            return deepenFacultyUrlToCourseUrl(
+                    course.getFacultyTreeNode().getRegistrationSiteUrl(),
+                    course.getCourseIdToken()
+            );
+        }
+
+        public static String getSectionUrl(final Course.CourseSection section) {
+            return deepenCourseUrlToSectionUrl(
+                    section.getParentCourse().getRegistrationSiteUrl(),
+                    section.getSectionIdToken()
+            );
+        }
+
+        public static String deepenCampusUrlToFacultyUrl(final String campusUrl, final String facultyIdToken) {
+            return campusUrl.replaceFirst(CAMPUS.getTnameQuery(), FACULTY.getTnameQuery())
+                    + FACULTY.makeQueryToken(facultyIdToken);
+        }
+
+        /*
+        METHODS FOR SPIDERS: since [Course] and [CourseSection] objects don't exist yet for them:
+         */
+
+        public static String deepenFacultyUrlToCourseUrl(final String facultyUrl, final String courseIdToken) {
+            return facultyUrl.replaceFirst(FACULTY.getTnameQuery(), COURSE.getTnameQuery())
+                    + COURSE.makeQueryToken(courseIdToken);
+        }
+
+        public static String deepenCourseUrlToSectionUrl(final String courseUrl, final String sectionIdToken) {
+            return courseUrl.replaceFirst(COURSE.getTnameQuery(), SECTION.getTnameQuery())
+                    + SECTION.makeQueryToken(sectionIdToken);
         }
     }
 

@@ -131,7 +131,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
 
     @Override
     public final String getRegistrationSiteUrl() {
-        return RegistrationSubjAreaQuery.getUrl(this);
+        return RegistrationSubjAreaQuery.getCourseUrl(this);
     }
 
     public final Requirement<Student> getStudentReqs() {
@@ -273,7 +273,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
 
         @Override
         public String getRegistrationSiteUrl() {
-            return RegistrationSubjAreaQuery.getUrl(this);
+            return RegistrationSubjAreaQuery.getSectionUrl(this);
         }
 
         @Override

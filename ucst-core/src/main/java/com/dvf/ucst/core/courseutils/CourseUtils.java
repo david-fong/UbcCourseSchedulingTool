@@ -33,7 +33,7 @@ public final class CourseUtils {
         public final String label;
         private final String xmlAttrVal;
 
-        YearOfStudy(String label) {
+        YearOfStudy(final String label) {
             this.value = ordinal() + 1;
             this.label = label;
             this.xmlAttrVal = this.label.split("\\s+")[0];
@@ -57,7 +57,7 @@ public final class CourseUtils {
         public static YearOfStudy decodeXmlAttr(final Attr attr) throws MalformedXmlDataException {
             final String attrToken = attr.getValue().split("\\s+")[0];
             for (YearOfStudy yearOfStudy : values()) {
-                if (yearOfStudy.label.equals(attrToken)) {
+                if (yearOfStudy.getXmlConstantValue().equals(attrToken)) {
                     return yearOfStudy;
                 }
             }

@@ -58,7 +58,7 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
 
     @Override
     default String getRegistrationSiteUrl() {
-        return RegistrationSubjAreaQuery.getUrl(this);
+        return RegistrationSubjAreaQuery.getFacultyUrl(this);
     }
 
 
