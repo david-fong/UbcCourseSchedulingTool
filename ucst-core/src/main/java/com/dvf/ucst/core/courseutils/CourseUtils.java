@@ -29,24 +29,14 @@ public final class CourseUtils {
         SIXTH_YEAR  ("Sixth year"),
         SEVENTH_YEAR("Seventh year"), // :0
         ;
-        public final int value;
-        public final String label;
+        private final int value;
+        private final String label;
         private final String xmlAttrVal;
 
         YearOfStudy(final String label) {
             this.value = ordinal() + 1;
             this.label = label;
             this.xmlAttrVal = this.label.split("\\s+")[0];
-        }
-
-        @Override
-        public String toString() {
-            return label;
-        }
-
-        @Override
-        public String getXmlConstantValue() {
-            return xmlAttrVal;
         }
 
         /**
@@ -56,12 +46,30 @@ public final class CourseUtils {
          */
         public static YearOfStudy decodeXmlAttr(final Attr attr) throws MalformedXmlDataException {
             final String attrToken = attr.getValue().split("\\s+")[0];
-            for (YearOfStudy yearOfStudy : values()) {
+            for (final YearOfStudy yearOfStudy : values()) {
                 if (yearOfStudy.getXmlConstantValue().equals(attrToken)) {
                     return yearOfStudy;
                 }
             }
             throw MalformedXmlDataException.invalidAttrVal(attr);
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        @Override
+        public String getXmlConstantValue() {
+            return xmlAttrVal;
+        }
+
+        @Override
+        public String toString() {
+            return label;
         }
     }
 
@@ -75,8 +83,8 @@ public final class CourseUtils {
         WINTER_S1 (Session.WINTER, Term.TERM_ONE, "W1", Month.SEPTEMBER, 0),
         WINTER_S2 (Session.WINTER, Term.TERM_TWO, "W2", Month.JANUARY, 0),
         ;
-        public final Session session;
-        public final Term term;
+        private final Session session;
+        private final Term term;
         private final String xmlAttrVal;
         private final Month startMonth;
         private final int startWeek;
@@ -87,11 +95,6 @@ public final class CourseUtils {
             this.xmlAttrVal = xmlAttrVal;
             this.startMonth = startMonth;
             this.startWeek = startWeek;
-        }
-
-        @Override
-        public String getXmlConstantValue() {
-            return xmlAttrVal;
         }
 
         /**
@@ -142,14 +145,31 @@ public final class CourseUtils {
             throw new RuntimeException("Unable to get current semester. Should never reach here.");
         }
 
+        public Session getSession() {
+            return session;
+        }
+
+        public Term getTerm() {
+            return term;
+        }
+
+        @Override
+        public String getXmlConstantValue() {
+            return xmlAttrVal;
+        }
+
         public enum Session {
             WINTER ("Winter"),
             SUMMER ("Summer"),
             ;
-            public final String label;
+            private final String label;
 
             Session(String label) {
                 this.label = label;
+            }
+
+            public String getLabel() {
+                return label;
             }
 
             @Override
@@ -162,8 +182,8 @@ public final class CourseUtils {
             TERM_ONE,
             TERM_TWO,
             ;
-            public final int value;
-            public final String label;
+            private final int value;
+            private final String label;
 
             Term() {
                 this.value = ordinal() + 1;
@@ -178,6 +198,14 @@ public final class CourseUtils {
                 val--;
                 return (val > 0 && val < values().length)
                         ? values()[val - 1] : null;
+            }
+
+            public int getValue() {
+                return value;
+            }
+
+            public String getLabel() {
+                return label;
             }
 
             @Override
@@ -202,11 +230,6 @@ public final class CourseUtils {
             this.dayOfWeek = DayOfWeek.of(ordinal() + 1);
         }
 
-        @Override
-        public String getXmlConstantValue() {
-            return xmlAttrVal;
-        }
-
         /**
          * @param attr An [Attr] object. Must not be [null].
          * @return A [WeekDay] whose [getXmlConstantValue] is equal to [attr.getValue].
@@ -220,9 +243,11 @@ public final class CourseUtils {
             }
             throw MalformedXmlDataException.invalidAttrVal(attr);
         }
+
+        @Override
+        public String getXmlConstantValue() {
+            return xmlAttrVal;
+        }
     }
-
-
-
 
 }

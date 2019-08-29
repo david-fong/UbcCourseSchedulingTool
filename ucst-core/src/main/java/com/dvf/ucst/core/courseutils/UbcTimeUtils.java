@@ -69,11 +69,11 @@ public final class UbcTimeUtils {
         }
 
         public String get12HourTimeString() {
-            return time.format(MY_12_HOUR_CLOCK_FORMATTER).toLowerCase();
+            return getTime().format(MY_12_HOUR_CLOCK_FORMATTER).toLowerCase();
         }
 
         public String get24HrTimeString() {
-            return time.format(MY_24_HOUR_CLOCK_FORMATTER);
+            return getTime().format(MY_24_HOUR_CLOCK_FORMATTER);
         }
 
         /**
@@ -89,8 +89,8 @@ public final class UbcTimeUtils {
             final BlockTime[] blockTimes = values();
             for (int i = 0; i < blockTimes.length - 1; i++) {
                 if ( // enter this block if [currentTime] is between the times for [i, i+1):
-                        currentTime.compareTo(blockTimes[i].time) >= 0
-                        && currentTime.compareTo(blockTimes[i + 1].time) < 0) {
+                        currentTime.compareTo(blockTimes[i].getTime()) >= 0
+                        && currentTime.compareTo(blockTimes[i + 1].getTime()) < 0) {
                     return blockTimes[i];
                 }
             }

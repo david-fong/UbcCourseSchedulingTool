@@ -47,7 +47,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
 
     public Course(final Document courseDocument) throws MalformedXmlDataException {
         final Element courseElement; {
-            NodeList nodeList = courseDocument.getElementsByTagName(Xml.COURSE_TAG.value);
+            NodeList nodeList = courseDocument.getElementsByTagName(Xml.COURSE_TAG.getXmlConstantValue());
             courseElement = (Element)nodeList.item(0);
         }
 
@@ -113,9 +113,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
 
     @Override
     public final String getSystemFullSectionIdString() {
-        return facultyTreeNode.getRootCampus().getCampusIdToken()
-                + " " + facultyTreeNode.getAbbreviation()
-                + " " + courseIdToken;
+        return facultyTreeNode.getRootCampus().getAbbreviation()
+                + " " + getUserFullSectionIdString();
     }
 
     @Override
@@ -196,7 +195,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
             if (!labSectionObj.sectionIdToken.startsWith(idPrefix)) {
                 throw new MalformedXmlDataException(String.format("section id tokens"
                         + " under the \"%s\" tag must start with a \"%s\"",
-                        sectionGroupTag.value, idPrefix
+                        sectionGroupTag.getXmlConstantValue(), idPrefix
                 ));
             }
             sectionGroup.add(labSectionObj);

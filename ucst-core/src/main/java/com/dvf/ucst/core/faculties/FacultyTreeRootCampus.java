@@ -24,14 +24,10 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         return getNameNoTitle() + getType().title;
     }
 
-    String getCampusIdToken();
-
-    String getUrlQueryTokenVal();
-
     @Override
     default String getXmlConstantValue() {
         // the method used to decode in [UbcCampuses::getCampusByIdToken] must match this.
-        return getCampusIdToken();
+        return getAbbreviation();
     }
 
     @Override
@@ -79,21 +75,19 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
      *
      */
     enum UbcCampuses implements FacultyTreeRootCampus {
-        VANCOUVER ("Vancouver", "VAN", VancouverFaculties.class, "UBC"),
-        //OKANAGAN  ("Okanagan", "OKA", OkanaganFaculties.class, "UBCO"),
+        VANCOUVER ("Vancouver", VancouverFaculties.class, "UBC"),
+        //OKANAGAN  ("Okanagan", OkanaganFaculties.class, "UBCO"),
         ;
         private final String name;
-        private final String campusIdToken;
         private final Class<? extends FacultyTreeNode> childrenClass;
-        private final String urlQueryTokenVal;
+        private final String campusIdToken;
         private final Map<String, FacultyTreeNode> squashedFacultyAbbrMap; // unmodifiable
 
-        <T extends Enum & FacultyTreeNode> UbcCampuses(String name, String campusIdToken,
-                                                       Class<T> childrenClass, String urlQueryTokenVal) {
+        <T extends Enum & FacultyTreeNode> UbcCampuses
+                (final String name, final Class<T> childrenClass, final String campusIdToken) {
             this.name = name;
-            this.campusIdToken = campusIdToken;
             this.childrenClass = childrenClass;
-            this.urlQueryTokenVal = urlQueryTokenVal;
+            this.campusIdToken = campusIdToken;
 
             final Map<String, FacultyTreeNode> squashedFacultyAbbrMap = new HashMap<>();
             recursiveInitSquashedFacultyAbbrMap(squashedFacultyAbbrMap, this);
@@ -125,17 +119,7 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
 
         @Override
         public String getAbbreviation() {
-            return urlQueryTokenVal;
-        }
-
-        @Override
-        public String getCampusIdToken() {
             return campusIdToken;
-        }
-
-        @Override
-        public String getUrlQueryTokenVal() {
-            return urlQueryTokenVal;
         }
 
         @Override
@@ -155,8 +139,8 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
          */
         public static UbcCampuses getCampusByIdToken(final String campusIdSearchToken) throws CampusNotFoundException {
             for (final UbcCampuses campus : UbcCampuses.values()) {
-                // [::getCampusIdToken] is used here to match with [::getXmlConstantValue]
-                if (campus.getCampusIdToken().equals(campusIdSearchToken)) {
+                // [::getAbbreviation] is used here to match with [::getXmlConstantValue]
+                if (campus.getAbbreviation().equals(campusIdSearchToken)) {
                     return campus;
                 }
             }

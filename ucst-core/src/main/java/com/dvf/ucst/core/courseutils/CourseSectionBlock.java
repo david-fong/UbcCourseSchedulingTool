@@ -20,13 +20,13 @@ public final class CourseSectionBlock {
     // TODO [repr][CourseSectionBlock]: add representation for location (building).
 
     CourseSectionBlock(final Element blockElement) throws MalformedXmlDataException {
-        this.isWaitlist = blockElement.getAttributeNode(Xml.OPTIONAL_WAITLIST_FLAG_ATTR.value) != null;
+        this.isWaitlist = blockElement.getAttributeNode(Xml.OPTIONAL_WAITLIST_FLAG_ATTR.getXmlConstantValue()) != null;
 
         this.weekDay = CourseUtils.WeekDay.decodeXmlAttr(
                 XmlUtils.getMandatoryAttr(blockElement, Xml.DAY_OF_WEEK_ATTR)
         );
         this.repetitionType = BlockRepetition.decodeXmlAttr(
-                blockElement.getAttributeNode(Xml.OPTIONAL_REPEAT_TYPE_ATTR.value)
+                blockElement.getAttributeNode(Xml.OPTIONAL_REPEAT_TYPE_ATTR.getXmlConstantValue())
         );
         final BlockTime start = BlockTime.decodeXmlAttr(
                 XmlUtils.getMandatoryAttr(blockElement, Xml.BEGIN_TIME_ATTR)
@@ -40,10 +40,10 @@ public final class CourseSectionBlock {
     // TODO [xml:write.setup][CourseSectionBlockWip]: Add constructor taking [CourseSectionBlockWip]
 
     // *note: do not change visibility. may be used in GUI.
-    public boolean overlapsWith(CourseSectionBlock other) {
-        if (weekDay != other.weekDay) {
+    public boolean overlapsWith(final CourseSectionBlock other) {
+        if (getWeekDay() != other.getWeekDay()) {
             return false;
-        } else if (repetitionType.mayOverlapWith(other.repetitionType)) {
+        } else if (getRepetitionType().mayOverlapWith(other.getRepetitionType())) {
             return this.timeEnclosure.overlapsWith(other.timeEnclosure);
         } else {
             return false;
@@ -87,12 +87,12 @@ public final class CourseSectionBlock {
         }
     }
 
-    public enum BlockRepetition {
+    public enum BlockRepetition implements XmlUtils.XmlConstant {
         EVERY_WEEK ("all"), // the default.
         ALTERNATING_FIRST ("2:1"),
         ALTERNATING_SECOND ("2:2"),
         ;
-        public final String xmlAttrVal;
+        private final String xmlAttrVal;
 
         BlockRepetition(String xmlAttrVal) {
             this.xmlAttrVal = xmlAttrVal;
@@ -100,6 +100,11 @@ public final class CourseSectionBlock {
 
         public boolean mayOverlapWith(BlockRepetition other) {
             return this == other || (this == EVERY_WEEK || other == EVERY_WEEK);
+        }
+
+        @Override
+        public String getXmlConstantValue() {
+            return xmlAttrVal;
         }
 
         /**

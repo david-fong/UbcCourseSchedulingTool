@@ -60,7 +60,7 @@ public interface HyperlinkBookIf {
         public static String getCampusUrl(final FacultyTreeRootCampus campus) {
             return PNames.BROWSE_COURSES.getRegistrationSiteUrl()
                     + CAMPUS.getTnameQuery()
-                    + CAMPUS.makeQueryToken(campus.getUrlQueryTokenVal());
+                    + CAMPUS.makeQueryToken(campus.getAbbreviation());
         }
 
         public static String getFacultyUrl(final FacultyTreeNode faculty) {
