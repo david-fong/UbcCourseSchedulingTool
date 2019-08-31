@@ -25,6 +25,9 @@ allprojects {
     plugins.withType(ApplicationPlugin) {
         applicationDefaultJvmArgs += ['']
     }
+    tasks.withType(JavaCompile) {
+        options.compilerArgs += '-Xlint:unchecked'
+    }
 }
 
 idea.project {

@@ -13,15 +13,19 @@ import java.util.Map;
 /**
  * At the top level, everything is first partitioned by campus. All faculties under
  * a common campus must have unique abbreviations.
+ *
+ * We will go by the hierarchy specified in the second link.
+ * - https://www.ubc.ca/our-campuses/vancouver/directories/faculties-schools.html
+ * - https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments
  */
 public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlConstant {
 
-    Map<String, Course> EMPTY_COURSE_CODE_MAP = Map.of();
+    Map<String, Course> EMPTY_COURSE_CODE_MAP = Collections.emptyMap();
 
     @Override
     default String getNameWithTitle() {
         // Here, the title is a suffix instead of a prefix:
-        return getNameNoTitle() + getType().title;
+        return getNameNoTitle() + getFacultyType().title;
     }
 
     @Override
@@ -31,7 +35,7 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
     }
 
     @Override
-    default FacultyTreeNodeType getType() {
+    default FacultyTreeNodeType getFacultyType() {
         return FacultyTreeNodeType.CAMPUS;
     }
 
@@ -41,13 +45,18 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
     }
 
     @Override
+    default int getDepth() {
+        return 0;
+    }
+
+    @Override
     default FacultyTreeNode getParentNode() {
         return null;
     }
 
     @Override
     default Path getRootAnchoredPathToInfo(SubDirectories subDir) {
-        return Paths.get(getAbbreviation().toLowerCase()).resolve(subDir.subDirName);
+        return Paths.get(getAbbreviation().toLowerCase()).resolve(subDir.getSubDirectory());
     }
 
     @Override
@@ -83,7 +92,7 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         private final String campusIdToken;
         private final Map<String, FacultyTreeNode> squashedFacultyAbbrMap; // unmodifiable
 
-        <T extends Enum & FacultyTreeNode> UbcCampuses
+        <T extends Enum<?> & FacultyTreeNode> UbcCampuses
                 (final String name, final Class<T> childrenClass, final String campusIdToken) {
             this.name = name;
             this.childrenClass = childrenClass;
@@ -95,20 +104,24 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode, XmlUtils.XmlCons
         }
 
         private void recursiveInitSquashedFacultyAbbrMap(final Map<String, FacultyTreeNode> abbrMap, final FacultyTreeNode scrub) {
-            if (scrub != null) {
-                for (FacultyTreeNode childNode : scrub.getChildren()) {
-                    final String childAbbr = childNode.getAbbreviation();
-                    assert !abbrMap.containsKey(childAbbr) : String.format(
-                            "Found two [%s]s going by the abbreviation \"%s\" - one"
-                            + " under the node \"%s\", and the other under the node \"%s\"."
-                            + " Requires fix before project deployment; please investigate.",
-                            FacultyTreeNode.class.getName(), childAbbr,
-                            abbrMap.get(childAbbr).getAbbreviation(),
-                            childNode.getAbbreviation()
-                    );
-                    abbrMap.put(childAbbr, childNode);
-                    recursiveInitSquashedFacultyAbbrMap(abbrMap, childNode);
-                }
+            for (final FacultyTreeNode childNode : scrub.getChildren()) {
+//                assert childNode.getParentNode() == scrub : String.format(
+//                        "The [%s] \"%s\" does not correctly point back to the parent it is under,"
+//                                + " \"%s\", as its parent. Please fix.",
+//                        FacultyTreeNode.class.getName(), scrub.getAbbreviation(),
+//                        childNode.getAbbreviation()
+//                );
+                final String childAbbr = childNode.getAbbreviation();
+                assert !abbrMap.containsKey(childAbbr) : String.format(
+                        "Found two [%s]s going by the abbreviation \"%s\" - one"
+                                + " under the node \"%s\", and the other under the node \"%s\"."
+                                + " Requires fix before project deployment. Please investigate.",
+                        FacultyTreeNode.class.getName(), childAbbr,
+                        abbrMap.get(childAbbr).getAbbreviation(),
+                        childNode.getAbbreviation()
+                );
+                abbrMap.put(childAbbr, childNode);
+                recursiveInitSquashedFacultyAbbrMap(abbrMap, childNode);
             }
         }
 

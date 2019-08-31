@@ -3,6 +3,7 @@ package com.dvf.ucst.core.coursedata;
 import com.dvf.ucst.core.CoreMain;
 
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -10,6 +11,8 @@ import java.nio.file.Paths;
  * The package of this class specifies that which will be used for generated
  * resources (based off of the generated resources folder) and for deployed
  * local registration data.
+ *
+ * TODO: this is broken after changing project to use gradle conventions. please fix.
  */
 public final class CourseDataLocator {
 
@@ -28,16 +31,19 @@ public final class CourseDataLocator {
         }
         DEVLP_GEN_RESOURCES = RUNTIME_DATA_MODULE
                 // TODO: make this more robust.
-                .getParent() // .../UbcCourseSchedulingTool/out/production/
-                .getParent() // .../UbcCourseSchedulingTool/out/
-                .getParent() // .../UbcCourseSchedulingTool/
-                .resolve(RUNTIME_DATA_MODULE.getFileName().toString())
-                .resolve("genresource")
+                             // .../ucst/ucst-core/build/classes/java/main/
+                .getParent() // .../ucst/ucst-core/build/classes/java/
+                .getParent() // .../ucst/ucst-core/build/classes/
+                .getParent() // .../ucst/ucst-core/build/
+                .resolve("resources")
+                .resolve(RUNTIME_DATA_MODULE.getFileName())
         ;
         final String packagePath = CourseDataLocator.class.getPackageName()
                 .replace(".", RUNTIME_DATA_MODULE.getFileSystem().getSeparator());
         RUNTIME_CAMPUS_DIR = RUNTIME_DATA_MODULE.resolve(packagePath);
         GENERATED_CAMPUS_DIR = DEVLP_GEN_RESOURCES.resolve(packagePath);
+        assert Files.isDirectory(RUNTIME_CAMPUS_DIR);
+        assert Files.isDirectory(GENERATED_CAMPUS_DIR);
     }
 
     public enum StagedDataPath {

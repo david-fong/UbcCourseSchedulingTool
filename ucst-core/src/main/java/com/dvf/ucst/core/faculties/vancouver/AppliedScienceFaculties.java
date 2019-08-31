@@ -43,7 +43,7 @@ public enum AppliedScienceFaculties implements FacultyTreeNode {
     }
 
     @Override
-    public FacultyTreeNodeType getType() {
+    public FacultyTreeNodeType getFacultyType() {
         return FacultyTreeNodeType.DEPARTMENT;
     }
 
@@ -54,7 +54,7 @@ public enum AppliedScienceFaculties implements FacultyTreeNode {
 
     @Override
     public FacultyTreeNode[] getChildren() {
-        return null;
+        return new FacultyTreeNode[0];
     }
 
     @Override

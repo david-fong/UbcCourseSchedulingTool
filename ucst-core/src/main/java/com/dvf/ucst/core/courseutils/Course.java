@@ -4,6 +4,8 @@ import com.dvf.ucst.core.HyperlinkBookIf;
 import com.dvf.ucst.core.SectionIdString;
 import com.dvf.ucst.core.Student;
 import com.dvf.ucst.core.faculties.CampusNotFoundException;
+import com.dvf.ucst.core.faculties.FacultyTreeNode;
+import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
 import com.dvf.ucst.core.schedule.Schedule;
 import com.dvf.ucst.utils.pickybuild.PickyBuildElement;
 import com.dvf.ucst.utils.requirement.Requirement;
@@ -11,17 +13,9 @@ import com.dvf.ucst.utils.requirement.matching.CreditValued;
 import com.dvf.ucst.utils.requirement.matching.MatchingRequirementIf;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
-import com.dvf.ucst.core.faculties.FacultyTreeNode;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -37,7 +31,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     private final String descriptionString;
 
     // reqs are non-null:
-    private final Requirement<Student> studentReqs;
+    private final Requirement<Student> studentReqs; // TODO: go look at real requirement examples and see what attributes they include.
     private final MatchingRequirementIf<Schedule> prerequisites;
     private final MatchingRequirementIf<Schedule> corequisites;
 
@@ -45,12 +39,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     private final Set<CourseSection> labSections;
     private final Set<CourseSection> tutorialSections;
 
-    public Course(final Document courseDocument) throws MalformedXmlDataException {
-        final Element courseElement; {
-            NodeList nodeList = courseDocument.getElementsByTagName(Xml.COURSE_TAG.getXmlConstantValue());
-            courseElement = (Element)nodeList.item(0);
-        }
-
+    public Course(final Element courseElement) throws MalformedXmlDataException {
         try { // get faculty node:
             this.facultyTreeNode = FacultyTreeRootCampus.UbcCampuses.getCampusByIdToken(
                     XmlUtils.getMandatoryAttr(courseElement, Xml.COURSE_CAMPUS_ATTR).getValue()
@@ -91,8 +80,6 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         }
         this.lectureSections = Collections.unmodifiableSet(lectureSections);
     }
-
-    // TODO [xml:write.setup][CourseWip]: Add constructor taking [CourseWip]
 
     public final FacultyTreeNode getFacultyTreeNode() {
         return facultyTreeNode;
@@ -203,6 +190,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         return Collections.unmodifiableSet(sectionGroup);
     }
 
+    // TODO [xml:write.setup][CourseWip]: Add static xml producer method taking [CourseWip]
+
 
 
     /**
@@ -243,12 +232,12 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
             this.blocks = Collections.unmodifiableSet(blocks);
         }
 
-        // TODO [xml:write.setup][CourseSectionWip]: Add private constructor taking [CourseSectionWip]
-
-        public final boolean overlapsWith(CourseSection other) {
+        public final boolean overlapsWith(final CourseSection other) {
             // *the equality comparison is an optimization - not essential.
-            return this.equals(other) || (semester == other.semester && blocks.stream()
-                    .anyMatch(block -> other.blocks.stream().anyMatch(block::overlapsWith))
+            return this.equals(other) || (
+                    getSemester() == other.getSemester() && getBlocks().stream()
+                            .anyMatch(block -> other.getBlocks().stream().anyMatch(block::overlapsWith)
+                    )
             );
         }
 
@@ -262,7 +251,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
 
         @Override
         public final String toString() {
-            return Course.this.toString() + " " + sectionIdToken;
+            return Course.this.toString() + " " + getSectionIdToken();
         }
 
         @Override
@@ -278,13 +267,13 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         @Override
         public final String getSystemFullSectionIdString() {
             return getParentCourse().getSystemFullSectionIdString()
-                    + " " + sectionIdToken;
+                    + " " + getSectionIdToken();
         }
 
         @Override
         public final String getUserFullSectionIdString() {
             return getParentCourse().getUserFullSectionIdString()
-                    + " " + sectionIdToken;
+                    + " " + getSectionIdToken();
         }
 
         public final CourseUtils.Semester getSemester() {
@@ -298,6 +287,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         public final Set<CourseSectionBlock> getBlocks() {
             return blocks;
         }
+
+        // TODO [xml:write.setup][CourseSectionWip]: Add static producer method taking [CourseSectionWip]
     }
 
     /**
@@ -321,8 +312,6 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
             );
             this.pickyBuildFriends = Set.of(requiredLabOptions, requiredTutorialOptions);
         }
-
-        // TODO [xml:write.setup][CourseLectureSectionWip]: Add private constructor taking [CourseLectureSectionWip]
 
         // helper for xml constructor. Throws RuntimeException if a referenced lab/tutorial is not found.
         private Set<CourseSection> getComplimentarySectionOptionsFromElement(final Element optionsElement)
@@ -369,6 +358,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         public final Set<Set<CourseSection>> getPickyBuildFriends() {
             return pickyBuildFriends;
         }
+
+        // TODO [xml:write.setup][CourseLectureSectionWip]: Add static producer method taking [CourseLectureSectionWip]
     }
 
     public static boolean isSectionIdTokenForLectureSection(final String sectionIdToken) {

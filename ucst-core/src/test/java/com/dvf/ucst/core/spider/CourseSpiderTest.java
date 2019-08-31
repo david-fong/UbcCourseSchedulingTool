@@ -15,7 +15,7 @@ class CourseSpiderTest {
     void draft() {
         try {
             final Elements elements = Jsoup.parse(
-                    Paths.get("test/com/dvf/ucst/data/spider/cpen").toFile(), "UTF-8"
+                    Paths.get("src/test/java/com/dvf/ucst/core/spider/cpen").toFile(), "UTF-8"
             ).getElementsByTag("tbody");
             System.out.println(elements.get(0));
         } catch (IOException e) {

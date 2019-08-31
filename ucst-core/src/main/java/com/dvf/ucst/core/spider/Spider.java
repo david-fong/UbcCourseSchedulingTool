@@ -51,7 +51,7 @@ public final class Spider {
                         throw new RuntimeException(String.format("%s \"%s\" under the campus \"%s\""
                                 + " is missing the subdirectory \"%s\".",
                                 FacultyTreeNode.class.getName(), faculty.getNameWithTitle(),
-                                faculty.getRootCampus().getNameWithTitle(), subDir.subDirName
+                                faculty.getRootCampus().getNameWithTitle(), subDir.getSubDirectory()
                         ));
                     }
                 }
