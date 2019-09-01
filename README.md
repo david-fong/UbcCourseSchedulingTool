@@ -1,32 +1,36 @@
 # :date: UBC Course Scheduling Tool
 
+> One does not simply register for courses at UBC.
+>
+> -Me, 2019
 
-### :mortar_board: The goal:
+## :mortar_board: The Motivation for this Project:
 
-Create a program (and wrapping desktop application) where a user can provide their program of study, and a collection of courses they have completed, and be returned with a collection of Worklists for their upcoming session that meet all their program requirements. As stated in this project's repo description, "One does not simply register for courses at UBC"- *but*, it shouldn't have to be that way. UBC is working on a project to reduce scheduling conflicts and walking distances between classes [(The Scheduling Project)](https://facultystaff.students.ubc.ca/enrolment-services/scheduling-records-systems-management/scheduling-services/scheduling-project) that perhaps this project can supplement as a mature proof-of-concept for scheduling automation.
+Registering for my third-year courses was a frustrating process. Sources on course requirements were inconsistent. [UBC's main site](https://you.ubc.ca/ubc_programs/computer-engineering/) had an incomplete listing, and so did [the ECE department's site](https://www.ece.ubc.ca/academic-programs/undergraduate/programs/computer-engineering-program). I could only find an explanation of one category of requirements on [UBC's degree navigator](https://degree-navigator.as.it.ubc.ca "link broken"), which was cluttered with ~400 other highly specific requirements, and I could only find information on elective requirements in [The ECE electives document](https://www.ece.ubc.ca/sites/default/files/CPEN%20-%202018%20May.pdf), which included some courses that were no longer offered, and other courses only for Electrical students and not Computer Engineering students (because of the two being under the ECE department), and didn't make any indications of those limitations. Most of my time making worklists was spent finding out what I could actually use, and how not to end up in a dead end. I ended up having a very limited number of choices for Worklists, despite making them manually instead of basing them off of standard timetables. I kept thinking to myself- "a computer could do this". As in- a computer could filter out courses and sections that I don't meet requirements for, and not as in- a computer could fix these inconsistencies, inconveniences, and dated pieces of information that made things difficult in the first place.
 
-For me, there are two leading frustrations:
+It's easy to bash on UBC and show off solutions to the surface level problems in play. For work like that which has already been done, that's great. Everybody at UBC needs that (minus the bashing). It's just that solving the easy problems is not enough.
 
-1. UBC has all the information needed to validate a worklist. They could automate it, but they haven't yet. Efforts have been made with great results by others [Ex. UBCScheduler by Yichen](https://yichen.dev/UBCScheduler/), but not to the extent of effort that *this* projects sets out for.
-1. Sources of course requirements are inconsistent. For the CPEN program, one is incomplete [(UBC's main site)](https://you.ubc.ca/ubc_programs/computer-engineering/), one is mixed with courses that are only for ELEC students- due to CPEN being lumped up with it as ECE [(The ECE electives document)](https://www.ece.ubc.ca/sites/default/files/CPEN%20-%202018%20May.pdf), one could use a css update [(the ECE department's site)](https://www.ece.ubc.ca/academic-programs/undergraduate/programs/computer-engineering-program), one on top of that is *incredibly, incredibly* cluttered [(UBC's degree navigator)](https://degree-navigator.as.it.ubc.ca "link broken"). **None of them completely agree with each other**. This is a problem that needs to be solved by effort and communication- not by algorithms. It is not a goal for this project to solve, but remains as much of a hope as for the other goals that it will be brought attention to.
+Of the problems in play here (that I see from my limited perspective as a student)- the big jumbled mess that they are, I see them in four layers and two fronts. Those layers separate the problems in complexity, with problems in each layer progressively becoming more complex, originating from more root causes, and requiring more care and collaboration to solve. The first three layers make up the technical front- problems that can be solved by computer programs (and some discussion on fairness). The last layer makes up the community front- problems including those that motivated this project in the first place- such as the problems of dated course requirements and of chronic scheduling conflicts. Here are those layers in order, with commentary drawing parallels to the depths of Sudoku-related problems (because I like Sudoku):
 
-That is the public face of the goal- but there is also a personal side: I want to practice managing a Java project after being a participant in one during my first COOP term, and to struggle through the process of searching for libraries, choosing them, and learning how to use them. This is something I don't get to do at school or at work. It is something I am really enjoying- to work through the design and representation of the data-structures and algorithms, and to do so to solve a problem not because someone will mark me on it, or because I will get paid, but simply because I want to take this problem on. I hope to thoroughly challenge myself, demonstrate my ability to think and learn independently, and in the process create something that can help many people. There are two more goals- ones that scare me and will challenge me the most when they kick off: to work on a project with a team of friends, and to learn how to use git to work on a team project.
+0. Improve the user interface to UBC's registration site. There are ways it is structured that make it inconvenient to use. Even by itself, rethinking and restructuring that interface could speed up the process of registering for courses significantly. This would be like writing an application presenting a GUI for solving a Sudoku puzzle with a variety of helpful tools.
+0. Automate worklist creation. There are three levels of thoroughness when it comes to solving this problem layer:
+   - Check that a worklist is valid. Ie. A student meets all requirements to register for the specific sections of each course in the worklist, there are no scheduling conflicts, and all contained sections have remaining seating available. This would be like writing a Sudoku program that checks that a user's solution to a puzzle is a valid solution. This is the level that UBC currently goes to with their registration site and the degree navigator site.
+   - Generate valid worklists given a set of course sections. This would be like writing a program that- given a Sudoku puzzle- can generate a valid solution to. This is the level that an existing project [(UBC Course Scheduler - Yichen)](https://github.com/Schemetrical/UBCScheduler) goes to.
+   - Generate valid worklists given a a student's program of study, year of study, and elective preferences. This would be like writing a program that generates a valid solution to a Sudoku puzzle given no Sudoku puzzle (which is actually almost the same as solving a puzzle, but just reduces the amount of required input, and increases the amount of computation). This is the level that this project aims to go to- and perhaps to go beyond.
+0. Create an algorithm to define course sections (which currently is done by individuals) that minimizes course section conflicts for the vast majority of students. This would be like writing a program to generate a Sudoku *puzzle*- a unique solution that remains to be solved by a user, and not just any puzzle, but one that can be proven to be difficult to solve, which- believe me- is not a simple thing to do. It requires learning how people who are good at Sudoku play Sudoku, reasoning about what makes a difficult puzzle difficult, and much more reasoning to reliably reproduce that effect in a reasonable amount of time. (I don't speak from experience). Of course- in our case, we would like to define course sections in a way that makes it easy for students to create worklists (Ie. that minimize encounters with scheduling conflicts). This is a dream for this project. Something that I would love to approach and attempt, but also that I don't know if I can find the time to do with love and care (or even without love and care).
+0. The last layer, and the only layer of the other front is by far the most complicated. Luckily, the battle on this front is already being fought- and being fought *by UBC itself*. I will not tread into defining it because they have already done so excellently. You can find all that information at [The Scheduling Project](https://facultystaff.students.ubc.ca/enrolment-services/scheduling-records-systems-management/scheduling-services/scheduling-project). I will try to draw a Sudoku-related parallel, though. Imagine this: You choose 81 individuals- hopefully each of which are kind, smart (each at something different), and hardworking, and you tell them each to pick their favorite number between one and nine, allowing them to change their number later if they wish. Then, you send them off, but not before giving them a time before which they must arrange themselves in a nine-by-nine grid... *As a complete, valid Sudoku puzzle solution*. This is how I imagine the process of course section definition goes. To get one human alone to create a valid Sudoku puzzle solution given an absolutely empty grid- let alone for multiple humans to do so together with an added factor of varying preferences- such a task in my mind is not one that can be done. Yet for reasons I don't know (because I haven't tried to find out)- *of which I have faith for many to be good reasons*- that is not unlike how things currently are done.
 
 My head is in the clouds- but [wouldn't it be lovely](https://www.youtube.com/watch?v=q5fW7sERw7I&t=4m24s)?
 
-### :file_folder: Google Drive Folder: [link](https://drive.google.com/drive/folders/1BmgHv7Mdu5VeI8_ZaramyXntM39VEjx8 "open for collaborators")
+## :cd: High-level Algorithm Description:
 
----
-
-### :cd: High-level Algorithm Description:
-
-1. Begin with complex program requirements imposed on the user such as those in the [The ECE electives document](https://www.ece.ubc.ca/sites/default/files/CPEN%20-%202018%20May.pdf), and a set of user-preferences such as "Earliest class time", or "Make sure there is a lunch break everyday".
+1. Begin with complex program requirements imposed on the user such as those in the [The ECE electives document](https://www.ece.ubc.ca/sites/default/files/CPEN%20-%202018%20May.pdf), and a set of user-preferences such as "Earliest class time", or "Try to fit in an hour long lunch break everyday".
 1. Weed out courses where the user doesn't meet the course's requirements (ie. prereqs, coreqs, student-reqs). Allow the user to select unusable courses to override to still consider in further operations. See [`Requirement::requireOf`](ucst-utils/src/main/java/com/dvf/ucst/utils/requirement/Requirement.java).
 1. Create a collection of all combinations of Courses that satisfy the complex program requirements. See [`MatchingRequirementIf::getAllBarelyPassingCombinations`](ucst-utils/src/main/java/com/dvf/ucst/utils/requirement/matching/MatchingRequirementIf.java).
 1. Create a collection of all conflict-free Worklists (containing *CourseSections* and not their *Courses*) for each of the previously generated Course combinations by trying all combinations of their CourseSections together (short circuiting upon encountering conflicts to avoid wasteful computation). See [`PickyBuildGenerator::generateAllFullPickyBuilds`](ucst-utils/src/main/java/com/dvf/ucst/utils/pickybuild/PickyBuildGenerator.java).
 1. Sort the conflict-free Worklists by their adherence to the user's preferences.
 
-### :monkey: Data Structures:
+## :monkey: Data Structures:
 - Faculties/Departments:
   - Have a collection of offered courses
   - May have a collection of STT's for their programs
@@ -46,19 +50,8 @@ My head is in the clouds- but [wouldn't it be lovely](https://www.youtube.com/wa
   - Logical variants (like AND or OR) that require other requirements to pass in a certain fashion
   - Matching requirements that require a test subject to contain matches of candidates
 
-### :spider: Data Data Data:
+## :spider: Data Data Data:
 - Please see [`The Spiders`](ucst-core/src/main/java/com/dvf/ucst/core/spider/Spider.java) for the classes which will pull registration data on Courses, their Sections, and STT's from UBC's public pages on their registration site.
 - See [`The FacultyNodes`](ucst-core/src/main/java/com/dvf/ucst/core/faculties) for the constants that define the URL's for all the necessary UBC registration site pages that the Spiders will pull from, and that define the file structure for the local cache of that data in xml format.
 
----
-
-### :oncoming_automobile: High-level Roadmap:
-1. Planning and Learning:
-   - List out gripes with UBC's registration site's interface, and how they propose to address them.
-1. Groundwork Representation:
-   - Implement all of the representation and algorithms for Requirements while writing and performing tests.
-1. Fetching, Parsing, and Storing Data:
-   - Work on the spiders (fetch html from ubc's registration pages and save as local xml files)
-1. GUI Design and Implementation:
-   - Design the layout of the GUI.
-   - Implement the GUI.
+### :file_folder: Google Drive Folder: [link](https://drive.google.com/drive/folders/1BmgHv7Mdu5VeI8_ZaramyXntM39VEjx8 "open for collaborators")
