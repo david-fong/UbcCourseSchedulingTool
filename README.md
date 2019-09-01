@@ -14,7 +14,7 @@ It's easy to bash on UBC and show off solutions to the surface level problems in
 
 
 
-# :mount_fuji: Choosing our Battles:
+## :mount_fuji: Choosing our Battles:
 
 Of the problems in play here (that I see from my limited perspective as a student)- the big jumbled mess that they are, I see them in four layers and two fronts. Those layers separate the problems in complexity, with problems in each layer progressively becoming more complex, originating from more root causes, and requiring more care and collaboration to solve. The first three layers make up the technical front- problems that can be solved by computer programs (and some discussion on fairness). The last layer makes up the community front- problems including those that motivated this project in the first place- such as the problems of dated course requirements and of chronic scheduling conflicts. Here are those layers in order, with commentary drawing parallels to the depths of Sudoku-related problems (because I like Sudoku):
 
