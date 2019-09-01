@@ -8,6 +8,7 @@ import com.dvf.ucst.core.faculties.FacultyTreeNode;
 import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
 import com.dvf.ucst.core.schedule.Schedule;
 import com.dvf.ucst.core.spider.CourseWip;
+import com.dvf.ucst.utils.general.WorkInProgress;
 import com.dvf.ucst.utils.pickybuild.PickyBuildElement;
 import com.dvf.ucst.utils.requirement.Requirement;
 import com.dvf.ucst.utils.requirement.matching.CreditValued;
@@ -21,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  *
@@ -195,16 +197,43 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         return Collections.unmodifiableSet(sectionGroup);
     }
 
-    // TODO [xml:write.setup][CourseWip]: Add static xml producer method taking [CourseWip]
-
     /**
-     *
-     * @param xml The [Element] to populate with [Course] properties from [wip] that
-     *     will later be used to reload that [Course] from a local xml file.
+     * @param elementSupplier Supplier of [Element]s which can be added to the
+     *     [Document] that the returned [Element] will ultimately be added to.
      * @param wip The [CourseWip] describing the properties to populate [xml] with.
+     * @return An [Element] that can be used for this class' constructor.
+     * @throws WorkInProgress.IncompleteWipException if [wip] is not complete.
      */
-    public static void populateXmlWithWip(final Element xml, final CourseWip wip) {
-        xml.getOwnerDocument();
+    public static Element createXmlOfWorkInProgress(
+            final Function<XmlUtils.XmlConstant, Element> elementSupplier,
+            final CourseWip wip
+    ) throws WorkInProgress.IncompleteWipException {
+        final Element courseElement = elementSupplier.apply(Xml.COURSE_TAG);
+        courseElement.setAttribute(
+                Xml.COURSE_CAMPUS_ATTR.getXmlConstantValue(),
+                wip.getFacultyTreeNode().getRootCampus().getXmlConstantValue()
+        );
+        courseElement.setAttribute(
+                Xml.COURSE_FACULTY_ATTR.getXmlConstantValue(),
+                wip.getFacultyTreeNode().getAbbreviation()
+        );
+        courseElement.setAttribute(
+                Xml.COURSE_CODE_ATTR.getXmlConstantValue(),
+                wip.getCourseIdToken()
+        );
+        courseElement.setAttribute(
+                Xml.COURSE_CREDIT_ATTR.getXmlConstantValue(),
+                Integer.toString(wip.getCreditValue())
+        ); {
+            final Element descriptionElement = elementSupplier.apply(Xml.DESCRIPTION_TAG);
+            descriptionElement.setTextContent(wip.getDescriptionString());
+            courseElement.appendChild(descriptionElement);
+        } {
+            // TODO [xml:write][Course requirements]
+        } {
+            // lectures, labs, tutorials
+        }
+        return courseElement;
     }
 
 
@@ -302,9 +331,19 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         public final Set<CourseSectionBlock> getBlocks() {
             return blocks;
         }
-
-        // TODO [xml:write.setup][CourseSectionWip]: Add static producer method taking [CourseSectionWip]
     }
+
+    // TODO [xml:write.setup][CourseSectionWip]: Add static producer method taking [CourseSectionWip]
+    private static Element createXmlOfWorkInProgress(
+            final Function<XmlUtils.XmlConstant, Element> elementSupplier,
+            final CourseWip.CourseSectionWip wip
+    ) throws WorkInProgress.IncompleteWipException {
+        final Element sectionElement = elementSupplier.apply(SecXml.COURSE_SECTION_TAG);
+
+        return sectionElement;
+    }
+
+
 
     /**
      * Implementation note: must be constructed after lab and tutorial sections
@@ -373,8 +412,16 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         public final Set<Set<CourseSection>> getPickyBuildFriends() {
             return pickyBuildFriends;
         }
+    }
 
-        // TODO [xml:write.setup][CourseLectureSectionWip]: Add static producer method taking [CourseLectureSectionWip]
+    // TODO [xml:write.setup][CourseLectureSectionWip]: Add static producer method taking [CourseLectureSectionWip]
+    private static Element createXmlOfWorkInProgress(
+            final Function<XmlUtils.XmlConstant, Element> elementSupplier,
+            final CourseWip.CourseSectionWip.CourseLectureSectionWip wip
+    ) throws WorkInProgress.IncompleteWipException {
+        final Element lectureElement = elementSupplier.apply(SecXml.COURSE_SECTION_TAG);
+
+        return lectureElement;
     }
 
     public static boolean isSectionIdTokenForLectureSection(final String sectionIdToken) {
