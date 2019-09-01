@@ -19,7 +19,7 @@ public final class CourseWip implements WorkInProgress {
 
     private FacultyTreeNode facultyTreeNode;
     private String courseIdToken;
-    private int creditValue;
+    private Integer creditValue;
     private String descriptionString;
 
     // TODO: add fields for requirements when those api's are ready.
@@ -71,7 +71,7 @@ public final class CourseWip implements WorkInProgress {
         return courseIdToken;
     }
 
-    public int getCreditValue() {
+    public Integer getCreditValue() {
         return creditValue;
     }
 

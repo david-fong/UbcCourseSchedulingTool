@@ -7,6 +7,7 @@ package com.dvf.ucst.utils.general;
  * - are located in the same package as whoever will call the setters (assemble the WIP)
  * - all fields are non-final and private
  * - all fields have public getters, collections must be wrapped as unmodifiable
+ * - getters should throw a [ReceivedIncompleteWipException] if a property is known to be incomplete
  * - all fields have package-private setters that return the instance the setter was called off of
  * - unless necessary, should not provide or implement any constructors
  */
