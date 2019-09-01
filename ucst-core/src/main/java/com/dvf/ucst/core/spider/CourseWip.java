@@ -63,32 +63,64 @@ public final class CourseWip implements WorkInProgress {
         return this;
     }
 
-    public FacultyTreeNode getFacultyTreeNode() {
-        return facultyTreeNode;
+    public FacultyTreeNode getFacultyTreeNode() throws IncompleteWipException {
+        if (facultyTreeNode != null) {
+            return facultyTreeNode;
+        } else {
+            throw missingProperty("facultyTreeNode");
+        }
     }
 
-    public String getCourseIdToken() {
-        return courseIdToken;
+    public String getCourseIdToken() throws IncompleteWipException {
+        if (courseIdToken != null) {
+            return courseIdToken;
+        } else {
+            throw missingProperty("courseIdToken");
+        }
     }
 
-    public Integer getCreditValue() {
-        return creditValue;
+    public Integer getCreditValue() throws IncompleteWipException {
+        if (creditValue != null) {
+            return creditValue;
+        } else {
+            throw missingProperty("creditValue");
+        }
     }
 
-    public String getDescriptionString() {
-        return descriptionString;
+    public String getDescriptionString() throws IncompleteWipException {
+        if (descriptionString != null) {
+            return descriptionString;
+        } else {
+            throw missingProperty("descriptionString");
+        }
     }
 
-    public Set<CourseLectureSectionWip> getLectureSections() {
-        return Collections.unmodifiableSet(lectureSections);
+    public Set<CourseLectureSectionWip> getLectureSections() throws IncompleteWipException {
+        if (lectureSections != null) {
+            return Collections.unmodifiableSet(lectureSections);
+        } else {
+            throw missingProperty("lectureSections");
+        }
     }
 
-    public Set<CourseSectionWip> getLabSections() {
-        return Collections.unmodifiableSet(labSections);
+    public Set<CourseSectionWip> getLabSections() throws IncompleteWipException {
+        if (labSections != null) {
+            return Collections.unmodifiableSet(labSections);
+        } else {
+            throw missingProperty("labSections");
+        }
     }
 
-    public Set<CourseSectionWip> getTutorialSections() {
-        return Collections.unmodifiableSet(tutorialSections);
+    public Set<CourseSectionWip> getTutorialSections() throws IncompleteWipException {
+        if (tutorialSections != null) {
+            return Collections.unmodifiableSet(tutorialSections);
+        } else {
+            throw missingProperty("tutorialSections");
+        }
+    }
+
+    private IncompleteWipException missingProperty(final String fieldName) {
+        return IncompleteWipException.missingProperty(this, fieldName);
     }
 
 
