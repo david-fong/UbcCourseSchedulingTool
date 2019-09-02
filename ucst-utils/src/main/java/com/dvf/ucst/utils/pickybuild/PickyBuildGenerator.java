@@ -135,4 +135,46 @@ public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
         return recursiveGenerateBuilds(clauseIdx + 1, newSoFar);
     }
 
+
+
+    /**
+     * package-private class intended for testing purposes only.
+     * @param <T>
+     */
+    static final class BuildEquivalenceComparison<T extends PickyBuildElement<T>> {
+
+        private final Set<Set<T>> unmatchedExpectedBuildContents;
+        private final Set<Set<T>> unmatchedActualBuildContents;
+
+        BuildEquivalenceComparison(
+                final Set<Set<T>> expectedBuildContents, // <- may be unmodifiable (same for contents). must assume so.
+                final Set<PickyBuild<T>> actualBuilds
+        ) {
+            final Set<Set<T>> actualBuildContents = actualBuilds.stream()
+                    .map(PickyBuild::getAllContents)
+                    .collect(Collectors.toSet());
+            final Set<Set<T>> unmatchedExpectedBuildContents = new HashSet<>(expectedBuildContents);
+            final Set<Set<T>> unmatchedActualBuildContents = new HashSet<>(actualBuildContents);
+
+            for (final Set<T> buildContent : expectedBuildContents) {
+
+            }
+
+            this.unmatchedExpectedBuildContents = Collections.unmodifiableSet(unmatchedExpectedBuildContents);
+            this.unmatchedActualBuildContents = Collections.unmodifiableSet(unmatchedActualBuildContents);
+        }
+
+        public boolean expectedAndActualMatch() {
+            return getUnmatchedExpectedBuildContents().isEmpty() && getUnmatchedActualBuildContents().isEmpty();
+        }
+
+        public Set<Set<T>> getUnmatchedExpectedBuildContents() {
+            return unmatchedExpectedBuildContents;
+        }
+
+        public Set<Set<T>> getUnmatchedActualBuildContents() {
+            return unmatchedActualBuildContents;
+        }
+    }
+
 }
