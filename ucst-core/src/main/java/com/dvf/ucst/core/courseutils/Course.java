@@ -211,7 +211,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         final Element courseElement = elementSupplier.apply(Xml.COURSE_TAG);
         courseElement.setAttribute(
                 Xml.COURSE_CAMPUS_ATTR.getXmlConstantValue(),
-                wip.getFacultyTreeNode().getRootCampus().getXmlConstantValue()
+                wip.getFacultyTreeNode().getRootCampus().getAbbreviation()
         );
         courseElement.setAttribute(
                 Xml.COURSE_FACULTY_ATTR.getXmlConstantValue(),

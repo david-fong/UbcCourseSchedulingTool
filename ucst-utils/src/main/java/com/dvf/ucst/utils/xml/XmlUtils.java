@@ -24,7 +24,10 @@ public final class XmlUtils {
      * @throws MalformedXmlDataException If an [Element] with [tagName] could not be
      *     found, or if more than one was found as a direct child of [host].
      */
-    public static Element getMandatoryUniqueChildByTag(Element host, XmlConstant tagName) throws MalformedXmlDataException {
+    public static Element getMandatoryUniqueChildByTag(
+            final Element host,
+            final XmlConstant tagName
+    ) throws MalformedXmlDataException {
         final Element element = getOptionalUniqueChildByTag(host, tagName);
         if (element != null) {
             return element;
@@ -37,7 +40,10 @@ public final class XmlUtils {
      * Same as [getMandatoryUniqueElementByTag], but returns [null] instead of throwing
      * a [MalformedXmlDataException] if zero [Element]s with [tagName] are found.
      */
-    public static Element getOptionalUniqueChildByTag(Element host, XmlConstant tagName) throws MalformedXmlDataException {
+    public static Element getOptionalUniqueChildByTag(
+            final Element host,
+            final XmlConstant tagName
+    ) throws MalformedXmlDataException {
         final List<Element> elements = getChildElementsByTagName(host, tagName);
         if (elements.size() == 1) {
             return elements.get(0);
@@ -55,7 +61,10 @@ public final class XmlUtils {
      * @return A [List] of all [Elements] directly under [host] with a tag name
      *     equal to [tagName]. Never [null].
      */
-    public static List<Element> getChildElementsByTagName(Element host, XmlConstant tagName) {
+    public static List<Element> getChildElementsByTagName(
+            final Element host,
+            final XmlConstant tagName
+    ) {
         final String tagNameString = tagName.getXmlConstantValue();
         return getChildElementsOf(host).stream()
                 .filter((element) -> element.getTagName().equals(tagNameString))
@@ -67,7 +76,7 @@ public final class XmlUtils {
      * @param host An [Element]
      * @return All [Element]s that are direct children of [host].
      */
-    public static List<Element> getChildElementsOf(Element host) {
+    public static List<Element> getChildElementsOf(final Element host) {
         final NodeList nodeList = host.getChildNodes();
         final List<Element> elements = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -89,7 +98,10 @@ public final class XmlUtils {
      * @return The [Attr] if it was found.
      * @throws MalformedXmlDataException If [attrName] could not be found.
      */
-    public static Attr getMandatoryAttr(Element host, XmlConstant attrName) throws MalformedXmlDataException {
+    public static Attr getMandatoryAttr(
+            final Element host,
+            final XmlConstant attrName
+    ) throws MalformedXmlDataException {
         Attr attr = host.getAttributeNode(attrName.getXmlConstantValue());
         if (attr == null) {
             throw MalformedXmlDataException.missingAttr(host, attrName.getXmlConstantValue());
@@ -105,7 +117,11 @@ public final class XmlUtils {
      * @param defaultValue The value to use if an attribute by [attrName] is not found.
      * @return The attribute's value if found, or [defaultValue] otherwise. Never null.
      */
-    public static String getOptionalAttr(Element host, XmlConstant attrName, String defaultValue) {
+    public static String getOptionalAttr(
+            final Element host,
+            final XmlConstant attrName,
+            final String defaultValue
+    ) {
         if (host == null) {
             return defaultValue;
         } else {
@@ -116,10 +132,12 @@ public final class XmlUtils {
 
 
 
+    @FunctionalInterface
     public interface XmlConstant {
         String getXmlConstantValue();
     }
 
+    @FunctionalInterface
     public interface UserDataXml {
         /**
          * @param elementSupplier Used to create an [Element] with an implementation-

@@ -130,7 +130,7 @@ public final class Student implements XmlUtils.UserDataXml {
         studentElement.setAttribute(Xml.FIRST_NAME_ATTR.getXmlConstantValue(), firstName);
         studentElement.setAttribute(Xml.LAST_NAME_ATTR.getXmlConstantValue(), lastName);
         studentElement.setAttribute(Xml.YEAR_OF_STUDY_ATTR.getXmlConstantValue(), currentYear.getXmlConstantValue());
-        studentElement.setAttribute(Xml.CAMPUS_ATTR.getXmlConstantValue(), campus.getXmlConstantValue());
+        studentElement.setAttribute(Xml.CAMPUS_ATTR.getXmlConstantValue(), campus.getAbbreviation());
 
         // previous schedules:
         final Element completedCoursesElement = elementSupplier.apply(Xml.COMPLETED_COURSES_TAG);

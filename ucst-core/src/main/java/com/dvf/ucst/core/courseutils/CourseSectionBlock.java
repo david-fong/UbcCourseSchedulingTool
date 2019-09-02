@@ -57,7 +57,7 @@ public final class CourseSectionBlock {
         return repetitionType;
     }
 
-    public BlockTime getStartTime() {
+    public BlockTime getBeginTime() {
         return timeEnclosure.begin;
     }
 

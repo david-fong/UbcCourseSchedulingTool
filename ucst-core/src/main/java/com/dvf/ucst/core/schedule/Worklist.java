@@ -196,7 +196,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
                 final EnumMap<GoogleCalCsvColumns, String> row = new EnumMap<>(GoogleCalCsvColumns.class);
                 row.put(GoogleCalCsvColumns.SUBJECT,    section.getUserFullSectionIdString());
                 row.put(GoogleCalCsvColumns.START_DATE, startDateString);
-                row.put(GoogleCalCsvColumns.START_TIME, block.getStartTime().getTime().format(GoogleCalCsvColumns.TIME_FORMATTER));
+                row.put(GoogleCalCsvColumns.START_TIME, block.getBeginTime().getTime().format(GoogleCalCsvColumns.TIME_FORMATTER));
                 row.put(GoogleCalCsvColumns.END_TIME,   block.getEndTime().getTime().format(GoogleCalCsvColumns.TIME_FORMATTER));
                 //row.put(GoogleCalCsvColumns.LOCATION, block.getLocation());
                 row.put(GoogleCalCsvColumns.DESCRIPTION, section.getParentCourse().getCourseDescription());
