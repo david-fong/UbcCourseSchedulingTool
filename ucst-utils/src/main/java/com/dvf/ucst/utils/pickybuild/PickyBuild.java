@@ -16,14 +16,11 @@ public interface PickyBuild<E extends PickyBuildElement<E>> {
     /**
      * @return A copy [PickyBuild] of an implementation instance. Cloning depth must
      *     go deep enough that adding items to the clone must not affect the state of
-     *     its parent or siblings in any way, and that between the point of the
-     *     cloning event and any following adding operations, the clone and its parent
-     *     must return the same value for any item to their [::checkForConflictsWith]
-     *     methods. Any other state-related information that has no bearings on these
-     *     requirements is free to differ between a newborn clone and its parent.
-     *     Implementations MUST return an instance of their own type so build-generation
-     *     operations are ensured to return builds that are cast-safe to the type
-     *     provided to the [PickyBuildGenerator] constructor as a template.
+     *     its parent or siblings in any way, and that all following adding operations
+     *     performed by [PickyBuildGenerator::generateAllFullPickyBuilds] with the same
+     *     arguments and sequence on the clone and its parent must return the same value.
+     *     Any other state-related information that has no bearings on these requirements
+     *     is free to differ between a newborn clone and its parent.
      */
     PickyBuild<E> copy();
 
@@ -53,9 +50,14 @@ public interface PickyBuild<E extends PickyBuildElement<E>> {
     /**
      * @param others A [Set] of other [PickyBuildElement]s.
      * @return Whether any contents of [others] are already in [this] [PickyBuild]
-     *     (according to ::equals comparison).
+     *     (according to ::equals comparison). Implementations of this interface
+     *     may choose to override this for performance gains. If they do, they must
+     *     ensure that from an outside point of view, they follow the exact same
+     *     behaviour as this default implementation.
      */
-    boolean containsAny(final Set<E> others);
+    default boolean containsAny(final Set<E> others) {
+        return getAllContents().stream().anyMatch(others::contains);
+    }
 
     /**
      * @return The Set of all [PickyBuildElement]s that were in [this] [PickyBuild]

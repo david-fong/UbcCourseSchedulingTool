@@ -108,6 +108,7 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
     }
 
     @Override
+    // overridden to avoid constructing a new set upon each call to this method.
     public boolean containsAny(final Set<CourseSection> others) {
         return others.stream().anyMatch(otherSection ->
                 publicSectionsView.contains(otherSection)
