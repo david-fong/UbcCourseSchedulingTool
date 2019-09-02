@@ -133,6 +133,7 @@ public final class CourseWip implements WorkInProgress {
         private String sectionIdToken;
         private CourseUtils.Semester semester;
         private String professorName; // TODO: should this be split into first and last name?
+        private Boolean isWaitlist;
         private Set<CourseSectionBlockWip> blocks;
 
         final CourseSectionWip setSectionIdToken(String sectionIdToken) {
@@ -147,6 +148,11 @@ public final class CourseWip implements WorkInProgress {
 
         final CourseSectionWip setProfessorName(String professorName) {
             this.professorName = professorName;
+            return this;
+        }
+
+        public CourseSectionWip setWaitlist(Boolean waitlist) {
+            isWaitlist = waitlist;
             return this;
         }
 
@@ -176,6 +182,14 @@ public final class CourseWip implements WorkInProgress {
                 return professorName;
             } else {
                 throw missingProperty("professorName");
+            }
+        }
+
+        public Boolean isWaitlist() throws IncompleteWipException {
+            if (isWaitlist != null) {
+                return isWaitlist;
+            } else {
+                throw missingProperty("isWaitlist");
             }
         }
 
@@ -236,17 +250,11 @@ public final class CourseWip implements WorkInProgress {
          */
         public static final class CourseSectionBlockWip implements WorkInProgress {
 
-            private Boolean isWaitlist;
             private CourseUtils.WeekDay weekDay;
             private CourseSectionBlock.BlockRepetition repetitionType;
             private UbcTimeUtils.BlockTime beginTime;
             private UbcTimeUtils.BlockTime endTime;
             // TODO [repr][CourseSectionBlockWip]: add representation for location (building) when available.
-
-            public CourseSectionBlockWip setWaitlist(Boolean waitlist) {
-                isWaitlist = waitlist;
-                return this;
-            }
 
             public CourseSectionBlockWip setWeekDay(CourseUtils.WeekDay weekDay) {
                 this.weekDay = weekDay;
@@ -266,14 +274,6 @@ public final class CourseWip implements WorkInProgress {
             public CourseSectionBlockWip setEndTime(UbcTimeUtils.BlockTime endTime) {
                 this.endTime = endTime;
                 return this;
-            }
-
-            public Boolean isWaitlist() throws IncompleteWipException {
-                if (isWaitlist != null) {
-                    return isWaitlist;
-                } else {
-                    throw missingProperty("isWaitlist");
-                }
             }
 
             public CourseUtils.WeekDay getWeekDay() throws IncompleteWipException {

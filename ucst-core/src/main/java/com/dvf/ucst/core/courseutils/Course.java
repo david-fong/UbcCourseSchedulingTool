@@ -253,6 +253,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         private final String sectionIdToken;
         private final CourseUtils.Semester semester;
         private final Professor professor;
+        private final boolean isWaitlist;
         private final Set<CourseSectionBlock> blocks;
 
         private CourseSection(final Element sectionElement) throws MalformedXmlDataException {
@@ -265,6 +266,9 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
             this.professor = new Professor(XmlUtils.getMandatoryUniqueChildByTag(
                     sectionElement, SecXml.SECTION_PROFESSOR_TAG
             ));
+            this.isWaitlist = sectionElement.getAttributeNode(
+                    SecXml.OPTIONAL_WAITLIST_FLAG_ATTR.getXmlConstantValue()
+            ) != null;
 
             final List<Element> blockElements = XmlUtils.getChildElementsByTagName(
                     sectionElement, CourseSectionBlock.Xml.BLOCK_TAG
@@ -328,6 +332,10 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
             return professor;
         }
 
+        public final boolean isWaitlist() {
+            return isWaitlist;
+        }
+
         public final Set<CourseSectionBlock> getBlocks() {
             return blocks;
         }
@@ -348,6 +356,9 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
                 wip.getSemester().getXmlConstantValue()
         ); {
             // TODO [xml:write][Course]: professor element
+        }
+        if (wip.isWaitlist()) {
+            sectionElement.setAttribute(SecXml.OPTIONAL_WAITLIST_FLAG_ATTR.getXmlConstantValue(), "");
         } {
             for (final CourseWip.CourseSectionWip.CourseSectionBlockWip blockWip : wip.getBlocks()) {
                 sectionElement.appendChild(CourseSectionBlock.createXmlOfWorkInProgress(elementSupplier, blockWip));
@@ -484,6 +495,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         SECTION_CODE_ATTR ("code"),
         SECTION_SEMESTER_ATTR ("semester"), // See [CourseUtils.Semester]
         SECTION_PROFESSOR_TAG("Instructor"),
+        OPTIONAL_WAITLIST_FLAG_ATTR ("waitlist"), // if this attribute exists, the section is a waitlist.
         // note: Blocks are not grouped under an element. That is why there is no tag for such a grouping element.
         ;
         private final String value;

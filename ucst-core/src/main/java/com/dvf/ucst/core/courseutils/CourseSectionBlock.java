@@ -17,15 +17,12 @@ import java.util.function.Function;
  */
 public final class CourseSectionBlock {
 
-    private final boolean isWaitlist;
     private final CourseUtils.WeekDay weekDay;
     private final BlockRepetition repetitionType;
     private final BlockTimeEnclosure timeEnclosure;
     // TODO [repr][CourseSectionBlock]: add representation for location (building).
 
     CourseSectionBlock(final Element blockElement) throws MalformedXmlDataException {
-        this.isWaitlist = blockElement.getAttributeNode(Xml.OPTIONAL_WAITLIST_FLAG_ATTR.getXmlConstantValue()) != null;
-
         this.weekDay = CourseUtils.WeekDay.decodeXmlAttr(XmlUtils
                 .getMandatoryAttr(blockElement, Xml.DAY_OF_WEEK_ATTR)
         );
@@ -41,8 +38,6 @@ public final class CourseSectionBlock {
         this.timeEnclosure = new BlockTimeEnclosure(start, end);
     }
 
-    // TODO [xml:write.setup][CourseSectionBlockWip]: Add constructor taking [CourseSectionBlockWip]
-
     // *note: do not change visibility. may be used in GUI.
     public boolean overlapsWith(final CourseSectionBlock other) {
         if (getWeekDay() != other.getWeekDay()) {
@@ -52,10 +47,6 @@ public final class CourseSectionBlock {
         } else {
             return false;
         }
-    }
-
-    public boolean isWaitlist() {
-        return isWaitlist;
     }
 
     public CourseUtils.WeekDay getWeekDay() {
@@ -79,9 +70,6 @@ public final class CourseSectionBlock {
             final CourseWip.CourseSectionWip.CourseSectionBlockWip wip
     ) throws WorkInProgress.IncompleteWipException {
         final Element blockElement = elementSupplier.apply(Xml.BLOCK_TAG);
-        if (wip.isWaitlist()) {
-            blockElement.setAttribute(Xml.OPTIONAL_WAITLIST_FLAG_ATTR.getXmlConstantValue(), "");
-        }
         blockElement.setAttribute(
                 Xml.DAY_OF_WEEK_ATTR.getXmlConstantValue(),
                 wip.getWeekDay().getXmlConstantValue()
@@ -170,9 +158,6 @@ public final class CourseSectionBlock {
 
         // if not present, assumed to be every week. See [BlockRepetition.value] for decode.
         OPTIONAL_REPEAT_TYPE_ATTR ("repeat"),
-
-        // if not present, assumed to be false, otherwise to be true. value ignored.
-        OPTIONAL_WAITLIST_FLAG_ATTR ("waitlist"),
         ;
         private final String value;
 
