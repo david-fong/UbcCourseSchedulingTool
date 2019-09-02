@@ -14,10 +14,10 @@ import java.time.format.DateTimeFormatter;
  */
 public final class UbcTimeUtils {
 
-    public static final String UBC_TIMEZONE_ID_STRING = "America/Vancouver";
+    public static final ZoneId UBC_TIMEZONE_ZONE_ID = ZoneId.of("America/Vancouver");
 
     public static ZoneOffset getUbcTimezoneOffset() {
-        return ZoneId.of(UBC_TIMEZONE_ID_STRING).getRules().getOffset(LocalDateTime.now());
+        return UBC_TIMEZONE_ZONE_ID.getRules().getOffset(LocalDateTime.now());
     }
 
     public static ZonedDateTime getCurrentUbcDateTime() {
@@ -45,7 +45,8 @@ public final class UbcTimeUtils {
         OUTSIDE_REGULAR_CLASS_TIME,
         ;
         private static final int EARLIEST_BLOCK_HOUR = 8; // anchors first enum.
-        private static final DateTimeFormatter MY_12_HOUR_CLOCK_FORMATTER = DateTimeFormatter.ofPattern("h:mma");
+        // note on 12hr format: getter also removes periods in A.M./P.M. and switches to lower case.
+        private static final DateTimeFormatter MY_12_HOUR_CLOCK_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
         private static final DateTimeFormatter MY_24_HOUR_CLOCK_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
         private final OffsetTime time;
@@ -69,7 +70,9 @@ public final class UbcTimeUtils {
         }
 
         public String get12HourTimeString() {
-            return getTime().format(MY_12_HOUR_CLOCK_FORMATTER).toLowerCase();
+            return getTime().format(MY_12_HOUR_CLOCK_FORMATTER)
+                    .replace(".", "")
+                    .toLowerCase();
         }
 
         public String get24HrTimeString() {

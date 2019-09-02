@@ -4,6 +4,7 @@ import com.dvf.ucst.core.courseutils.CourseUtils.Semester;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
@@ -15,12 +16,12 @@ class CourseUtilsTest {
 
     @Test
     void semesterGetCurrent() {
-        final Map<LocalDate, Semester> datesToExpectedMap = Map.of(
+        final Map<ZonedDateTime, Semester> datesToExpectedMap = Map.of(
                 SUMMER_S1.getApproxClassStartDay(2019, MONDAY), SUMMER_S1,
                 SUMMER_S1.getApproxClassStartDay(2019, TUESDAY), SUMMER_S1,
                 SUMMER_S1.getApproxClassStartDay(2019, MONDAY).minus(1, ChronoUnit.DAYS), WINTER_S2
         );
-        for (final Map.Entry<LocalDate, Semester> dateToExpectedEntry : datesToExpectedMap.entrySet()) {
+        for (final Map.Entry<ZonedDateTime, Semester> dateToExpectedEntry : datesToExpectedMap.entrySet()) {
             assertEquals(
                     dateToExpectedEntry.getValue(),
                     getCurrentSemester(dateToExpectedEntry.getKey())
