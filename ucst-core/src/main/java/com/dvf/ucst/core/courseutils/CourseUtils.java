@@ -7,6 +7,7 @@ import org.w3c.dom.Attr;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
@@ -105,11 +106,13 @@ public final class CourseUtils {
          * @return A [LocalDate] with the given [year] at the beginning of [this]
          *     [Semester] on the given [WeekDay].
          */
-        public LocalDate getApproxClassStartDay(final int year, final WeekDay weekDay) {
+        public ZonedDateTime getApproxClassStartDay(final int year, final WeekDay weekDay) {
             return LocalDate.of(year, startMonth, 1)
                     .with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY))
                     .plusWeeks(startWeek)
-                    .with(TemporalAdjusters.nextOrSame(weekDay.dayOfWeek));
+                    .with(TemporalAdjusters.nextOrSame(weekDay.dayOfWeek))
+                    .atStartOfDay(UbcTimeUtils.UBC_TIMEZONE_ZONE_ID)
+                    ;
         }
 
         /**
@@ -119,18 +122,19 @@ public final class CourseUtils {
          */
         public static Semester decodeXmlAttr(final Attr attr) throws MalformedXmlDataException {
             for (Semester semester : Semester.values()) {
-                if (semester.xmlAttrVal.equals(attr.getValue())) {
+                if (semester.getXmlConstantValue().equals(attr.getValue())) {
                     return semester;
                 }
             }
             throw MalformedXmlDataException.invalidAttrVal(attr);
         }
 
-        public static Semester getCurrentSemester(final LocalDate date) {
-            final Map<LocalDate, Semester> dateSemesterMap = new HashMap<>();
-            final List<LocalDate> semesterLoop = Arrays.stream(values())
+        public static Semester getCurrentSemester(final ZonedDateTime zonedDate) {
+            final Map<ZonedDateTime, Semester> dateSemesterMap = new HashMap<>();
+            final List<ZonedDateTime> semesterLoop = Arrays.stream(values())
                     .map(semester -> {
-                        final LocalDate semesterDate = semester.getApproxClassStartDay(date.getYear(), WeekDay.MONDAY);
+                        final ZonedDateTime semesterDate = semester
+                                .getApproxClassStartDay(zonedDate.getYear(), WeekDay.MONDAY);
                         dateSemesterMap.put(semesterDate, semester);
                         return semesterDate;
                     })
@@ -138,7 +142,8 @@ public final class CourseUtils {
             semesterLoop.add(semesterLoop.get(0).plus(1, ChronoUnit.YEARS));
 
             for (int i = 0; i < values().length; i++) {
-                if (date.compareTo(semesterLoop.get(i)) >= 0 && date.compareTo(semesterLoop.get(i + 1)) < 0) {
+                if (zonedDate.compareTo(semesterLoop.get(i)) >= 0 &&
+                        zonedDate.compareTo(semesterLoop.get(i + 1)) < 0) {
                     return dateSemesterMap.get(semesterLoop.get(i));
                 }
             }
@@ -225,7 +230,7 @@ public final class CourseUtils {
         private final String xmlAttrVal;
         private final DayOfWeek dayOfWeek;
 
-        WeekDay(String xmlAttrVal) {
+        WeekDay(final String xmlAttrVal) {
             this.xmlAttrVal = xmlAttrVal;
             this.dayOfWeek = DayOfWeek.of(ordinal() + 1);
         }
@@ -236,8 +241,8 @@ public final class CourseUtils {
          * @throws MalformedXmlDataException if no such [WeekDay] can be found.
          */
         public static WeekDay decodeXmlAttr(final Attr attr) throws MalformedXmlDataException {
-            for (WeekDay weekDay : WeekDay.values()) {
-                if (weekDay.xmlAttrVal.equals(attr.getValue())) {
+            for (final WeekDay weekDay : WeekDay.values()) {
+                if (weekDay.getXmlConstantValue().equals(attr.getValue())) {
                     return weekDay;
                 }
             }
