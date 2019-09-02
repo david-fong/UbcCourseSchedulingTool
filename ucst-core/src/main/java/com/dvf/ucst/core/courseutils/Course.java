@@ -270,7 +270,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
                     sectionElement, CourseSectionBlock.Xml.BLOCK_TAG
             );
             final Set<CourseSectionBlock> blocks = new HashSet<>(blockElements.size());
-            for (Element blockElement : blockElements) {
+            for (final Element blockElement : blockElements) {
                 blocks.add(new CourseSectionBlock(blockElement));
             }
             this.blocks = Collections.unmodifiableSet(blocks);
@@ -339,7 +339,20 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
             final CourseWip.CourseSectionWip wip
     ) throws WorkInProgress.IncompleteWipException {
         final Element sectionElement = elementSupplier.apply(SecXml.COURSE_SECTION_TAG);
-
+        sectionElement.setAttribute(
+                SecXml.SECTION_CODE_ATTR.getXmlConstantValue(),
+                wip.getSectionIdToken()
+        );
+        sectionElement.setAttribute(
+                SecXml.SECTION_SEMESTER_ATTR.getXmlConstantValue(),
+                wip.getSemester().getXmlConstantValue()
+        ); {
+            // TODO [xml:write][Course]: professor element
+        } {
+            for (final CourseWip.CourseSectionWip.CourseSectionBlockWip blockWip : wip.getBlocks()) {
+                sectionElement.appendChild(CourseSectionBlock.createXmlOfWorkInProgress(elementSupplier, blockWip));
+            }
+        }
         return sectionElement;
     }
 
@@ -471,6 +484,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         SECTION_CODE_ATTR ("code"),
         SECTION_SEMESTER_ATTR ("semester"), // See [CourseUtils.Semester]
         SECTION_PROFESSOR_TAG("Instructor"),
+        // note: Blocks are not grouped under an element. That is why there is no tag for such a grouping element.
         ;
         private final String value;
 
