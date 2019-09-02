@@ -61,10 +61,6 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
         return courseSections;
     }
 
-    public final boolean isBasedOffAnStt() {
-        return !sttSections.isEmpty();
-    }
-
     public final String getEnclosedSttName() {
         return sttName;
     }
@@ -72,7 +68,7 @@ public final class Schedule implements ScheduleIf<CourseSectionRef> {
     /**
      * @return Not null.
      */
-    public Set<CourseSectionRef> getEnclosedSttSections() {
+    public final Set<CourseSectionRef> getEnclosedSttSections() {
         return sttSections;
     }
 

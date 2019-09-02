@@ -18,7 +18,9 @@ interface ScheduleIf<S> {
      *     its [CourseSection]s cannot be removed. The value returned by this method
      *     must never vary when called from the same instance multiple times.
      */
-    boolean isBasedOffAnStt();
+    default boolean isBasedOffAnStt() {
+        return !getEnclosedSttSections().isEmpty();
+    }
 
     String getEnclosedSttName();
 

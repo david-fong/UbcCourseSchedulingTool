@@ -33,6 +33,9 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
      * Must begin with an alphabetic character.
      * Permits non-contiguous intermediate spaces.
      * Permits numbers and punctuation marks.
+     *
+     * Must be tested in all constructors for this class, and throw a
+     * [MalformedWorklistNameArgumentException] if the check fails.
      */
     private static final Pattern PERMITTED_NAME_PATTERN = Pattern.compile("\\p{Alpha}([ ]?\\p{Graph})*");
     public static final Predicate<String> PERMITTED_NAME_TESTER = PERMITTED_NAME_PATTERN.asPredicate();
@@ -66,7 +69,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
             throw new MalformedXmlDataException(new MalformedWorklistNameArgumentException());
         }
         this.name = name;
-        this.isLocked = worklistElement.hasAttribute(Xml.WORKLIST_IS_LOCKED_ATTR.value);
+        this.isLocked = worklistElement.hasAttribute(Xml.WORKLIST_IS_LOCKED_ATTR.getXmlConstantValue());
         this.favorability = WorklistFavorability.decodeXmlAttr(
                 XmlUtils.getMandatoryAttr(
                         worklistElement,
@@ -89,22 +92,22 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     @Override
     public Worklist copy() {
         try {
-            return new Worklist(this, name);
+            return new Worklist(this, getName());
         } catch (MalformedWorklistNameArgumentException e) {
             throw new RuntimeException(String.format("Unexpected %s: an existing %s"
                     + " should only have been successfully constructed with a valid name,"
                     + " whose validity should be held true afterwards since the predicate"
                     + " uses purely combinational logic. The failed name was \"%s\"",
                     MalformedWorklistNameArgumentException.class.getName(),
-                    Worklist.class.getName(), name
+                    Worklist.class.getName(), getName()
             ));
         }
     }
 
     @Override
-    public boolean addIfNoConflicts(CourseSection section) {
+    public boolean addIfNoConflicts(final CourseSection section) {
         // short-circuits the operation (skips call to super) if locked.
-        return !isLocked && super.addIfNoConflicts(section);
+        return !isLocked() && super.addIfNoConflicts(section);
     }
 
     /**
@@ -114,7 +117,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
      * @return [true] if the operation was successful and [false] otherwise.
      */
     public final boolean removeSection(CourseSection section) {
-        return !isLocked && !getEnclosedSttSections().contains(section) && courseSections.remove(section);
+        return !isLocked() && !getEnclosedSttSections().contains(section) && courseSections.remove(section);
     }
 
 //    /**
@@ -143,7 +146,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
         this.isLocked = locked;
     }
 
-    public final void setFavorability(WorklistFavorability favorability) {
+    public final void setFavorability(final WorklistFavorability favorability) {
         this.favorability = favorability;
     }
 
@@ -161,14 +164,20 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
             final Element sttSectionListElement = createSectionListElement(
                     elementSupplier, getEnclosedSttSections(), Schedule.Xml.STT_SECTION_LIST_TAG
             );
-            sttSectionListElement.setAttribute(Schedule.Xml.STT_NAME_ATTR.getXmlConstantValue(), getEnclosedSttName());
+            sttSectionListElement.setAttribute(
+                    Schedule.Xml.STT_NAME_ATTR.getXmlConstantValue(),
+                    getEnclosedSttName()
+            );
             worklistElement.appendChild(sttSectionListElement);
         }
-        worklistElement.setAttribute(Xml.WORKLIST_NAME_ATTR.value, name);
+        worklistElement.setAttribute(Xml.WORKLIST_NAME_ATTR.getXmlConstantValue(), getName());
         if (isLocked) {
-            worklistElement.setAttribute(Xml.WORKLIST_IS_LOCKED_ATTR.value, "");
+            worklistElement.setAttribute(Xml.WORKLIST_IS_LOCKED_ATTR.getXmlConstantValue(), "");
         }
-        worklistElement.setAttribute(Xml.WORKLIST_FAVORABILITY_ATTR.value, favorability.getXmlConstantValue());
+        worklistElement.setAttribute(
+                Xml.WORKLIST_FAVORABILITY_ATTR.getXmlConstantValue(),
+                favorability.getXmlConstantValue()
+        );
         return worklistElement;
     }
 
@@ -205,8 +214,8 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     // helper for toXml.
     private static Element createSectionListElement(
             final Function<XmlUtils.XmlConstant, Element> elementSupplier,
-            Set<CourseSection> sectionObjects,
-            Schedule.Xml listName
+            final Set<CourseSection> sectionObjects,
+            final Schedule.Xml listName
     ) {
         final Element sectionListElement = elementSupplier.apply(listName);
         for (final CourseSection sectionObject : sectionObjects) {
@@ -223,7 +232,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
 
 
     static final class MalformedWorklistNameArgumentException extends Exception {
-        MalformedWorklistNameArgumentException() {
+        private MalformedWorklistNameArgumentException() {
             super(String.format("Invalid name format. See %s for more info on formatting",
                     Worklist.class.getName()
             ));

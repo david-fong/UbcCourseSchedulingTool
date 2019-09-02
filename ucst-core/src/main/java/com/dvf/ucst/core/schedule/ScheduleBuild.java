@@ -34,7 +34,7 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
 
     // Copy constructor. Used publicly through [copy] method.
     ScheduleBuild(final ScheduleBuild other) {
-        this.courseSections = new HashSet<>(other.courseSections);
+        this.courseSections = new HashSet<>(other.getCourseSections());
         this.publicSectionsView = Collections.unmodifiableSet(courseSections);
         this.sttName = other.sttName;
         this.sttSections = other.sttSections;
@@ -109,11 +109,6 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
     @Override
     public final Set<CourseSection> getCourseSections() {
         return publicSectionsView;
-    }
-
-    @Override
-    public final boolean isBasedOffAnStt() {
-        return !sttSections.isEmpty();
     }
 
     @Override

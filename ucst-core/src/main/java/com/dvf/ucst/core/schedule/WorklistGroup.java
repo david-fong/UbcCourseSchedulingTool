@@ -62,7 +62,7 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
      *     the operation failed.
      */
     public Worklist addNewFromScratch(final String name) {
-        if (worklists.containsKey(name)) {
+        if (backingNameSet.contains(name)) {
             return null;
         } else {
             final Worklist newWorklist;
@@ -154,7 +154,7 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
      *     [WorklistGroup] and null otherwise.
      */
     public Worklist rename(final Worklist worklist, final String newName) {
-        if (isFromThis(worklist) && !worklist.isLocked() && !worklists.containsKey(newName)) {
+        if (isFromThis(worklist) && !worklist.isLocked() && !backingNameSet.contains(newName)) {
             worklists.remove(worklist.getName(), worklist);
             return addNewBasedOn(worklist, newName);
         } else {
@@ -200,7 +200,7 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
      */
     private String safeNameCopy(final String name) {
         String safeName = name;
-        while (worklists.containsKey(safeName)) {
+        while (backingNameSet.contains(safeName)) {
             safeName += NAME_OF_COPY_SUFFIX;
         }
         return safeName;

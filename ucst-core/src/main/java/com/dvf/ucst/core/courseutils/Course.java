@@ -266,9 +266,9 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
             this.professor = new Professor(XmlUtils.getMandatoryUniqueChildByTag(
                     sectionElement, SecXml.SECTION_PROFESSOR_TAG
             ));
-            this.isWaitlist = sectionElement.getAttributeNode(
+            this.isWaitlist = sectionElement.hasAttribute(
                     SecXml.OPTIONAL_WAITLIST_FLAG_ATTR.getXmlConstantValue()
-            ) != null;
+            );
 
             final List<Element> blockElements = XmlUtils.getChildElementsByTagName(
                     sectionElement, CourseSectionBlock.Xml.BLOCK_TAG
