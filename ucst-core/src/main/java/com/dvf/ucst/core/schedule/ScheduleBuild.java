@@ -37,7 +37,7 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
         this.courseSections = new HashSet<>(other.getCourseSections());
         this.publicSectionsView = Collections.unmodifiableSet(courseSections);
         this.sttName = other.sttName;
-        this.sttSections = other.sttSections;
+        this.sttSections = other.getEnclosedSttSections();
     }
 
     // Only here for [Worklist] to call super constructor.
@@ -49,7 +49,7 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
     // Used when creating a [ScheduleBuild] or a [Worklist] based off a [Schedule].
     ScheduleBuild(final Schedule schedule) throws MalformedXmlDataException {
         this.courseSections = new HashSet<>();
-        for (CourseSectionRef ref : schedule.getCourseSections()) {
+        for (final CourseSectionRef ref : schedule.getCourseSections()) {
             try {
                 courseSections.add(ref.dereference());
             } catch (FacultyCourseNotFoundException | CourseSectionNotFoundException e) {
@@ -59,7 +59,7 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
         this.publicSectionsView = Collections.unmodifiableSet(courseSections);
         this.sttName = schedule.getEnclosedSttName();
         final Set<CourseSection> sttSections = new HashSet<>();
-        for (CourseSectionRef ref : schedule.getCourseSections()) {
+        for (final CourseSectionRef ref : schedule.getCourseSections()) {
             try {
                 sttSections.add(ref.dereference());
             } catch (FacultyCourseNotFoundException | CourseSectionNotFoundException e) {
@@ -83,27 +83,43 @@ public class ScheduleBuild implements ScheduleIf<CourseSection>, PickyBuild<Cour
     }
 
     /**
-     * The operation will fail with a return value of false if any scheduling conflicts
-     * would arise as a result of adding [section] to this [Schedule].
+     * The operation will fail with a return value of false if any scheduling
+     * conflicts would arise as a result of adding [section] to this [Schedule].
      *
      * @param section A [CourseSection] to attempt to add to this [Schedule].
      * @return [true] if the operation was successful.
      */
     @Override
     public boolean addIfNoConflicts(final CourseSection section) {
-        if (publicSectionsView.contains(section)) {
+        if (publicSectionsView.contains(section)
+                || getEnclosedSttSections().contains(section)
+        ) { // lower-cost check for simpler cases where [section] is already contained:
             return true;
-        } else if (publicSectionsView.stream().anyMatch(section::overlapsWith)) {
+
+        } else if (publicSectionsView.stream().anyMatch(section::overlapsWith)
+                || getEnclosedSttSections().stream().anyMatch(section::overlapsWith)
+        ) { // main (higher-cost) check for any conflicts, and to fail if found:
             return false;
-        } else {
+
+        } else { // no conflicts. perform the add operation:
             courseSections.add(section);
             return true;
         }
     }
 
     @Override
-    public boolean containsAny(final Collection<CourseSection> others) {
-        return others.stream().anyMatch(publicSectionsView::contains);
+    public boolean containsAny(final Set<CourseSection> others) {
+        return others.stream().anyMatch(otherSection ->
+                publicSectionsView.contains(otherSection)
+                        || getEnclosedSttSections().contains(otherSection)
+        );
+    }
+
+    @Override
+    public Set<CourseSection> getAllContents() {
+        final Set<CourseSection> allContents = new HashSet<>(publicSectionsView);
+        allContents.addAll(getEnclosedSttSections());
+        return Collections.unmodifiableSet(allContents);
     }
 
     @Override

@@ -1,11 +1,13 @@
 package com.dvf.ucst.utils.pickybuild;
 
-import java.util.Collection;
+import java.util.Set;
 
 /**
  * A collection where items cannot be added if they would conflict with entries that
  * have already been added. It is up to the implementation to determine what qualifies
- * as a conflict.
+ * as a conflict. Implementations are allowed to contain elements upon construction
+ * as long as none of those elements would conflict with each other if manually added
+ * through [::addIfNoConflicts] in any sequence (since that method is order-agnostic).
  *
  * @param <E> The type of [PickyBuildElement] that can be added to the implementation.
  */
@@ -49,10 +51,19 @@ public interface PickyBuild<E extends PickyBuildElement<E>> {
     boolean addIfNoConflicts(final E item);
 
     /**
-     * @param others A [Collection] of other [PickyBuildElement]s.
+     * @param others A [Set] of other [PickyBuildElement]s.
      * @return Whether any contents of [others] are already in [this] [PickyBuild]
      *     (according to ::equals comparison).
      */
-    boolean containsAny(final Collection<E> others);
+    boolean containsAny(final Set<E> others);
+
+    /**
+     * @return The Set of all [PickyBuildElement]s that were in [this] [PickyBuild]
+     *     since its construction, or were added in any previous [::addIfNoConflicts]
+     *     operations. For some implementations, this may be equivalent to saying
+     *     "all elements that are considered as possible conflict sources during an
+     *     [::addIfNoConflicts] operation". The returned [Set] must be unmodifiable.
+     */
+    Set<E> getAllContents();
 
 }
