@@ -1,17 +1,17 @@
 package com.dvf.ucst.core.schedule;
 
+import com.dvf.ucst.core.courseutils.Course;
+import com.dvf.ucst.core.courseutils.Course.CourseSection;
 import com.dvf.ucst.core.courseutils.CourseSectionBlock;
 import com.dvf.ucst.utils.calendar.GoogleCalCsvColumns;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
-import com.dvf.ucst.core.courseutils.Course;
-import com.dvf.ucst.core.courseutils.Course.CourseSection;
 import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -147,21 +147,19 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
         this.favorability = favorability;
     }
 
-
-
     @Override
-    public Element toXml(final Document document) {
-        final Element worklistElement = document.createElement(Xml.WORKLIST_TAG.value);
+    public Element toXml(final Function<XmlUtils.XmlConstant, Element> elementSupplier) {
+        final Element worklistElement = elementSupplier.apply(Xml.WORKLIST_TAG);
         {
             // Add xml data for non-STT sections:
             final Set<CourseSection> nonSttSections = new HashSet<>(getCourseSections());
             nonSttSections.removeAll(getEnclosedSttSections());
             worklistElement.appendChild(createSectionListElement(
-                    document, nonSttSections, Schedule.Xml.MANUAL_SECTION_LIST_TAG
+                    elementSupplier, nonSttSections, Schedule.Xml.MANUAL_SECTION_LIST_TAG
             ));
             // Add xml data for STT sections:
             final Element sttSectionListElement = createSectionListElement(
-                    document, getEnclosedSttSections(), Schedule.Xml.STT_SECTION_LIST_TAG
+                    elementSupplier, getEnclosedSttSections(), Schedule.Xml.STT_SECTION_LIST_TAG
             );
             sttSectionListElement.setAttribute(Schedule.Xml.STT_NAME_ATTR.getXmlConstantValue(), getEnclosedSttName());
             worklistElement.appendChild(sttSectionListElement);
@@ -205,15 +203,18 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     );
 
     // helper for toXml.
-    private static Element createSectionListElement(final Document document,
-                                                    Set<CourseSection> sectionObjects,
-                                                    Schedule.Xml listName) {
-        final Element sectionListElement = document.createElement(listName.getXmlConstantValue());
-        for (CourseSection sectionObject : sectionObjects) {
-            final Element sectionElement = document.createElement(Course.SecXml.COURSE_SECTION_TAG.getXmlConstantValue());
+    private static Element createSectionListElement(
+            final Function<XmlUtils.XmlConstant, Element> elementSupplier,
+            Set<CourseSection> sectionObjects,
+            Schedule.Xml listName
+    ) {
+        final Element sectionListElement = elementSupplier.apply(listName);
+        for (final CourseSection sectionObject : sectionObjects) {
+            final Element sectionElement = elementSupplier.apply(Course.SecXml.COURSE_SECTION_TAG);
             sectionElement.setAttribute(
                     Course.SecXml.LECTURE_COMPLIMENTARY_SECTION_REF_ATTR.getXmlConstantValue(),
-                    sectionObject.toString()); // See [Schedule]'s xml constructor and [CourseSectionRef.extractAndParseAll]
+                    sectionObject.toString()
+            ); // ^See [Schedule]'s xml constructor and [CourseSectionRef.extractAndParseAll]
             sectionListElement.appendChild(sectionElement);
         }
         return sectionListElement;

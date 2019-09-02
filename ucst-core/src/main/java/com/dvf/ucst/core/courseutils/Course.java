@@ -270,7 +270,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
                     sectionElement, CourseSectionBlock.Xml.BLOCK_TAG
             );
             final Set<CourseSectionBlock> blocks = new HashSet<>(blockElements.size());
-            for (Element blockElement : blockElements) {
+            for (final Element blockElement : blockElements) {
                 blocks.add(new CourseSectionBlock(blockElement));
             }
             this.blocks = Collections.unmodifiableSet(blocks);
@@ -339,7 +339,22 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
             final CourseWip.CourseSectionWip wip
     ) throws WorkInProgress.IncompleteWipException {
         final Element sectionElement = elementSupplier.apply(SecXml.COURSE_SECTION_TAG);
-
+        sectionElement.setAttribute(
+                SecXml.SECTION_CODE_ATTR.getXmlConstantValue(),
+                wip.getSectionIdToken()
+        );
+        sectionElement.setAttribute(
+                SecXml.SECTION_SEMESTER_ATTR.getXmlConstantValue(),
+                wip.getSemester().getXmlConstantValue()
+        ); {
+            final Element professorElement = elementSupplier.apply(SecXml.SECTION_PROFESSOR_TAG);
+            // TODO
+            sectionElement.appendChild(professorElement);
+        } {
+            for (final CourseWip.CourseSectionWip.CourseSectionBlockWip blockWip : wip.getBlocks()) {
+                sectionElement.appendChild(CourseSectionBlock.createXmlOfWorkInProgress(elementSupplier, blockWip));
+            }
+        }
         return sectionElement;
     }
 
