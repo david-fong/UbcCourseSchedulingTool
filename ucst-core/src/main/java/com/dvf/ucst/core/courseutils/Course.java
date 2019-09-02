@@ -7,6 +7,8 @@ import com.dvf.ucst.core.faculties.CampusNotFoundException;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
 import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
 import com.dvf.ucst.core.schedule.Schedule;
+import com.dvf.ucst.core.spider.CourseWip;
+import com.dvf.ucst.utils.general.WorkInProgress;
 import com.dvf.ucst.utils.pickybuild.PickyBuildElement;
 import com.dvf.ucst.utils.requirement.Requirement;
 import com.dvf.ucst.utils.requirement.matching.CreditValued;
@@ -15,7 +17,12 @@ import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  *
@@ -66,16 +73,21 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         this.prerequisites = new MatchingRequirementIf.StrictlyFailingMatchThreshReq<>();
         this.corequisites = new MatchingRequirementIf.StrictlyFailingMatchThreshReq<>();
 
-        this.labSections = parseOutLabTutorialSections(courseElement, Xml.LABS_TAG);
-        this.tutorialSections = parseOutLabTutorialSections(courseElement, Xml.TUTORIALS_TAG);
-
-        // lecture sections (must be done last to refer to labs and tutorials):
+        this.labSections = parseOutLabTutorialSections(
+                XmlUtils.getMandatoryUniqueChildByTag(courseElement, Xml.LABS_TAG),
+                LAB_SECTION_ID_TOKEN_PREFIX
+        );
+        this.tutorialSections = parseOutLabTutorialSections(
+                XmlUtils.getMandatoryUniqueChildByTag(courseElement, Xml.TUTORIALS_TAG),
+                TUTORIAL_SECTION_ID_TOKEN_PREFIX
+        );
+        // lecture sections (must be done after loading labs and tutorials to refer to them as objects):
         final List<Element> lectureSectionElements = XmlUtils.getChildElementsByTagName(
                 XmlUtils.getMandatoryUniqueChildByTag(courseElement, Xml.LECTURES_TAG),
                 SecXml.COURSE_SECTION_TAG
         );
         final Set<CourseLectureSection> lectureSections = new HashSet<>(lectureSectionElements.size());
-        for (Element sectionElement : lectureSectionElements) {
+        for (final Element sectionElement : lectureSectionElements) {
             lectureSections.add(new CourseLectureSection(sectionElement));
         }
         this.lectureSections = Collections.unmodifiableSet(lectureSections);
@@ -163,34 +175,66 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     }
 
     // helper for xml constructor.
-    private Set<CourseSection> parseOutLabTutorialSections(final Element courseElement, final Xml sectionGroupTag) throws MalformedXmlDataException {
-        final String idPrefix;
-        switch (sectionGroupTag) {
-            case LABS_TAG:      idPrefix = LAB_SECTION_ID_TOKEN_PREFIX; break;
-            case TUTORIALS_TAG: idPrefix = TUTORIAL_SECTION_ID_TOKEN_PREFIX; break;
-            default: throw new RuntimeException(new IllegalArgumentException());
-        }
-
+    private Set<CourseSection> parseOutLabTutorialSections
+    (final Element sectionGroupElement, final String idPrefix) throws MalformedXmlDataException {
         final List<Element> SectionElements = XmlUtils.getChildElementsByTagName(
-                XmlUtils.getMandatoryUniqueChildByTag(courseElement, Xml.LABS_TAG),
+                sectionGroupElement,
                 SecXml.COURSE_SECTION_TAG
         );
 
         final Set<CourseSection> sectionGroup = new HashSet<>(SectionElements.size());
         for (final Element sectionElement : SectionElements) {
-            final CourseSection labSectionObj = new CourseSection(sectionElement);
-            if (!labSectionObj.sectionIdToken.startsWith(idPrefix)) {
+            // construct the lab/tutorial section object:
+            final CourseSection sectionObject = new CourseSection(sectionElement);
+            if (!sectionObject.sectionIdToken.startsWith(idPrefix)) {
                 throw new MalformedXmlDataException(String.format("section id tokens"
                         + " under the \"%s\" tag must start with a \"%s\"",
-                        sectionGroupTag.getXmlConstantValue(), idPrefix
+                        sectionGroupElement.getTagName(), idPrefix
                 ));
             }
-            sectionGroup.add(labSectionObj);
+            sectionGroup.add(sectionObject);
         }
         return Collections.unmodifiableSet(sectionGroup);
     }
 
-    // TODO [xml:write.setup][CourseWip]: Add static xml producer method taking [CourseWip]
+    /**
+     * @param elementSupplier Supplier of [Element]s which can be added to the
+     *     [Document] that the returned [Element] will ultimately be added to.
+     * @param wip The [CourseWip] describing the properties to populate [xml] with.
+     * @return An [Element] that can be used for this class' constructor.
+     * @throws WorkInProgress.IncompleteWipException if [wip] is not complete.
+     */
+    public static Element createXmlOfWorkInProgress(
+            final Function<XmlUtils.XmlConstant, Element> elementSupplier,
+            final CourseWip wip
+    ) throws WorkInProgress.IncompleteWipException {
+        final Element courseElement = elementSupplier.apply(Xml.COURSE_TAG);
+        courseElement.setAttribute(
+                Xml.COURSE_CAMPUS_ATTR.getXmlConstantValue(),
+                wip.getFacultyTreeNode().getRootCampus().getXmlConstantValue()
+        );
+        courseElement.setAttribute(
+                Xml.COURSE_FACULTY_ATTR.getXmlConstantValue(),
+                wip.getFacultyTreeNode().getAbbreviation()
+        );
+        courseElement.setAttribute(
+                Xml.COURSE_CODE_ATTR.getXmlConstantValue(),
+                wip.getCourseIdToken()
+        );
+        courseElement.setAttribute(
+                Xml.COURSE_CREDIT_ATTR.getXmlConstantValue(),
+                Integer.toString(wip.getCreditValue())
+        ); {
+            final Element descriptionElement = elementSupplier.apply(Xml.DESCRIPTION_TAG);
+            descriptionElement.setTextContent(wip.getDescriptionString());
+            courseElement.appendChild(descriptionElement);
+        } {
+            // TODO [xml:write][Course requirements]
+        } {
+            // lectures, labs, tutorials
+        }
+        return courseElement;
+    }
 
 
 
@@ -226,7 +270,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
                     sectionElement, CourseSectionBlock.Xml.BLOCK_TAG
             );
             final Set<CourseSectionBlock> blocks = new HashSet<>(blockElements.size());
-            for (Element blockElement : blockElements) {
+            for (final Element blockElement : blockElements) {
                 blocks.add(new CourseSectionBlock(blockElement));
             }
             this.blocks = Collections.unmodifiableSet(blocks);
@@ -287,9 +331,32 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         public final Set<CourseSectionBlock> getBlocks() {
             return blocks;
         }
-
-        // TODO [xml:write.setup][CourseSectionWip]: Add static producer method taking [CourseSectionWip]
     }
+
+    // TODO [xml:write.setup][CourseSectionWip]: Add static producer method taking [CourseSectionWip]
+    private static Element createXmlOfWorkInProgress(
+            final Function<XmlUtils.XmlConstant, Element> elementSupplier,
+            final CourseWip.CourseSectionWip wip
+    ) throws WorkInProgress.IncompleteWipException {
+        final Element sectionElement = elementSupplier.apply(SecXml.COURSE_SECTION_TAG);
+        sectionElement.setAttribute(
+                SecXml.SECTION_CODE_ATTR.getXmlConstantValue(),
+                wip.getSectionIdToken()
+        );
+        sectionElement.setAttribute(
+                SecXml.SECTION_SEMESTER_ATTR.getXmlConstantValue(),
+                wip.getSemester().getXmlConstantValue()
+        ); {
+            // TODO [xml:write][Course]: professor element
+        } {
+            for (final CourseWip.CourseSectionWip.CourseSectionBlockWip blockWip : wip.getBlocks()) {
+                sectionElement.appendChild(CourseSectionBlock.createXmlOfWorkInProgress(elementSupplier, blockWip));
+            }
+        }
+        return sectionElement;
+    }
+
+
 
     /**
      * Implementation note: must be constructed after lab and tutorial sections
@@ -358,8 +425,16 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         public final Set<Set<CourseSection>> getPickyBuildFriends() {
             return pickyBuildFriends;
         }
+    }
 
-        // TODO [xml:write.setup][CourseLectureSectionWip]: Add static producer method taking [CourseLectureSectionWip]
+    // TODO [xml:write.setup][CourseLectureSectionWip]: Add static producer method taking [CourseLectureSectionWip]
+    private static Element createXmlOfWorkInProgress(
+            final Function<XmlUtils.XmlConstant, Element> elementSupplier,
+            final CourseWip.CourseSectionWip.CourseLectureSectionWip wip
+    ) throws WorkInProgress.IncompleteWipException {
+        final Element lectureElement = elementSupplier.apply(SecXml.COURSE_SECTION_TAG);
+
+        return lectureElement;
     }
 
     public static boolean isSectionIdTokenForLectureSection(final String sectionIdToken) {
@@ -384,10 +459,9 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
 
         LECTURES_TAG ("Lectures"),
         /*
-        the below two tags are optional for use inside a lecture section element.
-        if present, list complimentary sections to the same course as the lecture
+        the below two tags list complimentary sections to the same course as the lecture
         of which a student must take one at the same time as the declaring lecture
-        element to be considered taking the course. If not found, none are required.
+        element to be considered taking the course. If empty, then none are required.
          */
         LABS_TAG ("Labs"),
         TUTORIALS_TAG ("Tutorials"),
@@ -410,6 +484,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         SECTION_CODE_ATTR ("code"),
         SECTION_SEMESTER_ATTR ("semester"), // See [CourseUtils.Semester]
         SECTION_PROFESSOR_TAG("Instructor"),
+        // note: Blocks are not grouped under an element. That is why there is no tag for such a grouping element.
         ;
         private final String value;
 

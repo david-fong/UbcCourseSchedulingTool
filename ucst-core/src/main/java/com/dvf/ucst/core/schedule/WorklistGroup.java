@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * A collection of [Worklist]s with distinct names. Contents can be added,
@@ -183,10 +184,10 @@ public final class WorklistGroup implements XmlUtils.UserDataXml {
     }
 
     @Override
-    public Element toXml(final Document document) {
-        final Element worklistElement = document.createElement(Xml.WORKLIST_GROUP_TAG.value);
-        for (Worklist worklist : worklists.values()) {
-            worklistElement.appendChild(worklist.toXml(document));
+    public Element toXml(final Function<XmlUtils.XmlConstant, Element> elementSupplier) {
+        final Element worklistElement = elementSupplier.apply(Xml.WORKLIST_GROUP_TAG);
+        for (final Worklist worklist : worklists.values()) {
+            worklistElement.appendChild(worklist.toXml(elementSupplier));
         }
         return worklistElement;
     }

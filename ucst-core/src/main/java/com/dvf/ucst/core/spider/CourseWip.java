@@ -19,7 +19,7 @@ public final class CourseWip implements WorkInProgress {
 
     private FacultyTreeNode facultyTreeNode;
     private String courseIdToken;
-    private int creditValue;
+    private Integer creditValue;
     private String descriptionString;
 
     // TODO: add fields for requirements when those api's are ready.
@@ -63,32 +63,64 @@ public final class CourseWip implements WorkInProgress {
         return this;
     }
 
-    public FacultyTreeNode getFacultyTreeNode() {
-        return facultyTreeNode;
+    public FacultyTreeNode getFacultyTreeNode() throws IncompleteWipException {
+        if (facultyTreeNode != null) {
+            return facultyTreeNode;
+        } else {
+            throw missingProperty("facultyTreeNode");
+        }
     }
 
-    public String getCourseIdToken() {
-        return courseIdToken;
+    public String getCourseIdToken() throws IncompleteWipException {
+        if (courseIdToken != null) {
+            return courseIdToken;
+        } else {
+            throw missingProperty("courseIdToken");
+        }
     }
 
-    public int getCreditValue() {
-        return creditValue;
+    public Integer getCreditValue() throws IncompleteWipException {
+        if (creditValue != null) {
+            return creditValue;
+        } else {
+            throw missingProperty("creditValue");
+        }
     }
 
-    public String getDescriptionString() {
-        return descriptionString;
+    public String getDescriptionString() throws IncompleteWipException {
+        if (descriptionString != null) {
+            return descriptionString;
+        } else {
+            throw missingProperty("descriptionString");
+        }
     }
 
-    public Set<CourseLectureSectionWip> getLectureSections() {
-        return Collections.unmodifiableSet(lectureSections);
+    public Set<CourseLectureSectionWip> getLectureSections() throws IncompleteWipException {
+        if (lectureSections != null) {
+            return Collections.unmodifiableSet(lectureSections);
+        } else {
+            throw missingProperty("lectureSections");
+        }
     }
 
-    public Set<CourseSectionWip> getLabSections() {
-        return Collections.unmodifiableSet(labSections);
+    public Set<CourseSectionWip> getLabSections() throws IncompleteWipException {
+        if (labSections != null) {
+            return Collections.unmodifiableSet(labSections);
+        } else {
+            throw missingProperty("labSections");
+        }
     }
 
-    public Set<CourseSectionWip> getTutorialSections() {
-        return Collections.unmodifiableSet(tutorialSections);
+    public Set<CourseSectionWip> getTutorialSections() throws IncompleteWipException {
+        if (tutorialSections != null) {
+            return Collections.unmodifiableSet(tutorialSections);
+        } else {
+            throw missingProperty("tutorialSections");
+        }
+    }
+
+    private IncompleteWipException missingProperty(final String fieldName) {
+        return IncompleteWipException.missingProperty(this, fieldName);
     }
 
 
@@ -123,20 +155,40 @@ public final class CourseWip implements WorkInProgress {
             return this;
         }
 
-        public final String getSectionIdToken() {
-            return sectionIdToken;
+        public final String getSectionIdToken() throws IncompleteWipException {
+            if (sectionIdToken != null) {
+                return sectionIdToken;
+            } else {
+                throw missingProperty("sectionIdToken");
+            }
         }
 
-        public final CourseUtils.Semester getSemester() {
-            return semester;
+        public final CourseUtils.Semester getSemester() throws IncompleteWipException {
+            if (semester != null) {
+                return semester;
+            } else {
+                throw missingProperty("semester");
+            }
         }
 
-        public final String getProfessorName() {
-            return professorName;
+        public final String getProfessorName() throws IncompleteWipException {
+            if (professorName != null) {
+                return professorName;
+            } else {
+                throw missingProperty("professorName");
+            }
         }
 
-        public final Set<CourseSectionBlockWip> getBlocks() {
-            return Collections.unmodifiableSet(blocks);
+        public final Set<CourseSectionBlockWip> getBlocks() throws IncompleteWipException {
+            if (blocks != null) {
+                return Collections.unmodifiableSet(blocks);
+            } else {
+                throw missingProperty("blocks");
+            }
+        }
+
+        private IncompleteWipException missingProperty(final String fieldName) {
+            return IncompleteWipException.missingProperty(this, fieldName);
         }
 
 
@@ -158,12 +210,24 @@ public final class CourseWip implements WorkInProgress {
                 return this;
             }
 
-            public Set<String> getRequiredLabOptionIdTokens() {
-                return Collections.unmodifiableSet(requiredLabOptionIdTokens);
+            public Set<String> getRequiredLabOptionIdTokens() throws IncompleteWipException {
+                if (requiredLabOptionIdTokens != null) {
+                    return Collections.unmodifiableSet(requiredLabOptionIdTokens);
+                } else {
+                    throw missingProperty("requiredLabOptionIdTokens");
+                }
             }
 
-            public Set<String> getRequiredTutorialOptionIdTokens() {
-                return Collections.unmodifiableSet(requiredTutorialOptionIdTokens);
+            public Set<String> getRequiredTutorialOptionIdTokens() throws IncompleteWipException {
+                if (requiredTutorialOptionIdTokens != null) {
+                    return Collections.unmodifiableSet(requiredTutorialOptionIdTokens);
+                } else {
+                    throw missingProperty("requiredTutorialOptionIdTokens");
+                }
+            }
+
+            private IncompleteWipException missingProperty(final String fieldName) {
+                return IncompleteWipException.missingProperty(this, fieldName);
             }
         }
 
@@ -172,14 +236,14 @@ public final class CourseWip implements WorkInProgress {
          */
         public static final class CourseSectionBlockWip implements WorkInProgress {
 
-            private boolean isWaitlist;
+            private Boolean isWaitlist;
             private CourseUtils.WeekDay weekDay;
             private CourseSectionBlock.BlockRepetition repetitionType;
             private UbcTimeUtils.BlockTime beginTime;
             private UbcTimeUtils.BlockTime endTime;
             // TODO [repr][CourseSectionBlockWip]: add representation for location (building) when available.
 
-            public CourseSectionBlockWip setWaitlist(boolean waitlist) {
+            public CourseSectionBlockWip setWaitlist(Boolean waitlist) {
                 isWaitlist = waitlist;
                 return this;
             }
@@ -204,24 +268,48 @@ public final class CourseWip implements WorkInProgress {
                 return this;
             }
 
-            public boolean isWaitlist() {
-                return isWaitlist;
+            public Boolean isWaitlist() throws IncompleteWipException {
+                if (isWaitlist != null) {
+                    return isWaitlist;
+                } else {
+                    throw missingProperty("isWaitlist");
+                }
             }
 
-            public CourseUtils.WeekDay getWeekDay() {
-                return weekDay;
+            public CourseUtils.WeekDay getWeekDay() throws IncompleteWipException {
+                if (weekDay != null) {
+                    return weekDay;
+                } else {
+                    throw missingProperty("weekDay");
+                }
             }
 
-            public CourseSectionBlock.BlockRepetition getRepetitionType() {
-                return repetitionType;
+            public CourseSectionBlock.BlockRepetition getRepetitionType() throws IncompleteWipException {
+                if (repetitionType != null) {
+                    return repetitionType;
+                } else {
+                    throw missingProperty("repetitionType");
+                }
             }
 
-            public UbcTimeUtils.BlockTime getBeginTime() {
-                return beginTime;
+            public UbcTimeUtils.BlockTime getBeginTime() throws IncompleteWipException {
+                if (beginTime != null) {
+                    return beginTime;
+                } else {
+                    throw missingProperty("beginTime");
+                }
             }
 
-            public UbcTimeUtils.BlockTime getEndTime() {
-                return endTime;
+            public UbcTimeUtils.BlockTime getEndTime() throws IncompleteWipException {
+                if (endTime != null) {
+                    return endTime;
+                } else {
+                    throw missingProperty("endTime");
+                }
+            }
+
+            private IncompleteWipException missingProperty(final String fieldName) {
+                return IncompleteWipException.missingProperty(this, fieldName);
             }
         }
     }

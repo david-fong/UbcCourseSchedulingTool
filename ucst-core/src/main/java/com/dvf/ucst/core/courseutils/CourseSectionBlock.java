@@ -1,10 +1,14 @@
 package com.dvf.ucst.core.courseutils;
 
 import com.dvf.ucst.core.courseutils.UbcTimeUtils.BlockTime;
+import com.dvf.ucst.core.spider.CourseWip;
+import com.dvf.ucst.utils.general.WorkInProgress;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+
+import java.util.function.Function;
 
 /**
  * One of several blocks (typically 2 or 3) that describe
@@ -22,17 +26,17 @@ public final class CourseSectionBlock {
     CourseSectionBlock(final Element blockElement) throws MalformedXmlDataException {
         this.isWaitlist = blockElement.getAttributeNode(Xml.OPTIONAL_WAITLIST_FLAG_ATTR.getXmlConstantValue()) != null;
 
-        this.weekDay = CourseUtils.WeekDay.decodeXmlAttr(
-                XmlUtils.getMandatoryAttr(blockElement, Xml.DAY_OF_WEEK_ATTR)
+        this.weekDay = CourseUtils.WeekDay.decodeXmlAttr(XmlUtils
+                .getMandatoryAttr(blockElement, Xml.DAY_OF_WEEK_ATTR)
         );
-        this.repetitionType = BlockRepetition.decodeXmlAttr(
-                blockElement.getAttributeNode(Xml.OPTIONAL_REPEAT_TYPE_ATTR.getXmlConstantValue())
+        this.repetitionType = BlockRepetition.decodeXmlAttr(blockElement
+                .getAttributeNode(Xml.OPTIONAL_REPEAT_TYPE_ATTR.getXmlConstantValue())
         );
-        final BlockTime start = BlockTime.decodeXmlAttr(
-                XmlUtils.getMandatoryAttr(blockElement, Xml.BEGIN_TIME_ATTR)
+        final BlockTime start = BlockTime.decodeXmlAttr(XmlUtils
+                .getMandatoryAttr(blockElement, Xml.BEGIN_TIME_ATTR)
         );
-        final BlockTime end = BlockTime.decodeXmlAttr(
-                XmlUtils.getMandatoryAttr(blockElement, Xml.END_TIME_ATTR)
+        final BlockTime end = BlockTime.decodeXmlAttr(XmlUtils
+                .getMandatoryAttr(blockElement, Xml.END_TIME_ATTR)
         );
         this.timeEnclosure = new BlockTimeEnclosure(start, end);
     }
@@ -68,6 +72,35 @@ public final class CourseSectionBlock {
 
     public BlockTime getEndTime() {
         return timeEnclosure.end;
+    }
+
+    public static Element createXmlOfWorkInProgress(
+            final Function<XmlUtils.XmlConstant, Element> elementSupplier,
+            final CourseWip.CourseSectionWip.CourseSectionBlockWip wip
+    ) throws WorkInProgress.IncompleteWipException {
+        final Element blockElement = elementSupplier.apply(Xml.BLOCK_TAG);
+        if (wip.isWaitlist()) {
+            blockElement.setAttribute(Xml.OPTIONAL_WAITLIST_FLAG_ATTR.getXmlConstantValue(), "");
+        }
+        blockElement.setAttribute(
+                Xml.DAY_OF_WEEK_ATTR.getXmlConstantValue(),
+                wip.getWeekDay().getXmlConstantValue()
+        );
+        blockElement.setAttribute(
+                Xml.BEGIN_TIME_ATTR.getXmlConstantValue(),
+                wip.getBeginTime().getXmlConstantValue()
+        );
+        blockElement.setAttribute(
+                Xml.END_TIME_ATTR.getXmlConstantValue(),
+                wip.getEndTime().getXmlConstantValue()
+        );
+        if (wip.getRepetitionType() != BlockRepetition.EVERY_WEEK) {
+            blockElement.setAttribute(
+                    Xml.OPTIONAL_REPEAT_TYPE_ATTR.getXmlConstantValue(),
+                    wip.getRepetitionType().getXmlConstantValue()
+            );
+        }
+        return blockElement;
     }
 
 
@@ -117,8 +150,8 @@ public final class CourseSectionBlock {
             if (attr == null) {
                 return EVERY_WEEK;
             }
-            for (BlockRepetition blockRepetition : BlockRepetition.values()) {
-                if (blockRepetition.xmlAttrVal.equals(attr.getValue())) {
+            for (final BlockRepetition blockRepetition : BlockRepetition.values()) {
+                if (blockRepetition.getXmlConstantValue().equals(attr.getValue())) {
                     return blockRepetition;
                 }
             }

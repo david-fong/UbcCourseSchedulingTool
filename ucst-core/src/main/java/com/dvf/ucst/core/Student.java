@@ -13,6 +13,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * A central collection of user data.
@@ -124,22 +125,22 @@ public final class Student implements XmlUtils.UserDataXml {
     }
 
     @Override
-    public Element toXml(final Document document) {
-        final Element studentElement = document.createElement(Xml.STUDENT_TAG.value);
+    public Element toXml(final Function<XmlUtils.XmlConstant, Element> elementSupplier) {
+        final Element studentElement = elementSupplier.apply(Xml.STUDENT_TAG);
         studentElement.setAttribute(Xml.FIRST_NAME_ATTR.value, firstName);
         studentElement.setAttribute(Xml.LAST_NAME_ATTR.value, lastName);
         studentElement.setAttribute(Xml.YEAR_OF_STUDY_ATTR.value, currentYear.getXmlConstantValue());
         studentElement.setAttribute(Xml.CAMPUS_ATTR.value, campus.getXmlConstantValue());
 
         // previous schedules
-        final Element completedCoursesElement = document.createElement(Xml.COMPLETED_COURSES_TAG.value);
+        final Element completedCoursesElement = elementSupplier.apply(Xml.COMPLETED_COURSES_TAG);
         for (final CompletedCourse completedCourse : publicCompleteCourses) {
-            completedCoursesElement.appendChild(completedCourse.toXml(document));
+            completedCoursesElement.appendChild(completedCourse.toXml(elementSupplier));
         }
 
-        final Element worklistGroupsElement = document.createElement(Xml.WORKLIST_GROUPS_TAG.value);
+        final Element worklistGroupsElement = elementSupplier.apply(Xml.WORKLIST_GROUPS_TAG);
         for (YearOfStudy yearOfStudy : worklistGroups.keySet()){
-            final Element worklistGroupElement = worklistGroups.get(yearOfStudy).toXml(document);
+            final Element worklistGroupElement = worklistGroups.get(yearOfStudy).toXml(elementSupplier);
             worklistGroupElement.setAttribute(Xml.YEAR_OF_STUDY_ATTR.value, yearOfStudy.getXmlConstantValue());
             worklistGroupsElement.appendChild(worklistGroupElement);
         }
@@ -190,8 +191,8 @@ public final class Student implements XmlUtils.UserDataXml {
         }
 
         @Override
-        public Element toXml(Document document) {
-            final Element completedElement = document.createElement(CompletedCourseXml.COMPLETED_COURSE_TAG.value);
+        public Element toXml(final Function<XmlUtils.XmlConstant, Element> elementSupplier) {
+            final Element completedElement = elementSupplier.apply(CompletedCourseXml.COMPLETED_COURSE_TAG);
             completedElement.setAttribute(CompletedCourseXml.YEAR_ATTR.value, yearCompleted.getXmlConstantValue());
             completedElement.setAttribute(CompletedCourseXml.SEMESTER_ATTR.value, semesterCompleted.getXmlConstantValue());
             completedElement.setAttribute(CompletedCourseXml.COURSE_ID_ATTR.value, completedCourse.getSystemFullSectionIdString());

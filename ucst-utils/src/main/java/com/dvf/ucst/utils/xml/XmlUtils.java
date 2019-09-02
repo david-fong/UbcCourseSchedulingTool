@@ -8,6 +8,7 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class XmlUtils {
@@ -121,12 +122,12 @@ public final class XmlUtils {
 
     public interface UserDataXml {
         /**
-         * @param document Must not be modified. Only used to create an [Element]
-         *     with an implementation-specific tag name.
+         * @param elementSupplier Used to create an [Element] with an implementation-
+         *     specific tag name.
          * @return An [Element] representing a user data object that can later be
          *     reconstructed.
          */
-        Element toXml(Document document);
+        Element toXml(final Function<XmlConstant, Element> elementSupplier);
     }
 
 }
