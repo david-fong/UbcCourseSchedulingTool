@@ -1,5 +1,6 @@
 package com.dvf.ucst.utils.pickybuild;
 
+import com.dvf.ucst.utils.pickybuild.PickyBuildGeneratorTest.NoFwdBakStrBuildTest.NoFwdBakStrBuild.NoFwdBakStrElement;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -12,74 +13,117 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PickyBuildGeneratorTest {
 
-    @Test
-    void test() {
-        // TODO:
-    }
 
 
+    /**
+     * Tests of a simple implementation of [PickyBuild] that will be used to test
+     * the algorithms in [PickyBuildGenerator]. Gotta make sure the test is valid :)
+     */
+    static final class NoFwdBakStrBuildTest {
 
-    // (in this implementation, items with the same string also conflict. not just palindromes)
-    static final class NoPalindromeBuild implements PickyBuild<NoPalindromeBuild.NoPalindromeElement> {
-
-        private final Set<NoPalindromeElement> contents;
-
-        NoPalindromeBuild(final Set<NoPalindromeElement> contents) {
-            this.contents = new HashSet<>(contents);
+        @Test
+        void assertConflictsNoModify() {
+            final NoFwdBakStrBuild build = NoFwdBakStrBuild.of(
+                    "You could not live with your own failure.",
+                    "And where did that bring you?",
+                    "Back to me."
+            );
+            // test implementation-specific behaviour for adding things that will fail:
+            for (final NoFwdBakStrElement element : build.getAllContents()) {
+                assertFalse(build.addIfNoConflicts(new NoFwdBakStrElement(element.getElementContent())));
+                assertFalse(build.addIfNoConflicts(new NoFwdBakStrElement(element.getReversedElementContent())));
+            }
+            // test that adding things that are already contained succeeds:
+            final int size = build.getAllContents().size();
+            for (final NoFwdBakStrElement element : build.getAllContents()) {
+                assertTrue(build.addIfNoConflicts(element));
+            }
+            // and make sure adding contained items causes no (externally visible) changes:
+            assertEquals(size, build.getAllContents().size());
         }
 
-        @Override
-        public PickyBuild<NoPalindromeElement> copy() {
-            return new NoPalindromeBuild(getAllContents());
-        }
+        /**
+         * In this implementation, items will conflict if their string values are the
+         * same either in the forward or backward direction.
+         */
+        static final class NoFwdBakStrBuild implements PickyBuild<NoFwdBakStrElement> {
 
-        @Override
-        public boolean addIfNoConflicts(final NoPalindromeElement item) {
-            if (contents.contains(item)) {
-                return true;
+            private final Set<NoFwdBakStrElement> contents;
 
-            } else {
-                final String itemBackwards = item.getReversedElementContent();
-                if (getAllContents().stream()
-                        .anyMatch(element -> element.getElementContent().equals(item.getElementContent())
-                                || element.elementContent.equals(itemBackwards))
-                ) {
-                    return false;
-
-                } else {
-                    contents.add(item);
-                    return true;
+            NoFwdBakStrBuild(final Set<NoFwdBakStrElement> contents) {
+                this.contents = new HashSet<>();
+                for (final NoFwdBakStrElement element : contents) {
+                    assert addIfNoConflicts(element);
                 }
             }
-        }
 
-        @Override
-        public Set<NoPalindromeElement> getAllContents() {
-            return Collections.unmodifiableSet(contents);
-        }
-
-        // static convenience producer/constructor method.
-        static NoPalindromeBuild of(String... elementsContents) {
-            return new NoPalindromeBuild(Arrays.stream(elementsContents)
-                    .map(NoPalindromeElement::new)
-                    .collect(Collectors.toSet())
-            );
-        }
-
-        static final class NoPalindromeElement implements PickyBuildElement<NoPalindromeElement> {
-            private final String elementContent;
-            NoPalindromeElement(final String elementContent) {
-                this.elementContent = elementContent;
-            }
             @Override
-            public Set<Set<NoPalindromeElement>> getPickyBuildFriends() {
-                return Collections.emptySet();
+            public PickyBuild<NoFwdBakStrElement> copy() {
+                return new NoFwdBakStrBuild(getAllContents());
             }
-            String getElementContent() {
-                return elementContent;
+
+            @Override
+            public boolean addIfNoConflicts(final NoFwdBakStrElement item) {
+                if (contents.contains(item)) {
+                    return true;
+
+                } else {
+                    final String itemBackwards = item.getReversedElementContent();
+                    if (getAllContents().stream()
+                            .anyMatch(element -> element.getElementContent().equals(item.getElementContent())
+                                    || element.elementContent.equals(itemBackwards))
+                    ) {
+                        return false;
+
+                    } else {
+                        contents.add(item);
+                        return true;
+                    }
+                }
             }
-            private String getReversedElementContent() {
-                return new StringBuilder(getElementContent()).reverse().toString();
+
+            @Override
+            public Set<NoFwdBakStrElement> getAllContents() {
+                return Collections.unmodifiableSet(contents);
+            }
+
+            // static convenience producer/constructor method.
+            static NoFwdBakStrBuild of(String... elementsContents) {
+                return new NoFwdBakStrBuild(
+                        NoFwdBakStrElement.setOf(elementsContents)
+                );
+            }
+
+            static final class NoFwdBakStrElement implements PickyBuildElement<NoFwdBakStrElement> {
+
+                private final String elementContent;
+                private final Set<Set<NoFwdBakStrElement>> friends;
+
+                NoFwdBakStrElement(final String elementContent) {
+                    this.elementContent = elementContent;
+                    friends = Collections.emptySet();
+                }
+                NoFwdBakStrElement(final String elementContent, final Set<Set<NoFwdBakStrElement>> friends) {
+                    this.elementContent = elementContent;
+                    this.friends = friends;
+                }
+
+                @Override
+                public Set<Set<NoFwdBakStrElement>> getPickyBuildFriends() {
+                    return Collections.emptySet();
+                }
+                String getElementContent() {
+                    return elementContent;
+                }
+                private String getReversedElementContent() {
+                    return new StringBuilder(getElementContent()).reverse().toString();
+                }
+
+                static Set<NoFwdBakStrElement> setOf(final String... contents) {
+                    return Arrays.stream(contents)
+                            .map(NoFwdBakStrElement::new)
+                            .collect(Collectors.toSet());
+                }
             }
         }
     }
