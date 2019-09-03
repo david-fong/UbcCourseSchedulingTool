@@ -8,6 +8,7 @@ import com.dvf.ucst.core.faculties.FacultyTreeNode;
 import com.dvf.ucst.utils.general.WorkInProgress;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Set;
  * we will create to save that information persistently, and locally so the app can
  * run without an internet connection.
  */
-public final class CourseWip implements WorkInProgress {
+public final class CourseWip implements WorkInProgress<CourseWip> {
 
     private FacultyTreeNode facultyTreeNode;
     private String courseIdToken;
@@ -27,6 +28,16 @@ public final class CourseWip implements WorkInProgress {
     private Set<CourseLectureSectionWip> lectureSections;
     private Set<CourseSectionWip> labSections;
     private Set<CourseSectionWip> tutorialSections;
+
+    @Override
+    public CourseWip copy() {
+        return new CourseWip()
+                .setFacultyTreeNode(facultyTreeNode)
+                .setCourseIdToken(courseIdToken)
+                .setCreditValue(creditValue)
+                .setDescriptionString(descriptionString)
+                ;
+    }
 
     CourseWip setFacultyTreeNode(FacultyTreeNode facultyTreeNode) {
         this.facultyTreeNode = facultyTreeNode;
@@ -128,13 +139,24 @@ public final class CourseWip implements WorkInProgress {
     /**
      *
      */
-    public static class CourseSectionWip implements WorkInProgress {
+    public static class CourseSectionWip implements WorkInProgress<CourseSectionWip> {
 
         private String sectionIdToken;
         private CourseUtils.Semester semester;
         private String professorName; // TODO: should this be split into first and last name?
         private Boolean isWaitlist;
         private Set<CourseSectionBlockWip> blocks;
+
+        @Override
+        public CourseSectionWip copy() {
+            return new CourseSectionWip()
+                    .setSectionIdToken(sectionIdToken)
+                    .setSemester(semester)
+                    .setProfessorName(professorName)
+                    .setWaitlist(isWaitlist)
+                    .setBlocks(new HashSet<>(blocks))
+                    ;
+        }
 
         final CourseSectionWip setSectionIdToken(String sectionIdToken) {
             this.sectionIdToken = sectionIdToken;
@@ -214,6 +236,14 @@ public final class CourseWip implements WorkInProgress {
             private Set<String> requiredLabOptionIdTokens;
             private Set<String> requiredTutorialOptionIdTokens;
 
+            @Override
+            public CourseLectureSectionWip copy() {
+                return new CourseLectureSectionWip()
+                        .setRequiredLabOptionIdTokens(new HashSet<>(requiredLabOptionIdTokens))
+                        .setRequiredTutorialSectionOptions(new HashSet<>(requiredTutorialOptionIdTokens))
+                        ;
+            }
+
             CourseLectureSectionWip setRequiredLabOptionIdTokens(Set<String> requiredLabOptionIdTokens) {
                 this.requiredLabOptionIdTokens = Collections.unmodifiableSet(requiredLabOptionIdTokens);
                 return this;
@@ -248,13 +278,23 @@ public final class CourseWip implements WorkInProgress {
         /**
          *
          */
-        public static final class CourseSectionBlockWip implements WorkInProgress {
+        public static final class CourseSectionBlockWip implements WorkInProgress<CourseSectionBlockWip> {
 
             private CourseUtils.WeekDay weekDay;
             private CourseSectionBlock.BlockRepetition repetitionType;
             private UbcTimeUtils.BlockTime beginTime;
             private UbcTimeUtils.BlockTime endTime;
             // TODO [repr][CourseSectionBlockWip]: add representation for location (building) when available.
+
+            @Override
+            public CourseSectionBlockWip copy() {
+                return new CourseSectionBlockWip()
+                        .setWeekDay(weekDay)
+                        .setRepetitionType(repetitionType)
+                        .setBeginTime(beginTime)
+                        .setEndTime(endTime)
+                        ;
+            }
 
             public CourseSectionBlockWip setWeekDay(CourseUtils.WeekDay weekDay) {
                 this.weekDay = weekDay;
