@@ -5,6 +5,7 @@ import com.dvf.ucst.core.courseutils.CourseSectionBlock.IllegalTimeEnclosureExce
 import com.dvf.ucst.core.courseutils.UbcTimeUtils.BlockTime;
 import com.dvf.ucst.core.spider.CourseWip.CourseSectionWip.CourseSectionBlockWip;
 import com.dvf.ucst.utils.general.WorkInProgress;
+import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlIoUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
@@ -72,22 +73,7 @@ class CourseSectionBlockTest {
         @Test
         void toXml() {
             final Document doc = XmlIoUtils.createNewXmlDocument();
-            final CourseSectionBlockWip wip = new CourseSectionBlockWip()
-                    .setBeginTime(T0800)
-                    .setEndTime(T0900)
-                    .setRepetitionType(CourseSectionBlock.BlockRepetition.EVERY_WEEK)
-                    .setWeekDay(CourseUtils.WeekDay.MONDAY);
-            final Element xml;
-            try {
-                xml = CourseSectionBlock.createXmlOfWorkInProgress(
-                        tagName -> doc.createElement(tagName.getXmlConstantValue()),
-                        wip
-                );
-                doc.appendChild(xml);
-            } catch (WorkInProgress.IncompleteWipException | IllegalTimeEnclosureException e) {
-                fail("Encountered unexpected " + e.getClass() + " exception");
-            }
-            XmlIoUtils.printNode(doc);
+            doc.appendChild(createBasicBlockXml(doc));
             try {
                 assertEquals(
                         "<Block begin=\"08:00\" day=\"mon\" end=\"09:00\"/>", // "\r\n"
@@ -95,6 +81,35 @@ class CourseSectionBlockTest {
                 );
             } catch (final TransformerException e) {
                 fail("Unexpected error serializing document to string");
+            }
+        }
+
+        @Test
+        void fromXml() {
+            final Document doc = XmlIoUtils.createNewXmlDocument();
+            final Element blockElement = createBasicBlockXml(doc);
+            try {
+                final CourseSectionBlock blockObject = new CourseSectionBlock(blockElement);
+            } catch (MalformedXmlDataException | IllegalTimeEnclosureException e) {
+                fail();
+            }
+        }
+
+        // does not add element to doc
+        private Element createBasicBlockXml(final Document doc) {
+            final CourseSectionBlockWip wip = new CourseSectionBlockWip()
+                    .setBeginTime(T0800)
+                    .setEndTime(T0900)
+                    .setRepetitionType(CourseSectionBlock.BlockRepetition.EVERY_WEEK)
+                    .setWeekDay(CourseUtils.WeekDay.MONDAY);
+            try {
+                return CourseSectionBlock.createXmlOfWorkInProgress(
+                        tagName -> doc.createElement(tagName.getXmlConstantValue()),
+                        wip
+                );
+            } catch (WorkInProgress.IncompleteWipException | IllegalTimeEnclosureException e) {
+                fail("Encountered unexpected " + e.getClass() + " exception");
+                return null;
             }
         }
     }
