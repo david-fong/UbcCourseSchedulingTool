@@ -26,10 +26,7 @@ public final class CourseSectionBlock {
     private final BlockTimeEnclosure timeEnclosure;
     // TODO [repr][CourseSectionBlock]: add representation for location (building).
 
-    CourseSectionBlock(final Element blockElement) throws
-            MalformedXmlDataException,
-            IllegalTimeEnclosureException
-    {
+    CourseSectionBlock(final Element blockElement) throws MalformedXmlDataException {
         this.weekDay = CourseUtils.WeekDay.decodeXmlAttr(XmlUtils
                 .getMandatoryAttr(blockElement, Xml.DAY_OF_WEEK_ATTR)
         );
@@ -42,7 +39,15 @@ public final class CourseSectionBlock {
         final BlockTime end = BlockTime.decodeXmlAttr(XmlUtils
                 .getMandatoryAttr(blockElement, Xml.END_TIME_ATTR)
         );
-        this.timeEnclosure = new BlockTimeEnclosure(start, end);
+        try {
+            this.timeEnclosure = new BlockTimeEnclosure(start, end);
+        } catch (final IllegalTimeEnclosureException e) {
+            throw new MalformedXmlDataException(String.format("Blocks were verified"
+                    + " to be legal during storage of fetched data to local xml. See"
+                    + " %s::createXmlOfBlockWips. Perhaps the user tampered with the"
+                    + " xml files.", CourseSectionBlock.class
+            ));
+        }
     }
 
     // *note: do not change visibility. may be used in GUI.
@@ -111,7 +116,7 @@ public final class CourseSectionBlock {
      * @throws InternalConflictException If any of the provided [CourseSectionBlockWip]s
      *     have a schedule conflict between them.
      */
-    public static Set<Element> createXmlOfWorksInProgress(
+    public static Set<Element> createXmlOfBlockWips(
             final Function<XmlUtils.XmlConstant, Element> elementSupplier,
             final Set<CourseSectionBlockWip> wips
     ) throws IncompleteWipException, IllegalTimeEnclosureException, InternalConflictException {
@@ -126,8 +131,8 @@ public final class CourseSectionBlock {
             for (final Element blockElement : blockElements) {
                 try {
                     tempBlockObjects.add(new CourseSectionBlock(blockElement));
-                } catch (MalformedXmlDataException e) {
-                    // this shouldn't happen
+                } catch (final MalformedXmlDataException e) {
+                    // this shouldn't happen.
                     throw new RuntimeException("Something is either wrong with"
                             + " ::createXmlOfWorkInProgress or the xml constructor", e
                     );

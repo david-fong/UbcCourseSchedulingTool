@@ -46,10 +46,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     private final Set<CourseSection> labSections;
     private final Set<CourseSection> tutorialSections;
 
-    public Course(final Element courseElement) throws
-            MalformedXmlDataException,
-            CourseSectionBlock.IllegalTimeEnclosureException
-    {
+    public Course(final Element courseElement) throws MalformedXmlDataException {
         try { // get faculty node:
             this.facultyTreeNode = FacultyTreeRootCampus.UbcCampuses.getCampusByIdToken(
                     XmlUtils.getMandatoryAttr(courseElement, Xml.COURSE_CAMPUS_ATTR).getValue()
@@ -181,9 +178,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     private Set<CourseSection> parseOutLabTutorialSections(
             final Element sectionGroupElement,
             final String idPrefix
-    ) throws MalformedXmlDataException,
-            CourseSectionBlock.IllegalTimeEnclosureException
-    {
+    ) throws MalformedXmlDataException {
         final List<Element> SectionElements = XmlUtils.getChildElementsByTagName(
                 sectionGroupElement,
                 SecXml.COURSE_SECTION_TAG
@@ -263,10 +258,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         private final boolean isWaitlist;
         private final Set<CourseSectionBlock> blocks;
 
-        private CourseSection(final Element sectionElement) throws
-                MalformedXmlDataException,
-                CourseSectionBlock.IllegalTimeEnclosureException
-        {
+        private CourseSection(final Element sectionElement) throws MalformedXmlDataException {
             this.sectionIdToken = XmlUtils.getMandatoryAttr(
                     sectionElement, SecXml.SECTION_CODE_ATTR
             ).getValue();
@@ -286,16 +278,16 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
             );
             final Set<CourseSectionBlock> blocks = new HashSet<>(blockElements.size());
             for (final Element blockElement : blockElements) {
-                final CourseSectionBlock blockObject = new CourseSectionBlock(blockElement);
-                blocks.add(blockObject);
+                blocks.add(new CourseSectionBlock(blockElement));
             }
             try {
                 CourseSectionBlock.InternalConflictException.checkForConflicts(blocks);
             } catch (final CourseSectionBlock.InternalConflictException e) {
-                throw new MalformedXmlDataException("Sections were verified not to have"
-                        + " scheduling conflicts during fetching from UBC's registration"
-                        + " site. Perhaps the user tampered with the xml files?", e
-                );
+                throw new MalformedXmlDataException(String.format("Sections were verified"
+                        + " not to have scheduling conflicts during fetching from UBC's"
+                        + " registration site. See %s::createXmlOfBlockWips. Perhaps the"
+                        + " user tampered with the xml files.", CourseSectionBlock.class
+                ), e);
             }
             this.blocks = Collections.unmodifiableSet(blocks);
         }
@@ -362,7 +354,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     }
 
     // TODO [xml:write.setup][CourseSectionWip]: Add static producer method taking [CourseSectionWip]
-    private static Element createXmlOfWorkInProgress(
+    private static Element createXmlOfSectionWip(
             final Function<XmlUtils.XmlConstant, Element> elementSupplier,
             final CourseWip.CourseSectionWip wip
     ) throws WorkInProgress.IncompleteWipException, CourseSectionBlock.IllegalTimeEnclosureException {
@@ -399,10 +391,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         private final Set<CourseSection> requiredTutorialOptions;
         private final Set<Set<CourseSection>> pickyBuildFriends; // unmodifiable;
 
-        private CourseLectureSection(final Element lectureElement) throws
-                MalformedXmlDataException,
-                CourseSectionBlock.IllegalTimeEnclosureException
-        {
+        private CourseLectureSection(final Element lectureElement) throws MalformedXmlDataException {
             super(lectureElement);
 
             this.requiredLabOptions = getComplimentarySectionOptionsFromElement(

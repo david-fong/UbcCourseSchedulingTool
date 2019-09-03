@@ -30,17 +30,21 @@ class CourseSectionBlockTest {
 
     }
 
-    // does not add element to doc.
-    private Element createBasicBlockXml(final Document doc) {
-        final CourseSectionBlockWip wip = new CourseSectionBlockWip()
-                .setBeginTime(T0800)
-                .setEndTime(T0900)
-                .setRepetitionType(CourseSectionBlock.BlockRepetition.EVERY_WEEK)
-                .setWeekDay(CourseUtils.WeekDay.MONDAY);
+    private CourseSectionBlock createBlockObject(final Document doc, final CourseSectionBlockWip blockWip) {
+        try {
+            return new CourseSectionBlock(createBlockElement(doc, blockWip));
+        } catch (final MalformedXmlDataException e) {
+            fail();
+            return null;
+        }
+    }
+
+    // does not add element to doc. blockWip must be complete.
+    private Element createBlockElement(final Document doc, final CourseSectionBlockWip blockWip) {
         try {
             return CourseSectionBlock.createXmlOfWorkInProgress(
                     tagName -> doc.createElement(tagName.getXmlConstantValue()),
-                    wip
+                    blockWip
             );
         } catch (WorkInProgress.IncompleteWipException | IllegalTimeEnclosureException e) {
             fail("Encountered unexpected " + e.getClass() + " exception");
@@ -92,7 +96,12 @@ class CourseSectionBlockTest {
         @Test
         void toXml() {
             final Document doc = XmlIoUtils.createNewXmlDocument();
-            doc.appendChild(createBasicBlockXml(doc));
+            doc.appendChild(createBlockElement(doc, new CourseSectionBlockWip()
+                    .setBeginTime(T0800)
+                    .setEndTime(T0900)
+                    .setRepetitionType(CourseSectionBlock.BlockRepetition.EVERY_WEEK)
+                    .setWeekDay(CourseUtils.WeekDay.MONDAY)
+            ));
             try {
                 assertEquals(
                         "<Block begin=\"08:00\" day=\"mon\" end=\"09:00\"/>", // "\r\n"

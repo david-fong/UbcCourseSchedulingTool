@@ -90,11 +90,7 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
                     getRootAnchoredPathToInfo(SubDirectories.COURSE_XML_DATA)
             ).resolve(codeString + XmlIoUtils.XML_EXTENSION_STRING);
             try {
-                try {
-                    course = new Course(XmlIoUtils.readXmlFromFile(coursePath).getDocumentElement());
-                } catch (CourseSectionBlock.IllegalTimeEnclosureException e) {
-                    throw new MalformedXmlDataException(e);
-                }
+                course = new Course(XmlIoUtils.readXmlFromFile(coursePath).getDocumentElement());
             } catch (SAXException | IOException e) {
                 throw new RuntimeException("could not get xml from file", e);
             } catch (MalformedXmlDataException e) {
