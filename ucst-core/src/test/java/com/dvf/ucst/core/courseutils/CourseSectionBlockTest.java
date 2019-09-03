@@ -21,6 +21,44 @@ class CourseSectionBlockTest {
     static final class BlockTimeEnclosureTest {
 
         @Test
+        void assertNoOverlaps() {
+            final Map<BlockTimeEnclosure, Set<BlockTimeEnclosure>> noOverlapsWithMap;
+            try {
+                noOverlapsWithMap = Map.of( // --- || ??
+                        // key = short duration at beginning of day:
+                        bte(T1000, T1130), Set.of(
+                                bte(T0800, T0900), // <<
+                                bte(T0830, T1000), // <=
+                                bte(T1130, T1200), // =>
+                                bte(T1300, T1930)  // >>
+                        ),
+                        // key = medium duration during common hours:
+                        bte(T1230, T1630), Set.of(
+                                bte(T1000, T1200), // <<
+                                bte(T0800, T1230), // <=
+                                bte(T1630, T1700), // =>
+                                bte(T1700, T1830)  // >>
+                        ),
+                        // key = short duration during later hours:
+                        bte(T1530, T1800), Set.of(
+                                bte(T1130, T1400), // <<
+                                bte(T1430, T1530), // <=
+                                bte(T1800, T2000), // =>
+                                bte(T1830, T2030)  // >>
+                        )
+                );
+            } catch (IllegalTimeEnclosureException e) {
+                throw new RuntimeException("you weren't supposed to do that lol");
+            }
+            noOverlapsWithMap.forEach((enclosure, nonOverlappingEnclosures) -> {
+                nonOverlappingEnclosures.forEach(nonOverlappingEnclosure -> {
+                    assertFalse(enclosure.overlapsWith(nonOverlappingEnclosure));
+                    assertFalse(nonOverlappingEnclosure.overlapsWith(enclosure)); // and vice-versa
+                });
+            });
+        }
+
+        @Test
         void assertOverlaps() {
             final Map<BlockTimeEnclosure, Set<BlockTimeEnclosure>> overlapsWithMap;
             try {
