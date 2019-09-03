@@ -88,6 +88,7 @@ class CourseSectionBlockTest {
             ));
         }
 
+        // volatile test. compared string literal subject to change with xml spec.
         @Test
         void toXml() {
             final Document doc = XmlIoUtils.createNewXmlDocument();

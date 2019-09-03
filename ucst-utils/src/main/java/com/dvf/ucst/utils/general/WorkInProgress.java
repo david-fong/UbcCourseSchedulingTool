@@ -25,8 +25,14 @@ package com.dvf.ucst.utils.general;
  *       depend on other fields with setters (to prevent user of setters from having to write
  *       ugly code that performs the same validation externally).
  *
+ * @param <I> The implementation's own type.
  */
-public interface WorkInProgress {
+public interface WorkInProgress<I extends WorkInProgress<I>> {
+
+    /**
+     * @return a deep copy of the calling instance.
+     */
+    I copy();
 
     /**
      * Consumers of [WorkInProgress] instances should throw this if they receive one

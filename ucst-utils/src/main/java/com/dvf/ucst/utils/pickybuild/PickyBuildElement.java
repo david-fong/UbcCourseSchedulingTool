@@ -6,7 +6,7 @@ import java.util.Set;
  * An element of a [PickyBuild]. May have friends that it wants to pull in too.
  * @param <I> The implementation type.
  */
-public interface PickyBuildElement<I extends PickyBuildElement> {
+public interface PickyBuildElement<I extends PickyBuildElement<I>> {
 
     /**
      * @return A conjunctive-normal-formed collection of other [PickyBuildElement]s
