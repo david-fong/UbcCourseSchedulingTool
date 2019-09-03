@@ -23,6 +23,8 @@ public class CourseSectionSpider {
     private static <T extends CourseSectionWip> T makeNonLectureSectionWip(final Element sectionDom, final T host) {
         // work goes here.
 
+        // see CourseSectionBlock::createXmlOfWorksInProgress
+
         return host;
     }
 

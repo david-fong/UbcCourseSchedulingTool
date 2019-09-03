@@ -1,14 +1,17 @@
 package com.dvf.ucst.core.courseutils;
 
 import com.dvf.ucst.core.courseutils.UbcTimeUtils.BlockTime;
-import com.dvf.ucst.core.spider.CourseWip;
-import com.dvf.ucst.utils.general.WorkInProgress;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
+
+import static com.dvf.ucst.core.spider.CourseWip.CourseSectionWip.*;
 
 /**
  * One of several blocks (typically 2 or 3) that describe
@@ -69,10 +72,10 @@ public final class CourseSectionBlock {
         return timeEnclosure.end;
     }
 
-    public static Element createXmlOfWorkInProgress(
+    static Element createXmlOfWorkInProgress(
             final Function<XmlUtils.XmlConstant, Element> elementSupplier,
-            final CourseWip.CourseSectionWip.CourseSectionBlockWip wip
-    ) throws WorkInProgress.IncompleteWipException, IllegalTimeEnclosureException {
+            final CourseSectionBlockWip wip
+    ) throws IncompleteWipException, IllegalTimeEnclosureException {
         final Element blockElement = elementSupplier.apply(Xml.BLOCK_TAG);
         blockElement.setAttribute(
                 Xml.DAY_OF_WEEK_ATTR.getXmlConstantValue(),
@@ -97,8 +100,75 @@ public final class CourseSectionBlock {
         return blockElement;
     }
 
+    /**
+     * @param elementSupplier A supplier of [Element]s with a [Document] anchor that
+     *     elements of the returned collection of [Elements] will eventually be added to.
+     * @param wips A collection of [CourseSectionBlockWip]s that should be complete.
+     * @return A collection of [Element]s representing [wips] through xml.
+     * @throws IncompleteWipException If an element of [wips] did not contain all the
+     *     required information for this method to perform its function.
+     * @throws IllegalTimeEnclosureException See [BlockTimeEnclosure].
+     * @throws InternalConflictException If any of the provided [CourseSectionBlockWip]s
+     *     have a schedule conflict between them.
+     */
+    public static Set<Element> createXmlOfWorksInProgress(
+            final Function<XmlUtils.XmlConstant, Element> elementSupplier,
+            final Set<CourseSectionBlockWip> wips
+    ) throws IncompleteWipException, IllegalTimeEnclosureException, InternalConflictException {
+        // map the wips to xml elements:
+        final Set<Element> blockElements = new HashSet<>();
+        for (final CourseSectionBlockWip wip : wips) {
+            blockElements.add(createXmlOfWorkInProgress(elementSupplier, wip));
+        }
+
+        { // check if the section block wips have any conflicts with each other:
+            final Set<CourseSectionBlock> tempBlockObjects = new HashSet<>(blockElements.size());
+            for (final Element blockElement : blockElements) {
+                try {
+                    tempBlockObjects.add(new CourseSectionBlock(blockElement));
+                } catch (MalformedXmlDataException e) {
+                    // this shouldn't happen
+                    throw new RuntimeException("Something is either wrong with"
+                            + " ::createXmlOfWorkInProgress or the xml constructor", e
+                    );
+                }
+            }
+            InternalConflictException.checkForConflicts(tempBlockObjects);
+        }
+        return blockElements;
+    }
 
 
+    /**
+     * Thrown when some source of a collection of coexisting [CourseSectionBLock]s
+     * contains blocks that conflict with each other.
+     */
+    public static final class InternalConflictException extends Exception {
+        // meirl
+        private InternalConflictException(final CourseSectionBlock block1, final CourseSectionBlock block2) {
+            super(String.format("The two blocks %s and %s cannot coexist"
+                    + " because they conflict with one another",
+                    block1, block2
+            ));
+            assert block1.overlapsWith(block2) : "Alright. who did this?";
+        }
+
+        static void checkForConflicts(final Set<CourseSectionBlock> blocks) throws InternalConflictException {
+            final Set<CourseSectionBlock> conflictFreeAccumulator = new HashSet<>();
+            for (final CourseSectionBlock block : Collections.unmodifiableSet(blocks)) {
+                for (final CourseSectionBlock addedBlock : conflictFreeAccumulator) {
+                    if (block.overlapsWith(addedBlock)) {
+                        throw new InternalConflictException(block, addedBlock);
+                    }
+                }
+                conflictFreeAccumulator.add(block);
+            }
+        }
+    }
+
+    /**
+     * A begin and end time with non-zero positive duration.
+     */
     static final class BlockTimeEnclosure {
 
         private final BlockTime begin;

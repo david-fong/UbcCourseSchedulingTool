@@ -3,8 +3,18 @@ package com.dvf.ucst.core.courseutils;
 import com.dvf.ucst.core.courseutils.CourseSectionBlock.BlockTimeEnclosure;
 import com.dvf.ucst.core.courseutils.CourseSectionBlock.IllegalTimeEnclosureException;
 import com.dvf.ucst.core.courseutils.UbcTimeUtils.BlockTime;
+import com.dvf.ucst.core.spider.CourseWip.CourseSectionWip.CourseSectionBlockWip;
+import com.dvf.ucst.utils.general.WorkInProgress;
+import com.dvf.ucst.utils.xml.MalformedXmlDataException;
+import com.dvf.ucst.utils.xml.XmlIoUtils;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.ThrowingSupplier;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +25,91 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CourseSectionBlockTest {
 
+    @Test
+    void fromXml() {
+
+    }
+
+    // does not add element to doc.
+    private Element createBasicBlockXml(final Document doc) {
+        final CourseSectionBlockWip wip = new CourseSectionBlockWip()
+                .setBeginTime(T0800)
+                .setEndTime(T0900)
+                .setRepetitionType(CourseSectionBlock.BlockRepetition.EVERY_WEEK)
+                .setWeekDay(CourseUtils.WeekDay.MONDAY);
+        try {
+            return CourseSectionBlock.createXmlOfWorkInProgress(
+                    tagName -> doc.createElement(tagName.getXmlConstantValue()),
+                    wip
+            );
+        } catch (WorkInProgress.IncompleteWipException | IllegalTimeEnclosureException e) {
+            fail("Encountered unexpected " + e.getClass() + " exception");
+            return null;
+        }
+    }
+
+
+
+    /**
+     *
+     */
+    @Nested
+    final class CourseSectionBlockWipTest {
+
+        @Test
+        void makeWip() {
+            final CourseSectionBlockWip blockWip = new CourseSectionBlockWip()
+                    .setBeginTime(T0800)
+                    .setEndTime(T0900)
+                    .setRepetitionType(CourseSectionBlock.BlockRepetition.EVERY_WEEK)
+                    .setWeekDay(CourseUtils.WeekDay.MONDAY);
+            final Set<ThrowingSupplier<Object>> getters = Set.of(
+                    blockWip::getBeginTime,
+                    blockWip::getEndTime,
+                    blockWip::getRepetitionType,
+                    blockWip::getWeekDay
+            );
+            getters.forEach(Assertions::assertDoesNotThrow);
+        }
+
+        @Test
+        void assertThrowsIncomplete() {
+            // make a block wip and don't populate its fields:
+            final CourseSectionBlockWip blockWip = new CourseSectionBlockWip();
+            final Set<ThrowingSupplier<Object>> getters = Set.of(
+                    blockWip::getBeginTime,
+                    blockWip::getEndTime,
+                    blockWip::getRepetitionType,
+                    blockWip::getWeekDay
+            );
+            getters.forEach(getter -> assertThrows(
+                    WorkInProgress.IncompleteWipException.class,
+                    getter::get
+            ));
+        }
+
+        @Test
+        void toXml() {
+            final Document doc = XmlIoUtils.createNewXmlDocument();
+            doc.appendChild(createBasicBlockXml(doc));
+            try {
+                assertEquals(
+                        "<Block begin=\"08:00\" day=\"mon\" end=\"09:00\"/>", // "\r\n"
+                        XmlIoUtils.printNodeToString(doc).trim()
+                );
+            } catch (final TransformerException e) {
+                fail("Unexpected error serializing document to string");
+            }
+        }
+    }
+
+
+
     /**
      * Tests for the private class [BlockTimeEnclosure]
      */
-    static final class BlockTimeEnclosureTest {
+    @Nested
+    final class BlockTimeEnclosureTest {
 
         @Test
         void assertNoOverlaps() {
@@ -115,7 +206,7 @@ class CourseSectionBlockTest {
         }
 
         // for sake of brevity:
-        private static BlockTimeEnclosure bte(
+        private BlockTimeEnclosure bte(
                 final BlockTime begin,
                 final BlockTime end
         ) throws IllegalTimeEnclosureException {
