@@ -26,8 +26,26 @@ import static org.junit.jupiter.api.Assertions.*;
 class CourseSectionBlockTest {
 
     @Test
-    void test() {
+    void fromXml() {
 
+    }
+
+    // does not add element to doc.
+    private Element createBasicBlockXml(final Document doc) {
+        final CourseSectionBlockWip wip = new CourseSectionBlockWip()
+                .setBeginTime(T0800)
+                .setEndTime(T0900)
+                .setRepetitionType(CourseSectionBlock.BlockRepetition.EVERY_WEEK)
+                .setWeekDay(CourseUtils.WeekDay.MONDAY);
+        try {
+            return CourseSectionBlock.createXmlOfWorkInProgress(
+                    tagName -> doc.createElement(tagName.getXmlConstantValue()),
+                    wip
+            );
+        } catch (WorkInProgress.IncompleteWipException | IllegalTimeEnclosureException e) {
+            fail("Encountered unexpected " + e.getClass() + " exception");
+            return null;
+        }
     }
 
 
@@ -81,35 +99,6 @@ class CourseSectionBlockTest {
                 );
             } catch (final TransformerException e) {
                 fail("Unexpected error serializing document to string");
-            }
-        }
-
-        @Test
-        void fromXml() {
-            final Document doc = XmlIoUtils.createNewXmlDocument();
-            final Element blockElement = createBasicBlockXml(doc);
-            try {
-                final CourseSectionBlock blockObject = new CourseSectionBlock(blockElement);
-            } catch (MalformedXmlDataException | IllegalTimeEnclosureException e) {
-                fail();
-            }
-        }
-
-        // does not add element to doc
-        private Element createBasicBlockXml(final Document doc) {
-            final CourseSectionBlockWip wip = new CourseSectionBlockWip()
-                    .setBeginTime(T0800)
-                    .setEndTime(T0900)
-                    .setRepetitionType(CourseSectionBlock.BlockRepetition.EVERY_WEEK)
-                    .setWeekDay(CourseUtils.WeekDay.MONDAY);
-            try {
-                return CourseSectionBlock.createXmlOfWorkInProgress(
-                        tagName -> doc.createElement(tagName.getXmlConstantValue()),
-                        wip
-                );
-            } catch (WorkInProgress.IncompleteWipException | IllegalTimeEnclosureException e) {
-                fail("Encountered unexpected " + e.getClass() + " exception");
-                return null;
             }
         }
     }

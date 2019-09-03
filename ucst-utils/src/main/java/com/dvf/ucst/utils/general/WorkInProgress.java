@@ -37,6 +37,10 @@ public interface WorkInProgress {
             super(message);
         }
 
+        public IncompleteWipException(final String message, Exception e) {
+            super(message, e);
+        }
+
         /**
          * @param wip the [WorkInProgress] considered to be missing the property
          *     bound to a declared field of its own by the name [fieldName].
