@@ -280,12 +280,22 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
                     SecXml.OPTIONAL_WAITLIST_FLAG_ATTR.getXmlConstantValue()
             );
 
+            // parse out [CourseSectionBlock]s.
             final List<Element> blockElements = XmlUtils.getChildElementsByTagName(
                     sectionElement, CourseSectionBlock.Xml.BLOCK_TAG
             );
             final Set<CourseSectionBlock> blocks = new HashSet<>(blockElements.size());
             for (final Element blockElement : blockElements) {
-                blocks.add(new CourseSectionBlock(blockElement));
+                final CourseSectionBlock blockObject = new CourseSectionBlock(blockElement);
+                blocks.add(blockObject);
+            }
+            try {
+                CourseSectionBlock.InternalConflictException.checkForConflicts(blocks);
+            } catch (final CourseSectionBlock.InternalConflictException e) {
+                throw new MalformedXmlDataException("Sections were verified not to have"
+                        + " scheduling conflicts during fetching from UBC's registration"
+                        + " site. Perhaps the user tampered with the xml files?", e
+                );
             }
             this.blocks = Collections.unmodifiableSet(blocks);
         }

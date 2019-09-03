@@ -8,12 +8,16 @@ import org.w3c.dom.Element;
  */
 public class MalformedXmlDataException extends Exception {
 
-    public MalformedXmlDataException(String message) {
+    public MalformedXmlDataException(final String message) {
         super(message);
     }
 
-    public MalformedXmlDataException(Exception rootCause) {
+    public MalformedXmlDataException(final Exception rootCause) {
         super(rootCause);
+    }
+
+    public MalformedXmlDataException(final String message, final Exception rootCause) {
+        super(message, rootCause);
     }
 
     public static MalformedXmlDataException noSuchUniqueChildElement(final Element host, final String tagName) {
