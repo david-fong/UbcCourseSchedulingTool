@@ -27,9 +27,12 @@ public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
      *      where each clause is composed of items representing options, and the group
      *      of clauses represents a requirement for an inclusion of at least one option
      *      from each clause. Like a logical AND of logical OR's.
+     *   - Empty clauses are allowed and will be ignored.
      *   - It is allowed for clauses to have shared items (using ::equals comparison).
      *       See spec of [PickyBuild::addIfNoConflicts] for handling of such situations.
-     *   - Empty clauses are allowed and will be ignored.
+     *       Two clauses may even share all the same contents and contain nothing but
+     *       shared contents, but this will have the same effect on generated builds
+     *       as if one was excluded, and will result in a lot of unnecessary computation.
      *   - [conjunctiveNormalFormed] must not be [null]. If empty, then generating
      *       builds will return [templateBuild] directly.
      */
@@ -133,6 +136,57 @@ public final class PickyBuildGenerator<T extends PickyBuildElement<T>> {
             }
         }
         return recursiveGenerateBuilds(clauseIdx + 1, newSoFar);
+    }
+
+
+
+    /**
+     * package-private class intended for testing purposes only.
+     * @param <T>
+     */
+    static final class BuildEquivalenceComparison<T extends PickyBuildElement<T>> {
+
+        private final Set<Set<T>> unmatchedExpectedBuildContents;
+        private final Set<Set<T>> unmatchedActualBuildContents;
+
+        BuildEquivalenceComparison(
+                final Set<Set<T>> expectedBuildContents, // <- may be unmodifiable (same for contents). must assume so.
+                final Set<PickyBuild<T>> actualBuilds
+        ) {
+            final Set<Set<T>> actualBuildContents = Collections.unmodifiableSet(actualBuilds.stream()
+                    .map(PickyBuild::getAllContents)
+                    .collect(Collectors.toSet())
+            );
+            final Set<Set<T>> unmatchedExpectedBuildContents = new HashSet<>();
+            final Set<Set<T>> unmatchedActualBuildContents = new HashSet<>(actualBuildContents);
+
+            for (final Set<T> expectedBuildContent : expectedBuildContents) {
+                actualBuildContents.stream()
+                    .filter(actualBuildContent -> {
+                        // find a matching actual build for the expected build:
+                        return expectedBuildContent.size() == actualBuildContent.size()
+                                && expectedBuildContent.containsAll(actualBuildContent);
+                    }).findAny().ifPresentOrElse(
+                        unmatchedActualBuildContents::remove,
+                        () -> unmatchedExpectedBuildContents.add(expectedBuildContent)
+                );
+            }
+
+            this.unmatchedExpectedBuildContents = Collections.unmodifiableSet(unmatchedExpectedBuildContents);
+            this.unmatchedActualBuildContents = Collections.unmodifiableSet(unmatchedActualBuildContents);
+        }
+
+        public boolean expectedAndActualMatch() {
+            return getUnmatchedExpectedBuildContents().isEmpty() && getUnmatchedActualBuildContents().isEmpty();
+        }
+
+        public Set<Set<T>> getUnmatchedExpectedBuildContents() {
+            return unmatchedExpectedBuildContents;
+        }
+
+        public Set<Set<T>> getUnmatchedActualBuildContents() {
+            return unmatchedActualBuildContents;
+        }
     }
 
 }
