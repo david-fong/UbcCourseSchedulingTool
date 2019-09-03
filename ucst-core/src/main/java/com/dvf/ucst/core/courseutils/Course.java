@@ -46,7 +46,10 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     private final Set<CourseSection> labSections;
     private final Set<CourseSection> tutorialSections;
 
-    public Course(final Element courseElement) throws MalformedXmlDataException {
+    public Course(final Element courseElement) throws
+            MalformedXmlDataException,
+            CourseSectionBlock.IllegalTimeEnclosureException
+    {
         try { // get faculty node:
             this.facultyTreeNode = FacultyTreeRootCampus.UbcCampuses.getCampusByIdToken(
                     XmlUtils.getMandatoryAttr(courseElement, Xml.COURSE_CAMPUS_ATTR).getValue()
@@ -175,8 +178,12 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     }
 
     // helper for xml constructor.
-    private Set<CourseSection> parseOutLabTutorialSections
-    (final Element sectionGroupElement, final String idPrefix) throws MalformedXmlDataException {
+    private Set<CourseSection> parseOutLabTutorialSections(
+            final Element sectionGroupElement,
+            final String idPrefix
+    ) throws MalformedXmlDataException,
+            CourseSectionBlock.IllegalTimeEnclosureException
+    {
         final List<Element> SectionElements = XmlUtils.getChildElementsByTagName(
                 sectionGroupElement,
                 SecXml.COURSE_SECTION_TAG
@@ -256,7 +263,10 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         private final boolean isWaitlist;
         private final Set<CourseSectionBlock> blocks;
 
-        private CourseSection(final Element sectionElement) throws MalformedXmlDataException {
+        private CourseSection(final Element sectionElement) throws
+                MalformedXmlDataException,
+                CourseSectionBlock.IllegalTimeEnclosureException
+        {
             this.sectionIdToken = XmlUtils.getMandatoryAttr(
                     sectionElement, SecXml.SECTION_CODE_ATTR
             ).getValue();
@@ -345,7 +355,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     private static Element createXmlOfWorkInProgress(
             final Function<XmlUtils.XmlConstant, Element> elementSupplier,
             final CourseWip.CourseSectionWip wip
-    ) throws WorkInProgress.IncompleteWipException {
+    ) throws WorkInProgress.IncompleteWipException, CourseSectionBlock.IllegalTimeEnclosureException {
         final Element sectionElement = elementSupplier.apply(SecXml.COURSE_SECTION_TAG);
         sectionElement.setAttribute(
                 SecXml.SECTION_CODE_ATTR.getXmlConstantValue(),
@@ -379,7 +389,10 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         private final Set<CourseSection> requiredTutorialOptions;
         private final Set<Set<CourseSection>> pickyBuildFriends; // unmodifiable;
 
-        private CourseLectureSection(final Element lectureElement) throws MalformedXmlDataException {
+        private CourseLectureSection(final Element lectureElement) throws
+                MalformedXmlDataException,
+                CourseSectionBlock.IllegalTimeEnclosureException
+        {
             super(lectureElement);
 
             this.requiredLabOptions = getComplimentarySectionOptionsFromElement(
