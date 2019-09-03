@@ -3,7 +3,12 @@ package com.dvf.ucst.core.courseutils;
 import com.dvf.ucst.core.courseutils.CourseSectionBlock.BlockTimeEnclosure;
 import com.dvf.ucst.core.courseutils.CourseSectionBlock.IllegalTimeEnclosureException;
 import com.dvf.ucst.core.courseutils.UbcTimeUtils.BlockTime;
+import com.dvf.ucst.core.spider.CourseWip.CourseSectionWip.CourseSectionBlockWip;
+import com.dvf.ucst.utils.general.WorkInProgress;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.ThrowingSupplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +20,59 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CourseSectionBlockTest {
 
+    @Test
+    void test() {
+
+    }
+
+
+
+    /**
+     *
+     */
+    @Nested
+    final class CourseSectionBlockWipTest {
+
+        @Test
+        void makeWip() {
+            final CourseSectionBlockWip blockWip = new CourseSectionBlockWip()
+                    .setBeginTime(T0800)
+                    .setEndTime(T0900)
+                    .setRepetitionType(CourseSectionBlock.BlockRepetition.EVERY_WEEK)
+                    .setWeekDay(CourseUtils.WeekDay.MONDAY);
+            final Set<ThrowingSupplier<Object>> getters = Set.of(
+                    blockWip::getBeginTime,
+                    blockWip::getEndTime,
+                    blockWip::getRepetitionType,
+                    blockWip::getWeekDay
+            );
+            getters.forEach(Assertions::assertDoesNotThrow);
+        }
+
+        @Test
+        void assertThrowsIncomplete() {
+            // make a block wip and don't populate its fields:
+            final CourseSectionBlockWip blockWip = new CourseSectionBlockWip();
+            final Set<ThrowingSupplier<Object>> getters = Set.of(
+                    blockWip::getBeginTime,
+                    blockWip::getEndTime,
+                    blockWip::getRepetitionType,
+                    blockWip::getWeekDay
+            );
+            getters.forEach(getter -> assertThrows(
+                    WorkInProgress.IncompleteWipException.class,
+                    getter::get
+            ));
+        }
+    }
+
+
+
     /**
      * Tests for the private class [BlockTimeEnclosure]
      */
-    static final class BlockTimeEnclosureTest {
+    @Nested
+    final class BlockTimeEnclosureTest {
 
         @Test
         void assertNoOverlaps() {
@@ -115,7 +169,7 @@ class CourseSectionBlockTest {
         }
 
         // for sake of brevity:
-        private static BlockTimeEnclosure bte(
+        private BlockTimeEnclosure bte(
                 final BlockTime begin,
                 final BlockTime end
         ) throws IllegalTimeEnclosureException {
