@@ -47,14 +47,14 @@ class UbcTimeUtilsTest {
                 LocalTime.of(preEndOfDay.getHour(), preEndOfDay.getMinute()), LAST_BLOCK,
                 LocalTime.of(OUTSIDE.getTime().getHour(), OUTSIDE.getTime().getMinute()), OUTSIDE
         );
-        for (final Map.Entry<LocalTime, BlockTime> timeToExpectedBlockEntry : timeToExpectedBlockMap.entrySet()) {
-            final OffsetTime inputTime = timeToExpectedBlockEntry.getKey().atOffset(getUbcTimezoneOffset());
-            assertEquals(
-                    timeToExpectedBlockEntry.getValue(),
-                    getCurrentBlockTime(inputTime),
-                    "given time: " + timeToExpectedBlockEntry.getKey()
-            );
-        }
+        timeToExpectedBlockMap.forEach((
+                final LocalTime localTime,
+                final BlockTime blockTime
+        ) -> assertEquals(
+                blockTime,
+                getCurrentBlockTime(localTime.atOffset(getUbcTimezoneOffset())),
+                "given time: " + localTime
+        ));
     }
 
     @Test
@@ -73,14 +73,14 @@ class UbcTimeUtilsTest {
                 LocalTime.of(preEndOfDay.getHour(), preEndOfDay.getMinute()), OUTSIDE,
                 LocalTime.of(OUTSIDE.getTime().getHour(), OUTSIDE.getTime().getMinute()), FIRST_BLOCK
         );
-        for (final Map.Entry<LocalTime, BlockTime> timeToExpectedBlockEntry : timeToExpectedBlockMap.entrySet()) {
-            final OffsetTime inputTime = timeToExpectedBlockEntry.getKey().atOffset(getUbcTimezoneOffset());
-            assertEquals(
-                    timeToExpectedBlockEntry.getValue(),
-                    getNextBlockTime(inputTime),
-                    "given time: " + timeToExpectedBlockEntry.getKey()
-            );
-        }
+        timeToExpectedBlockMap.forEach((
+                final LocalTime localTime,
+                final BlockTime expectedNextBlock
+        ) -> assertEquals(
+                expectedNextBlock,
+                getNextBlockTime(localTime.atOffset(getUbcTimezoneOffset())),
+                "given time: " + localTime
+        ));
     }
 
     @Test
