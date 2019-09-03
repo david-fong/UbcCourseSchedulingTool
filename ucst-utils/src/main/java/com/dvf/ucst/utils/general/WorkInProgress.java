@@ -1,7 +1,7 @@
 package com.dvf.ucst.utils.general;
 
 /**
- * There is nothing here but docs.
+ * Ain't nobody here but us docs.
  *
  * Implementations of this interface should have the following properties:
  * - are located in the same package as whoever will call the setters (assemble the WIP)
@@ -34,12 +34,12 @@ public interface WorkInProgress {
             try {
                 return new IncompleteWipException(String.format("The [%s]"
                         + " \"%s\" is currently missing its \"%s\" property",
-                        WorkInProgress.class.getName(),
+                        WorkInProgress.class,
                         wip,
                         wip.getClass().getDeclaredField(fieldName).getName() // absolutely unnecessary.
                 ));
-            } catch (NoSuchFieldException e) {
-                throw new RuntimeException(e);
+            } catch (final NoSuchFieldException e) {
+                throw new RuntimeException("A String literal for a field name in WIP getter is wrong", e);
             }
         }
     }

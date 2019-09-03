@@ -11,9 +11,15 @@ public final class FacultyCourseNotFoundException extends Exception {
     }
 
     public FacultyCourseNotFoundException(
-            String suppliedSearchCode, FacultyTreeNode facultyNode, Exception rootCause) {
+            final String suppliedSearchCode,
+            final FacultyTreeNode facultyNode,
+            final Exception rootCause
+    ) {
         super(String.format("A course by the code \"%s\" could not be found under"
-                + " the %s", suppliedSearchCode, facultyNode.getNameWithTitle()
+                + " the %s \"%s\"",
+                suppliedSearchCode,
+                FacultyTreeNode.class,
+                facultyNode.getNameWithTitle()
         ), rootCause);
     }
 

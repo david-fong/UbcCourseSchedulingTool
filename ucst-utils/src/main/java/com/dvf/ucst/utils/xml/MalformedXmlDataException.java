@@ -16,21 +16,21 @@ public class MalformedXmlDataException extends Exception {
         super(rootCause);
     }
 
-    public static MalformedXmlDataException noSuchUniqueChildElement(Element host, String tagName) {
+    public static MalformedXmlDataException noSuchUniqueChildElement(final Element host, final String tagName) {
         return new MalformedXmlDataException(String.format("A unique %s by the tag name"
                 + " \"%s\" could not be found as a direct child of the host %s",
-                Element.class.getName(), tagName, host.getTagName()
+                Element.class, tagName, host.getTagName()
         ));
     }
 
-    public static MalformedXmlDataException missingAttr(Element host, String attrName) {
-        return new MalformedXmlDataException(String.format("An %s.%s by the name \"%s\""
-                + " could not be found for the %s %s", Attr.class.getPackageName(),
-                Attr.class.getName(), attrName, Element.class.getName(), host.getTagName()
+    public static MalformedXmlDataException missingAttr(final Element host, final String attrName) {
+        return new MalformedXmlDataException(String.format("A %s by the name \"%s\""
+                + " could not be found for the %s %s",
+                Attr.class, attrName, Element.class, host.getTagName()
         ));
     }
 
-    public static MalformedXmlDataException invalidAttrVal(Attr attr) {
+    public static MalformedXmlDataException invalidAttrVal(final Attr attr) {
         Element host = attr.getOwnerElement();
         return new MalformedXmlDataException(String.format(""
                 + "Encountered unexpected value \"%s\" for"
