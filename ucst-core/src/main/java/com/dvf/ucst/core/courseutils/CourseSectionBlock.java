@@ -13,7 +13,8 @@ import java.util.function.Function;
 /**
  * One of several blocks (typically 2 or 3) that describe
  * specific meeting places and times for a [CourseSection].
- * Has no notion of semester context.
+ * Has no notion of semester context. The end time for a
+ * block must be exclusively after the start time.
  */
 public final class CourseSectionBlock {
 
@@ -22,7 +23,10 @@ public final class CourseSectionBlock {
     private final BlockTimeEnclosure timeEnclosure;
     // TODO [repr][CourseSectionBlock]: add representation for location (building).
 
-    CourseSectionBlock(final Element blockElement) throws MalformedXmlDataException {
+    CourseSectionBlock(final Element blockElement) throws
+            MalformedXmlDataException,
+            IllegalTimeEnclosureException
+    {
         this.weekDay = CourseUtils.WeekDay.decodeXmlAttr(XmlUtils
                 .getMandatoryAttr(blockElement, Xml.DAY_OF_WEEK_ATTR)
         );
@@ -68,12 +72,14 @@ public final class CourseSectionBlock {
     public static Element createXmlOfWorkInProgress(
             final Function<XmlUtils.XmlConstant, Element> elementSupplier,
             final CourseWip.CourseSectionWip.CourseSectionBlockWip wip
-    ) throws WorkInProgress.IncompleteWipException {
+    ) throws WorkInProgress.IncompleteWipException, IllegalTimeEnclosureException {
         final Element blockElement = elementSupplier.apply(Xml.BLOCK_TAG);
         blockElement.setAttribute(
                 Xml.DAY_OF_WEEK_ATTR.getXmlConstantValue(),
                 wip.getWeekDay().getXmlConstantValue()
         );
+        // test constructing a [BlockTimeEnclosure] to see if the times are invalid.
+        BlockTimeEnclosure.of(wip.getBeginTime(), wip.getEndTime());
         blockElement.setAttribute(
                 Xml.BEGIN_TIME_ATTR.getXmlConstantValue(),
                 wip.getBeginTime().getXmlConstantValue()
@@ -93,18 +99,41 @@ public final class CourseSectionBlock {
 
 
 
-    private static final class BlockTimeEnclosure {
+    static final class BlockTimeEnclosure {
 
         private final BlockTime begin;
         private final BlockTime end;
 
-        private BlockTimeEnclosure(BlockTime begin, BlockTime end) {
+        private BlockTimeEnclosure(final BlockTime begin, final BlockTime end) throws CourseSectionBlock.IllegalTimeEnclosureException {
             this.begin = begin;
             this.end = end;
+            if (!this.end.isAfter(this.begin)) {
+                throw new CourseSectionBlock.IllegalTimeEnclosureException(this.begin, this.end);
+            }
         }
 
-        private boolean overlapsWith(final BlockTimeEnclosure other) {
+        boolean overlapsWith(final BlockTimeEnclosure other) {
             return begin.isBefore(other.end) && end.isAfter(other.begin);
+        }
+
+        // for writing unit tests.
+        static BlockTimeEnclosure of(
+                final BlockTime begin,
+                final BlockTime end
+        ) throws CourseSectionBlock.IllegalTimeEnclosureException {
+            return new BlockTimeEnclosure(begin, end);
+        }
+    }
+
+    /**
+     * Thrown when constructing a [BlockTimeEnclosure] with negative or zero duration.
+     */
+    public static final class IllegalTimeEnclosureException extends Exception {
+        private IllegalTimeEnclosureException(final BlockTime begin, final BlockTime end) {
+            super(String.format("Cannot construct a %s with an end-time (%s)"
+                            + " equal to or before its begin-time (%s)",
+                    BlockTimeEnclosure.class, begin, end
+            ));
         }
     }
 
