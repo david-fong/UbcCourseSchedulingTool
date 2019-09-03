@@ -49,17 +49,17 @@ public final class CourseWip implements WorkInProgress {
     }
 
     CourseWip setLectureSections(Set<CourseLectureSectionWip> lectureSections) {
-        this.lectureSections = lectureSections;
+        this.lectureSections = Collections.unmodifiableSet(lectureSections);
         return this;
     }
 
     CourseWip setLabSections(Set<CourseSectionWip> labSections) {
-        this.labSections = labSections;
+        this.labSections = Collections.unmodifiableSet(labSections);
         return this;
     }
 
     CourseWip setTutorialSections(Set<CourseSectionWip> tutorialSections) {
-        this.tutorialSections = tutorialSections;
+        this.tutorialSections = Collections.unmodifiableSet(tutorialSections);
         return this;
     }
 
@@ -157,7 +157,7 @@ public final class CourseWip implements WorkInProgress {
         }
 
         final CourseSectionWip setBlocks(Set<CourseSectionBlockWip> blocks) {
-            this.blocks = blocks;
+            this.blocks = Collections.unmodifiableSet(blocks);
             return this;
         }
 
@@ -215,12 +215,12 @@ public final class CourseWip implements WorkInProgress {
             private Set<String> requiredTutorialOptionIdTokens;
 
             CourseLectureSectionWip setRequiredLabOptionIdTokens(Set<String> requiredLabOptionIdTokens) {
-                this.requiredLabOptionIdTokens = requiredLabOptionIdTokens;
+                this.requiredLabOptionIdTokens = Collections.unmodifiableSet(requiredLabOptionIdTokens);
                 return this;
             }
 
             CourseLectureSectionWip setRequiredTutorialSectionOptions(Set<String> requiredTutorialOptionIdTokens) {
-                this.requiredTutorialOptionIdTokens = requiredTutorialOptionIdTokens;
+                this.requiredTutorialOptionIdTokens = Collections.unmodifiableSet(requiredTutorialOptionIdTokens);
                 return this;
             }
 

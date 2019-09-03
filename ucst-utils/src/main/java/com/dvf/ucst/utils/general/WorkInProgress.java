@@ -3,13 +3,28 @@ package com.dvf.ucst.utils.general;
 /**
  * Ain't nobody here but us docs.
  *
+ *
  * Implementations of this interface should have the following properties:
+ *
  * - are located in the same package as whoever will call the setters (assemble the WIP)
- * - all fields are non-final and private
- * - all fields have public getters, collections must be wrapped as unmodifiable
- * - getters should throw a [IncompleteWipException] if a property is known to be incomplete
- * - all fields have package-private setters that return the instance the setter was called off of
  * - unless necessary, should not provide or implement any constructors
+ *
+ * - all fields are non-final and private
+ * - no primitive fields - box them with their respective objects
+ * - fields may have default values as long is it is clearly documented in the class doc
+ *
+ * - all fields have public getters, collections must be wrapped as unmodifiable (even if redundant)
+ * - getters should throw a [IncompleteWipException] if a property is known to be incomplete
+ * - if a getter's field has a default value, it may choose to force the setter to use the
+ *       default value if the input would qualify as invalid (Ex. null), and forgo the exception
+ *       in the getter.
+ *
+ * - all fields have package-private setters that return the instance the setter was called off of
+ * - unless absolutely necessary, setters must wrap input collections as unmodifiable before assigning to fields
+ * - setters may perform validation and throw exceptions as long as the validation does not
+ *       depend on other fields with setters (to prevent user of setters from having to write
+ *       ugly code that performs the same validation externally).
+ *
  */
 public interface WorkInProgress {
 
