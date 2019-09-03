@@ -70,11 +70,11 @@ public final class CourseSectionBlock {
     }
 
     public BlockTime getBeginTime() {
-        return timeEnclosure.begin;
+        return timeEnclosure.getBegin();
     }
 
     public BlockTime getEndTime() {
-        return timeEnclosure.end;
+        return timeEnclosure.getEnd();
     }
 
     static Element createXmlOfWorkInProgress(
@@ -144,6 +144,7 @@ public final class CourseSectionBlock {
     }
 
 
+
     /**
      * Thrown when some source of a collection of coexisting [CourseSectionBLock]s
      * contains blocks that conflict with each other.
@@ -171,6 +172,8 @@ public final class CourseSectionBlock {
         }
     }
 
+
+
     /**
      * A begin and end time with non-zero positive duration.
      */
@@ -189,6 +192,14 @@ public final class CourseSectionBlock {
 
         boolean overlapsWith(final BlockTimeEnclosure other) {
             return begin.isBefore(other.end) && end.isAfter(other.begin);
+        }
+
+        BlockTime getBegin() {
+            return begin;
+        }
+
+        BlockTime getEnd() {
+            return end;
         }
 
         // for writing unit tests.
@@ -253,6 +264,9 @@ public final class CourseSectionBlock {
 
 
 
+    /**
+     *
+     */
     public enum Xml implements XmlUtils.XmlConstant {
         BLOCK_TAG ("Block"),
 
