@@ -24,8 +24,32 @@ class CourseSectionBlockTest {
         void assertOverlaps() {
             final Map<BlockTimeEnclosure, Set<BlockTimeEnclosure>> overlapsWithMap;
             try {
-                overlapsWithMap = Map.of(
-                        bte(T0800, T0900), Set.of(bte(T0800, T0900), bte(T0830, T0900), bte(T0800, T0930), bte(T0830, T2130))
+                overlapsWithMap = Map.of( // ----- || ?? description -------------------------------
+                        // key = short duration at beginning of day:
+                        bte(T0800, T0900), Set.of(
+                                bte(T0800, T0900), // == same begin and end
+                                bte(T0830, T0900), // >= nudge begin later, same end
+                                bte(T0800, T0930), // => same begin, nudge end later
+                                bte(T0830, T2130)  // >> nudge begin later, shove end much later
+                        ),
+                        // key = medium duration during common hours:
+                        bte(T1030, T1600), Set.of(
+                                bte(T1000, T1100), // << nudge begin earlier, end close to key.begin
+                                bte(T0800, T1100), // << push begin earlier, end close to key.begin
+                                bte(T0800, T1530), // << push begin earlier, nudge end earlier
+                                bte(T1100, T1530), // >< nudge bounds inward
+                                bte(T1300, T1330), // >< nudge bounds inward more
+                                bte(T1000, T1630), // <> nudge bounds outward
+                                bte(T0830, T2000)  // <> nudge bounds outward more
+                        ),
+                        // key = short duration during later hours:
+                        bte(T1530, T1700), Set.of(
+                                bte(T1530, T1700), // == same begin and end
+                                bte(T1600, T1630), // >< nudge bounds inward
+                                bte(T1600, T1700), // >= nudge begin later, same end
+                                bte(T1530, T1630), // =< same begin, nudge end earlier
+                                bte(T1500, T1700)  // <= nudge begin earlier, same end
+                        )
                 );
             } catch (IllegalTimeEnclosureException e) {
                 throw new RuntimeException("you weren't supposed to do that lol");
