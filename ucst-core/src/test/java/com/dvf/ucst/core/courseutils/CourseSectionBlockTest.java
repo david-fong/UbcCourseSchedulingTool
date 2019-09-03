@@ -5,11 +5,15 @@ import com.dvf.ucst.core.courseutils.CourseSectionBlock.IllegalTimeEnclosureExce
 import com.dvf.ucst.core.courseutils.UbcTimeUtils.BlockTime;
 import com.dvf.ucst.core.spider.CourseWip.CourseSectionWip.CourseSectionBlockWip;
 import com.dvf.ucst.utils.general.WorkInProgress;
+import com.dvf.ucst.utils.xml.XmlIoUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +67,35 @@ class CourseSectionBlockTest {
                     WorkInProgress.IncompleteWipException.class,
                     getter::get
             ));
+        }
+
+        @Test
+        void toXml() {
+            final Document doc = XmlIoUtils.createNewXmlDocument();
+            final CourseSectionBlockWip wip = new CourseSectionBlockWip()
+                    .setBeginTime(T0800)
+                    .setEndTime(T0900)
+                    .setRepetitionType(CourseSectionBlock.BlockRepetition.EVERY_WEEK)
+                    .setWeekDay(CourseUtils.WeekDay.MONDAY);
+            final Element xml;
+            try {
+                xml = CourseSectionBlock.createXmlOfWorkInProgress(
+                        tagName -> doc.createElement(tagName.getXmlConstantValue()),
+                        wip
+                );
+                doc.appendChild(xml);
+            } catch (WorkInProgress.IncompleteWipException | IllegalTimeEnclosureException e) {
+                fail("Encountered unexpected " + e.getClass() + " exception");
+            }
+            XmlIoUtils.printNode(doc);
+            try {
+                assertEquals(
+                        "<Block begin=\"08:00\" day=\"mon\" end=\"09:00\"/>", // "\r\n"
+                        XmlIoUtils.printNodeToString(doc).trim()
+                );
+            } catch (final TransformerException e) {
+                fail("Unexpected error serializing document to string");
+            }
         }
     }
 

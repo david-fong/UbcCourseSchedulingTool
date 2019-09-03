@@ -15,7 +15,7 @@ class XmlIoUtilsTest {
                     "https://courses.students.ubc.ca/cs/courseschedule"
                     + "?pname=subjarea&tname=subj-department&dept=CPEN"
             );
-            XmlIoUtils.printDocument(XmlIoUtils.fetchHtmlFromUrl(url));
+            XmlIoUtils.printNode(XmlIoUtils.fetchHtmlFromUrl(url));
         } catch (SAXException | IOException e) {
             e.printStackTrace();
         }

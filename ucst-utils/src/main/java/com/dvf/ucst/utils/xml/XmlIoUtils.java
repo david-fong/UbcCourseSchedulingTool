@@ -1,6 +1,7 @@
 package com.dvf.ucst.utils.xml;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -14,6 +15,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URL;
 import java.nio.file.Path;
 
@@ -104,14 +106,26 @@ public final class XmlIoUtils {
 
     /**
      * A utility method for debugging and test purposes.
-     * @param document A [Document] to print to the standard output.
+     * @param node A [Node] to print to the standard output.
      */
-    public static void printDocument(final Document document) {
+    public static void printNode(final Node node) {
         try {
-            PRETTY_TRANSFORMER.transform(new DOMSource(document), new StreamResult(System.out));
-        } catch (TransformerException e) {
+            PRETTY_TRANSFORMER.transform(
+                    new DOMSource(node),
+                    new StreamResult(System.out)
+            );
+        } catch (final TransformerException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String printNodeToString(final Node node) throws TransformerException {
+        final StringWriter writer = new StringWriter();
+        PRETTY_TRANSFORMER.transform(
+                new DOMSource(node),
+                new StreamResult(writer)
+        );
+        return writer.toString();
     }
 
 }
