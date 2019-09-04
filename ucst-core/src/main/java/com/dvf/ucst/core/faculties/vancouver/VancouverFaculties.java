@@ -2,7 +2,7 @@ package com.dvf.ucst.core.faculties.vancouver;
 
 import com.dvf.ucst.core.courseutils.Course;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
+import com.dvf.ucst.core.faculties.UbcCampuses;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,11 +14,13 @@ import static com.dvf.ucst.core.faculties.FacultyTreeNode.FacultyTreeNodeType.FA
  */
 public enum VancouverFaculties implements FacultyTreeNode {
     // TODO [data]: add entries as needed. prefer alphabetical order.
-    APSC (FACULTY, "Applied Science", AppliedScienceFaculties.class),
+    APSC (FACULTY, "Applied Science", BascFaculties.class),
     // ...
-    SCIE (FACULTY, "Science", ScienceFaculties.class),
+    SCIE (FACULTY, "Science", ScieFaculties.class),
     // ...
     ;
+    private static UbcCampuses PARENT = UbcCampuses.VANCOUVER;
+
     private final FacultyTreeNodeType facultyType;
     private final String nonAbbreviatedName;
     private final Class<? extends FacultyTreeNode> childrenClass;
@@ -51,8 +53,8 @@ public enum VancouverFaculties implements FacultyTreeNode {
     }
 
     @Override
-    public FacultyTreeRootCampus getParentNode() {
-        return FacultyTreeRootCampus.UbcCampuses.VANCOUVER;
+    public UbcCampuses getParentNode() {
+        return PARENT;
     }
 
     @Override

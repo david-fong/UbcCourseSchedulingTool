@@ -6,28 +6,29 @@ import com.dvf.ucst.core.faculties.FacultyTreeNode;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum AppliedScienceFaculties implements FacultyTreeNode {
-    BMEG("Biomedical"),
-    CHML("Chemical and Biological"),
-    CIVL("Civil"),
-    CPEN("Computer"),
-    ELEC("Electrical"),
-    ENPH("Engineering Physics", ""),
-    ENVE("Environmental"),
-    GEOE("Geological"),
-    IGEN("Integrated"),
-    MECH("Mechanical"),
-    MINE("Mining"),
-    MTRL("Materials"),
+public enum BascFaculties implements FacultyTreeNode {
+    BMEG ("Biomedical"),
+    CHML ("Chemical and Biological"),
+    CIVL ("Civil"),
+    CPEN ("Computer"),
+    ELEC ("Electrical"),
+    ENPH ("Engineering Physics", ""),
+    ENVE ("Environmental"),
+    GEOE ("Geological"),
+    IGEN ("Integrated"),
+    MANU ("Manufacturing"),
+    MECH ("Mechanical"),
+    MINE ("Mining"),
+    MTRL ("Materials"),
     ;
     private final String name;
     private final Map<String, Course> courseCodeMap;
 
-    AppliedScienceFaculties(String name) {
+    BascFaculties(String name) {
         this.name = name + " Engineering";
         this.courseCodeMap = new HashMap<>();
     }
-    AppliedScienceFaculties(String name, String s) {
+    BascFaculties(String name, String s) {
         this.name = name;
         this.courseCodeMap = new HashMap<>();
     }

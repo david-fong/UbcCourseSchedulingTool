@@ -1,15 +1,15 @@
 package com.dvf.ucst.core;
 
 import com.dvf.ucst.core.faculties.FacultyCourseNotFoundException;
+import com.dvf.ucst.core.faculties.UbcCampuses;
+import com.dvf.ucst.core.programs.ProgramSpecialization;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
 import com.dvf.ucst.core.courseutils.Course;
 import com.dvf.ucst.core.courseutils.CourseUtils.Semester;
 import com.dvf.ucst.core.courseutils.CourseUtils.YearOfStudy;
 import com.dvf.ucst.core.faculties.CampusNotFoundException;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
 import com.dvf.ucst.core.schedule.WorklistGroup;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.*;
@@ -22,27 +22,18 @@ public final class Student implements XmlUtils.UserDataXml {
 
     private final String firstName;
     private final String lastName;
-    private YearOfStudy currentYear;
-    private FacultyTreeRootCampus.UbcCampuses campus;
+    private final StudentCoreQualities coreQualities;
 
-    /*
-    TODO [repr][Student]: investigate whether registering in any courses depend on
-     whether the student got a certain mark for a prerequisite. This may require
-     a wrapper class around [Course] that takes a [grade] constructor argument.
-     I'd do it, but I'd feel bad about asking about this information from the user.
-     */
     private final Set<CompletedCourse> completedCourses; // modifiable! be careful.
     private final Set<CompletedCourse> publicCompleteCourses; // unmodifiable.
     private final Map<YearOfStudy, WorklistGroup> worklistGroups; // modifiable! be careful.
 
     // For first time-creation. Subsequent constructions
     // upon application-start will be from saved xml data.
-    public Student(String firstName, String lastName, YearOfStudy yearOfStudy,
-                   FacultyTreeRootCampus.UbcCampuses campus) {
+    public Student(String firstName, String lastName, StudentCoreQualities coreQualities) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.currentYear = yearOfStudy;
-        this.campus = campus;
+        this.coreQualities = coreQualities;
         this.completedCourses = new HashSet<>();
         this.publicCompleteCourses = Collections.unmodifiableSet(completedCourses);
         this.worklistGroups = new EnumMap<>(YearOfStudy.class);
@@ -52,14 +43,10 @@ public final class Student implements XmlUtils.UserDataXml {
     public Student(final Element studentElement) throws MalformedXmlDataException {
         this.firstName = XmlUtils.getMandatoryAttr(studentElement, Xml.FIRST_NAME_ATTR).getValue();
         this.lastName = XmlUtils.getMandatoryAttr(studentElement, Xml.LAST_NAME_ATTR).getValue();
-        this.currentYear = YearOfStudy.decodeXmlAttr(XmlUtils.getMandatoryAttr(studentElement, Xml.YEAR_OF_STUDY_ATTR));
-        try {
-            this.campus = FacultyTreeRootCampus.UbcCampuses.getCampusByIdToken(
-                    XmlUtils.getMandatoryAttr(studentElement, Xml.CAMPUS_ATTR).getValue()
-            );
-        } catch (CampusNotFoundException e) {
-            throw new MalformedXmlDataException(e);
-        }
+        this.coreQualities = new StudentCoreQualities(XmlUtils.getMandatoryUniqueChildByTag(
+                studentElement,
+                StudentCoreQualities.Xml.CORE_QUALITIES_TAG
+        ));
 
         this.completedCourses = parseOutCompletedCourses(
                 XmlUtils.getMandatoryUniqueChildByTag(studentElement, Xml.COMPLETED_COURSES_TAG)
@@ -89,24 +76,20 @@ public final class Student implements XmlUtils.UserDataXml {
         return lastName;
     }
 
-    public final YearOfStudy getCurrentYear() {
-        return currentYear;
-    }
-
-    public final FacultyTreeRootCampus.UbcCampuses getCampus() {
-        return campus;
+    public final StudentCoreQualities getCoreQualities() {
+        return coreQualities;
     }
 
     public final Map<YearOfStudy, WorklistGroup> getWorklistGroups() {
         return worklistGroups;
     }
 
-    public final void setCurrentYear(YearOfStudy yearOfStudy) {
-        this.currentYear = yearOfStudy;
+    public final void setCurrentYear(final YearOfStudy yearOfStudy) {
+        getCoreQualities().setYearOfStudy(yearOfStudy);
     }
 
-    public final void setCampus(FacultyTreeRootCampus.UbcCampuses campus) {
-        this.campus = campus;
+    void setProgramSpecialization(final ProgramSpecialization programSpecialization) {
+        getCoreQualities().setProgramSpecialization(programSpecialization);
     }
 
     public final Set<CompletedCourse> getCompletedCourses() {
@@ -129,8 +112,9 @@ public final class Student implements XmlUtils.UserDataXml {
         final Element studentElement = elementSupplier.apply(Xml.STUDENT_TAG);
         studentElement.setAttribute(Xml.FIRST_NAME_ATTR.getXmlConstantValue(), firstName);
         studentElement.setAttribute(Xml.LAST_NAME_ATTR.getXmlConstantValue(), lastName);
-        studentElement.setAttribute(Xml.YEAR_OF_STUDY_ATTR.getXmlConstantValue(), currentYear.getXmlConstantValue());
-        studentElement.setAttribute(Xml.CAMPUS_ATTR.getXmlConstantValue(), campus.getAbbreviation());
+
+        // core qualities:
+        studentElement.appendChild(getCoreQualities().toXml(elementSupplier));
 
         // previous schedules:
         final Element completedCoursesElement = elementSupplier.apply(Xml.COMPLETED_COURSES_TAG);
@@ -155,6 +139,10 @@ public final class Student implements XmlUtils.UserDataXml {
 
     /**
      * Wrapper around a [Course].
+     * TODO [repr][Student]: investigate whether registering in any courses depend on
+     *      whether the student got a certain mark for a prerequisite. This may require
+     *      a wrapper class around [Course] that takes a [grade] constructor argument.
+     *      I'd do it, but I'd feel bad about asking about this information from the user.
      */
     public static final class CompletedCourse implements XmlUtils.UserDataXml {
 
@@ -173,7 +161,7 @@ public final class Student implements XmlUtils.UserDataXml {
                     completedElement, CompletedCourseXml.COURSE_ID_ATTR
             ).getValue().split("\\s+");
             try {
-                this.completedCourse = FacultyTreeRootCampus.UbcCampuses
+                this.completedCourse = UbcCampuses
                         .getCampusByIdToken(courseIdTokens[0])
                         .getSquashedFacultyAbbrMap().get(courseIdTokens[1])
                         .getCourseByCodeString(courseIdTokens[2]);

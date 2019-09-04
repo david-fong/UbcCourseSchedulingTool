@@ -1,10 +1,7 @@
 package com.dvf.ucst.core.courseutils;
 
-import com.dvf.ucst.core.faculties.FacultyCourseNotFoundException;
+import com.dvf.ucst.core.faculties.*;
 import com.dvf.ucst.core.courseutils.Course.CourseSection;
-import com.dvf.ucst.core.faculties.CampusNotFoundException;
-import com.dvf.ucst.core.faculties.FacultyTreeNode;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
@@ -68,8 +65,7 @@ public interface CourseSectionRef {
 
         public CourseSectionRefUnloaded(String refString) throws CampusNotFoundException {
             final String[] tokens = refString.split("\\s+");
-            final FacultyTreeRootCampus campusToken = FacultyTreeRootCampus
-                    .UbcCampuses.getCampusByIdToken(tokens[0]);
+            final UbcCampuses campusToken = UbcCampuses.getCampusByIdToken(tokens[0]);
             this.facultyToken = campusToken.getSquashedFacultyAbbrMap().get(tokens[1]);
             this.courseToken  = tokens[2];
             this.sectionToken = tokens[3];

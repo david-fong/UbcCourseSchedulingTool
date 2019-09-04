@@ -2,7 +2,7 @@ package com.dvf.ucst.core;
 
 import com.dvf.ucst.core.courseutils.Course;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
+import com.dvf.ucst.core.faculties.UbcCampuses;
 
 /**
  * https://courses.students.ubc.ca/cs/courseschedule
@@ -57,7 +57,7 @@ public interface HyperlinkBookIf {
             return tnameQuery;
         }
 
-        public static String getCampusUrl(final FacultyTreeRootCampus campus) {
+        public static String getCampusUrl(final UbcCampuses campus) {
             return PNames.BROWSE_COURSES.getRegistrationSiteUrl()
                     + CAMPUS.getTnameQuery()
                     + CAMPUS.makeQueryToken(campus.getAbbreviation());
