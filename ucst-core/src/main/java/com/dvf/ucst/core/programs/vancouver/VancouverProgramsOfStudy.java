@@ -107,7 +107,7 @@ public enum VancouverProgramsOfStudy implements ProgramOfStudy {
     }
 
     @Override
-    public FacultyTreeRootCampus getCampusContext() {
+    public FacultyTreeRootCampus.UbcCampuses getCampusContext() {
         return FacultyTreeRootCampus.UbcCampuses.VANCOUVER;
     }
 

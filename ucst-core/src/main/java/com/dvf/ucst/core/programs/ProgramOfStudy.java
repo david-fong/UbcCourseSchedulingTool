@@ -19,7 +19,7 @@ public interface ProgramOfStudy {
 
     ProgramOfStudyType getType();
 
-    FacultyTreeRootCampus getCampusContext();
+    FacultyTreeRootCampus.UbcCampuses getCampusContext();
 
     /*
     TODO [investigate]: It seems like StudentCoreQualityReqs don't care about the
