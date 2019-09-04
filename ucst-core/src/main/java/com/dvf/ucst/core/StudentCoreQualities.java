@@ -1,7 +1,7 @@
 package com.dvf.ucst.core;
 
 import com.dvf.ucst.core.courseutils.CourseUtils.YearOfStudy;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
+import com.dvf.ucst.core.faculties.UbcCampuses;
 import com.dvf.ucst.core.programs.ProgramOfStudy;
 import com.dvf.ucst.core.programs.ProgramSpecialization;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
@@ -39,7 +39,7 @@ public final class StudentCoreQualities implements XmlUtils.UserDataXml {
         this.programSpecialization = null; // TODO: how to get this?
     }
 
-    public final FacultyTreeRootCampus.UbcCampuses getCampus() {
+    public final UbcCampuses getCampus() {
         return getProgramOfStudy().getCampusContext();
     }
 

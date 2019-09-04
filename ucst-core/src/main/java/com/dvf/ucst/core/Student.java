@@ -1,6 +1,7 @@
 package com.dvf.ucst.core;
 
 import com.dvf.ucst.core.faculties.FacultyCourseNotFoundException;
+import com.dvf.ucst.core.faculties.UbcCampuses;
 import com.dvf.ucst.core.programs.ProgramSpecialization;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlUtils;
@@ -8,9 +9,7 @@ import com.dvf.ucst.core.courseutils.Course;
 import com.dvf.ucst.core.courseutils.CourseUtils.Semester;
 import com.dvf.ucst.core.courseutils.CourseUtils.YearOfStudy;
 import com.dvf.ucst.core.faculties.CampusNotFoundException;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
 import com.dvf.ucst.core.schedule.WorklistGroup;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.*;
@@ -162,7 +161,7 @@ public final class Student implements XmlUtils.UserDataXml {
                     completedElement, CompletedCourseXml.COURSE_ID_ATTR
             ).getValue().split("\\s+");
             try {
-                this.completedCourse = FacultyTreeRootCampus.UbcCampuses
+                this.completedCourse = UbcCampuses
                         .getCampusByIdToken(courseIdTokens[0])
                         .getSquashedFacultyAbbrMap().get(courseIdTokens[1])
                         .getCourseByCodeString(courseIdTokens[2]);

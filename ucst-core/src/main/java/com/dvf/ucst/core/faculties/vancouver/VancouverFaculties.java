@@ -2,7 +2,7 @@ package com.dvf.ucst.core.faculties.vancouver;
 
 import com.dvf.ucst.core.courseutils.Course;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
+import com.dvf.ucst.core.faculties.UbcCampuses;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,8 +51,8 @@ public enum VancouverFaculties implements FacultyTreeNode {
     }
 
     @Override
-    public FacultyTreeRootCampus getParentNode() {
-        return FacultyTreeRootCampus.UbcCampuses.VANCOUVER;
+    public UbcCampuses getParentNode() {
+        return UbcCampuses.VANCOUVER;
     }
 
     @Override

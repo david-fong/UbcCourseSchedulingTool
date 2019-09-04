@@ -1,7 +1,7 @@
 package com.dvf.ucst.core.programs.vancouver;
 
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
+import com.dvf.ucst.core.faculties.UbcCampuses;
 import com.dvf.ucst.core.programs.ProgramOfStudy;
 import com.dvf.ucst.core.programs.ProgramSpecialization;
 
@@ -107,8 +107,8 @@ public enum VancouverProgramsOfStudy implements ProgramOfStudy {
     }
 
     @Override
-    public FacultyTreeRootCampus.UbcCampuses getCampusContext() {
-        return FacultyTreeRootCampus.UbcCampuses.VANCOUVER;
+    public UbcCampuses getCampusContext() {
+        return UbcCampuses.VANCOUVER;
     }
 
     @Override

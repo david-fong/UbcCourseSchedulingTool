@@ -1,7 +1,7 @@
 package com.dvf.ucst.core.programs;
 
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
+import com.dvf.ucst.core.faculties.UbcCampuses;
 
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +19,7 @@ public interface ProgramOfStudy {
 
     ProgramOfStudyType getType();
 
-    FacultyTreeRootCampus.UbcCampuses getCampusContext();
+    UbcCampuses getCampusContext();
 
     /*
     TODO [investigate]: It seems like StudentCoreQualityReqs don't care about the

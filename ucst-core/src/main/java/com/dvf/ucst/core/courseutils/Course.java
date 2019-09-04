@@ -5,7 +5,7 @@ import com.dvf.ucst.core.SectionIdString;
 import com.dvf.ucst.core.Student;
 import com.dvf.ucst.core.faculties.CampusNotFoundException;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
+import com.dvf.ucst.core.faculties.UbcCampuses;
 import com.dvf.ucst.core.schedule.Schedule;
 import com.dvf.ucst.core.spider.CourseWip;
 import com.dvf.ucst.utils.general.WorkInProgress;
@@ -48,7 +48,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
 
     public Course(final Element courseElement) throws MalformedXmlDataException {
         try { // get faculty node:
-            this.facultyTreeNode = FacultyTreeRootCampus.UbcCampuses.getCampusByIdToken(
+            this.facultyTreeNode = UbcCampuses.getCampusByIdToken(
                     XmlUtils.getMandatoryAttr(courseElement, Xml.COURSE_CAMPUS_ATTR).getValue()
             ).getSquashedFacultyAbbrMap().get(
                     XmlUtils.getMandatoryAttr(courseElement, Xml.COURSE_FACULTY_ATTR).getValue()

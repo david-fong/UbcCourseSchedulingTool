@@ -2,7 +2,7 @@ package com.dvf.ucst.core;
 
 import com.dvf.ucst.core.coursedata.CourseDataLocator;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
-import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
+import com.dvf.ucst.core.faculties.UbcCampuses;
 
 import java.nio.file.Files;
 
@@ -35,7 +35,7 @@ public final class CoreMain {
         }
         System.out.println(CourseDataLocator.StagedDataPath.PRE_DEPLOYMENT.path);
         System.out.println(CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path);
-        System.out.println(FacultyTreeNode.getSubTreeString(FacultyTreeRootCampus.UbcCampuses.VANCOUVER));
+        System.out.println(FacultyTreeNode.getSubTreeString(UbcCampuses.VANCOUVER));
     }
 
 }
