@@ -31,9 +31,7 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
     }
 
     @Override
-    default FacultyTreeRootCampus getRootCampus() {
-        return this;
-    }
+    UbcCampuses getRootCampus(); // reject default implementation in FacultyTreeNode.
 
     @Override
     default int getDepth() {
@@ -66,6 +64,5 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
     default Map<String, Course> getCourseIdTokenToCourseMap() {
         return EMPTY_COURSE_CODE_MAP;
     }
-
 
 }

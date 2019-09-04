@@ -3,7 +3,6 @@ package com.dvf.ucst.core.faculties;
 import com.dvf.ucst.core.HyperlinkBookIf;
 import com.dvf.ucst.core.coursedata.CourseDataLocator;
 import com.dvf.ucst.core.courseutils.Course;
-import com.dvf.ucst.core.courseutils.CourseSectionBlock;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
 import com.dvf.ucst.utils.xml.XmlIoUtils;
 import org.xml.sax.SAXException;
@@ -11,11 +10,14 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
 /**
  * A property of a [Course].
+ * All implementations should call [verifyProperTree(this)] at the end of their constructors.
  */
 public interface FacultyTreeNode extends HyperlinkBookIf {
 
@@ -29,7 +31,8 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
 
     FacultyTreeNodeType getFacultyType();
 
-    default FacultyTreeRootCampus getRootCampus() {
+    // implementation note: UbcCampuses must break recursion by returning "this" (ie. themselves).
+    default UbcCampuses getRootCampus() {
         return getParentNode().getRootCampus();
     }
 
@@ -42,7 +45,9 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
     /**
      * @return The [FacultyTreeNode] containing [this] in the collection returned by
      *     its [getChildren] method. Instances of [FacultyTreeRootCampus] must return
-     *     [null]. Any other implementation must not return [null].
+     *     [null]. Any other implementation must not return [null]. Chained calls to
+     *     this method should end with a [NullPointerException] caused by a call from
+     *     a [FacultyTreeRootCampus]. There should be no loops.
      */
     FacultyTreeNode getParentNode();
 
@@ -122,6 +127,47 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
         for (final FacultyTreeNode child : scrub.getChildren()) {
             getSubTreeString(child, scrubTabLevel + 1, stringJoiner);
         }
+    }
+
+    /**
+     * Should only be used for assertions for each FacultyTreeNode implementation
+     * after their construction (so their parent can statically load). Verifies
+     * that the upward path contains absolutely no cycles, and that it ends with an
+     * instance of [UbcCampuses] at the root of the tree. Throws a [RuntimeException]
+     * if those conditions are not found to be met.
+     *
+     * @param nodeUnderTest The node to search upwards and verify a valid path for.
+     */
+    static void verifyProperTree(final FacultyTreeNode nodeUnderTest) {
+        System.out.println(nodeUnderTest.getAbbreviation());
+        final Set<FacultyTreeNode> encounteredNodes = new LinkedHashSet<>();
+        FacultyTreeNode scrub = nodeUnderTest;
+        do {
+            if (!encounteredNodes.add(scrub)) {
+                // if the set of encountered nodes already contained the scrub node,
+                // that means there is a loop. throw a RuntimeException.
+                throw new RuntimeException(String.format("The faculty tree must not"
+                        + " contain any cycles, but one was found with the elements"
+                        + " %s", encounteredNodes
+
+                ));
+            } else {
+                // verify that the spec for getParentNode is being followed.
+                // ie. that returning null is equivalent to being an instance
+                // of [FacultyTreeRootCampus].
+                if (scrub.getParentNode() == null && !(scrub instanceof FacultyTreeRootCampus)) {
+                    System.out.println(encounteredNodes);
+                    throw new RuntimeException(String.format("[%s]s with a %s parent must be"
+                            + " instances of [%s], but this was not true for the node %s",
+                            FacultyTreeNode.class,
+                            null,
+                            FacultyTreeRootCampus.class,
+                            nodeUnderTest.getAbbreviation()
+                    ));
+                }
+            }
+            scrub = scrub.getParentNode();
+        } while(scrub != null); // unnecessary check.
     }
 
 

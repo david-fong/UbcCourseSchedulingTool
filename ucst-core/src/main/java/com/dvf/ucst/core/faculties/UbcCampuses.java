@@ -67,6 +67,11 @@ public enum UbcCampuses implements FacultyTreeRootCampus {
     }
 
     @Override
+    public UbcCampuses getRootCampus() {
+        return this;
+    }
+
+    @Override
     public String getRegistrationSiteUrl(){
         return RegistrationSubjAreaQuery.getCampusUrl(this);
     }

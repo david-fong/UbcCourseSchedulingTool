@@ -19,6 +19,8 @@ public enum VancouverFaculties implements FacultyTreeNode {
     SCIE (FACULTY, "Science", ScieFaculties.class),
     // ...
     ;
+    private static UbcCampuses PARENT = UbcCampuses.VANCOUVER;
+
     private final FacultyTreeNodeType facultyType;
     private final String nonAbbreviatedName;
     private final Class<? extends FacultyTreeNode> childrenClass;
@@ -52,7 +54,7 @@ public enum VancouverFaculties implements FacultyTreeNode {
 
     @Override
     public UbcCampuses getParentNode() {
-        return UbcCampuses.VANCOUVER;
+        return PARENT;
     }
 
     @Override
