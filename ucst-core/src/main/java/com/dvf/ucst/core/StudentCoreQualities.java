@@ -3,7 +3,7 @@ package com.dvf.ucst.core;
 import com.dvf.ucst.core.courseutils.CourseUtils.YearOfStudy;
 import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
 import com.dvf.ucst.core.programs.ProgramOfStudy;
-import com.dvf.ucst.core.programs.specializations.ProgramSpecialization;
+import com.dvf.ucst.core.programs.ProgramSpecialization;
 
 /**
  * Bundles together the four core qualities of a student:

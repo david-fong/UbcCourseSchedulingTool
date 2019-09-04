@@ -1,9 +1,10 @@
 package com.dvf.ucst.core.programs;
 
+import com.dvf.ucst.core.faculties.FacultyTreeNode;
 import com.dvf.ucst.core.faculties.FacultyTreeRootCampus;
-import com.dvf.ucst.core.programs.specializations.ProgramSpecialization;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -20,7 +21,7 @@ public interface ProgramOfStudy {
 
     FacultyTreeRootCampus getCampusContext();
 
-    List<ProgramSpecialization> getSpecializations(); // must be unmodifiable list.
+    Map<FacultyTreeNode, Set<ProgramSpecialization>> getSpecializations(); // must be unmodifiable map.
 
 
 
