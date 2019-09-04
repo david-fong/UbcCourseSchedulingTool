@@ -157,6 +157,11 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
         //  also, reqs will need to be able to refer to common reqs like the engineering "impact of tech
         //  on society" candidates, and the arts elective candidates. How to decide where to put and how
         //  to refer to them in a way that specifies that?
+        /*
+        TODO [spec]: make specialization information on course requirements go under a different file
+         hierarchy to follow their object representation:
+         campus >> programs >> specializations >> subject >> files named after specialization UID.
+         */
         ;
         private final Path subDirectory;
 

@@ -1,7 +1,7 @@
 package com.dvf.ucst.core.programs.vancouver;
 
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
-import com.dvf.ucst.core.faculties.vancouver.AppliedScienceFaculties;
+import com.dvf.ucst.core.faculties.vancouver.BascFaculties;
 import com.dvf.ucst.core.programs.ProgramOfStudy;
 import com.dvf.ucst.core.programs.ProgramSpecialization;
 
@@ -34,7 +34,7 @@ final class BascSpecializations {
 
     private enum CpenSpecializations implements BascProgramSpecialization {
         ;
-        private static final FacultyTreeNode SUBJECT = AppliedScienceFaculties.CPEN;
+        private static final FacultyTreeNode SUBJECT = BascFaculties.CPEN;
 
         @Override
         public FacultyTreeNode getSubject() {
@@ -44,7 +44,7 @@ final class BascSpecializations {
 
     private enum ElecSpecializations implements BascProgramSpecialization {
         ;
-        private static final FacultyTreeNode SUBJECT = AppliedScienceFaculties.ELEC;
+        private static final FacultyTreeNode SUBJECT = BascFaculties.ELEC;
 
         @Override
         public FacultyTreeNode getSubject() {

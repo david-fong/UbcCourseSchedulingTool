@@ -14,9 +14,9 @@ import static com.dvf.ucst.core.faculties.FacultyTreeNode.FacultyTreeNodeType.FA
  */
 public enum VancouverFaculties implements FacultyTreeNode {
     // TODO [data]: add entries as needed. prefer alphabetical order.
-    APSC (FACULTY, "Applied Science", AppliedScienceFaculties.class),
+    APSC (FACULTY, "Applied Science", BascFaculties.class),
     // ...
-    SCIE (FACULTY, "Science", ScienceFaculties.class),
+    SCIE (FACULTY, "Science", ScieFaculties.class),
     // ...
     ;
     private final FacultyTreeNodeType facultyType;

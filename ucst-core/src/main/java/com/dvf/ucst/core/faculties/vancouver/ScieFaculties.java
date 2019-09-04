@@ -3,13 +3,12 @@ package com.dvf.ucst.core.faculties.vancouver;
 import com.dvf.ucst.core.courseutils.Course;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.dvf.ucst.core.faculties.FacultyTreeNode.FacultyTreeNodeType.DEPARTMENT;
 
-public enum ScienceFaculties implements FacultyTreeNode {
+public enum ScieFaculties implements FacultyTreeNode {
     // TODO [data]: add entries as needed. prefer alphabetical order.
     // ...
     CPSC (DEPARTMENT, "Computer Science"),
@@ -24,7 +23,7 @@ public enum ScienceFaculties implements FacultyTreeNode {
     private final Class<? extends FacultyTreeNode> childrenClass;
     private final Map<String, Course> courseCodeMap;
 
-    <T extends Enum<?> & FacultyTreeNode> ScienceFaculties(
+    <T extends Enum<?> & FacultyTreeNode> ScieFaculties(
             final FacultyTreeNodeType facultyType,
             final String nonAbbreviatedName,
             final Class<T> childrenClass
@@ -36,7 +35,7 @@ public enum ScienceFaculties implements FacultyTreeNode {
     }
 
     // constructor for faculties without children faculties.
-    ScienceFaculties(final FacultyTreeNodeType facultyType, final String nonAbbreviatedName) {
+    ScieFaculties(final FacultyTreeNodeType facultyType, final String nonAbbreviatedName) {
         this(facultyType, nonAbbreviatedName, null);
     }
 
