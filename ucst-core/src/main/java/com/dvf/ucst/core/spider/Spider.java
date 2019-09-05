@@ -32,9 +32,9 @@ public final class Spider {
         switch (absolutePathToCampuses) {
             case PRE_DEPLOYMENT:
                 try {
-                    for (FacultyTreeNode.SubDirectories subDir : FacultyTreeNode.SubDirectories.values()) {
+                    for (FacultyTreeNode.FacultyCourseSubDir subDir : FacultyTreeNode.FacultyCourseSubDir.values()) {
                         final Path createdDir = Files.createDirectories(absolutePathToCampuses.path.resolve(
-                                faculty.getRootAnchoredPathToInfo(subDir)
+                                faculty.getCampusAnchoredPathTo(subDir)
                         ));
                     }
                 } catch (IOException e) {
@@ -44,20 +44,20 @@ public final class Spider {
 
             case POST_DEPLOYMENT:
                 // Check that path to data exists:
-                for (FacultyTreeNode.SubDirectories subDir : FacultyTreeNode.SubDirectories.values()) {
+                for (FacultyTreeNode.FacultyCourseSubDir subDir : FacultyTreeNode.FacultyCourseSubDir.values()) {
                     if (!Files.isDirectory(absolutePathToCampuses.path.resolve(
-                            faculty.getRootAnchoredPathToInfo(subDir)
+                            faculty.getCampusAnchoredPathTo(subDir)
                     ))) {
                         throw new RuntimeException(String.format("%s \"%s\" under the campus \"%s\""
                                 + " is missing the subdirectory \"%s\".",
                                 FacultyTreeNode.class.getName(), faculty.getNameWithTitle(),
-                                faculty.getRootCampus().getNameWithTitle(), subDir.getSubDirectory()
+                                faculty.getRootCampus().getNameWithTitle(), subDir.getPathToken()
                         ));
                     }
                 }
                 // Init keys of [getCodeStringToCourseMap] with names of files under the faculty folder:
                 final Path courseXmlPath = StagedDataPath.POST_DEPLOYMENT.path.resolve(
-                        faculty.getRootAnchoredPathToInfo(FacultyTreeNode.SubDirectories.COURSE_XML_DATA)
+                        faculty.getCampusAnchoredPathTo(FacultyTreeNode.FacultyCourseSubDir.COURSE_XML_DATA)
                 );
                 try (final DirectoryStream<Path> fileStream = Files.newDirectoryStream(courseXmlPath, XML_FILE_FILTER)) {
                     fileStream.forEach(file -> {

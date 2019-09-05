@@ -35,7 +35,7 @@ public final class CoreMain {
         }
         System.out.println(CourseDataLocator.StagedDataPath.PRE_DEPLOYMENT.path);
         System.out.println(CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path);
-        System.out.println(FacultyTreeNode.getSubTreeString(UbcCampuses.VANCOUVER));
+        System.out.println(UbcCampuses.VANCOUVER.getSubTreeString());
     }
 
 }

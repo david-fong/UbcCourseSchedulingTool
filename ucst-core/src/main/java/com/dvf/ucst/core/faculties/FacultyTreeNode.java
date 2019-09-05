@@ -63,10 +63,10 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
      * @param subDir The class of information being looked for. Must not be [null].
      * @return The path to the contained data specified by [subDir].
      */
-    default Path getRootAnchoredPathToInfo(SubDirectories subDir) {
-        return getParentNode().getRootAnchoredPathToInfo(SubDirectories.CHILD_FACULTY_NODES)
-                .resolve(getAbbreviation().toLowerCase())
-                .resolve(subDir.subDirectory);
+    default Path getCampusAnchoredPathTo(final FacultyCourseSubDir subDir) {
+        return getParentNode().getCampusAnchoredPathTo(FacultyCourseSubDir.CHILD_FACULTY_NODES)
+                .resolve(getAbbreviation())
+                .resolve(subDir.getPathToken());
     }
 
     @Override
@@ -92,7 +92,7 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
             return course;
         } else {
             final Path coursePath = CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path.resolve(
-                    getRootAnchoredPathToInfo(SubDirectories.COURSE_XML_DATA)
+                    getCampusAnchoredPathTo(FacultyCourseSubDir.COURSE_XML_DATA)
             ).resolve(codeString + XmlIoUtils.XML_EXTENSION_STRING);
             try {
                 course = new Course(XmlIoUtils.readXmlFromFile(coursePath).getDocumentElement());
@@ -114,18 +114,18 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
      */
     Map<String, Course> getCourseIdTokenToCourseMap();
 
-    static String getSubTreeString(final FacultyTreeNode scrub) {
+    default String getSubTreeString() {
         final StringJoiner treeStringJoiner = new StringJoiner("\n");
-        getSubTreeString(scrub, 0, treeStringJoiner);
+        getSubTreeString(0, treeStringJoiner);
         return treeStringJoiner.toString();
     }
-    static void getSubTreeString(final FacultyTreeNode scrub, final int scrubTabLevel, final StringJoiner stringJoiner) {
+    private void getSubTreeString(final int scrubTabLevel, final StringJoiner stringJoiner) {
         stringJoiner.add(
                 new String(new char[scrubTabLevel]).replace("\0", "   ") // <- String repetition
-                        + "- " + scrub.getAbbreviation()
+                        + "- " + getAbbreviation()
         );
-        for (final FacultyTreeNode child : scrub.getChildren()) {
-            getSubTreeString(child, scrubTabLevel + 1, stringJoiner);
+        for (final FacultyTreeNode child : getChildren()) {
+            child.getSubTreeString(scrubTabLevel + 1, stringJoiner);
         }
     }
 
@@ -193,30 +193,20 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
     /**
      * Course data saved locally is organized into the following subdirectories:
      */
-    enum SubDirectories {
+    enum FacultyCourseSubDir {
         THIS (""),
         CHILD_FACULTY_NODES ("childnodes"),
         COURSE_XML_DATA ("coursedata"),
         STANDARD_TIMETABLES ("stts"), // an xml file for each year of study.
-        PROGRAM_SPECS ("programspecs"), // a file for each year of study. include elective reqs.
-        // TODO[spec]: ^design how reqs that need to finished before a certain year are represented.
-        //  also, reqs will need to be able to refer to common reqs like the engineering "impact of tech
-        //  on society" candidates, and the arts elective candidates. How to decide where to put and how
-        //  to refer to them in a way that specifies that?
-        /*
-        TODO [spec]: make specialization information on course requirements go under a different file
-         hierarchy to follow their object representation:
-         campus >> programs >> specializations >> subject >> files named after specialization UID.
-         */
         ;
-        private final Path subDirectory;
+        private final Path pathToken;
 
-        SubDirectories(final String subDirectory) {
-            this.subDirectory = Paths.get(subDirectory);
+        FacultyCourseSubDir(final String pathTokenString) {
+            this.pathToken = Paths.get(pathTokenString);
         }
 
-        public Path getSubDirectory() {
-            return subDirectory;
+        public Path getPathToken() {
+            return pathToken;
         }
     }
 
