@@ -1,6 +1,6 @@
 package com.dvf.ucst.core.schedule;
 
-import com.dvf.ucst.core.courseutils.Course;
+import com.dvf.ucst.core.courseutils.AbstractCourseSection.SecXml;
 import com.dvf.ucst.core.courseutils.Course.CourseSection;
 import com.dvf.ucst.core.courseutils.CourseSectionBlock;
 import com.dvf.ucst.utils.calendar.GoogleCalCsvColumns;
@@ -219,9 +219,9 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     ) {
         final Element sectionListElement = elementSupplier.apply(listName);
         for (final CourseSection sectionObject : sectionObjects) {
-            final Element sectionElement = elementSupplier.apply(Course.SecXml.COURSE_SECTION_TAG);
+            final Element sectionElement = elementSupplier.apply(SecXml.COURSE_SECTION_TAG);
             sectionElement.setAttribute(
-                    Course.SecXml.LECTURE_COMPLIMENTARY_SECTION_REF_ATTR.getXmlConstantValue(),
+                    SecXml.LECTURE_COMPLIMENTARY_SECTION_REF_ATTR.getXmlConstantValue(),
                     sectionObject.toString()
             ); // ^See [Schedule]'s xml constructor and [CourseSectionRef.extractAndParseAll]
             sectionListElement.appendChild(sectionElement);
