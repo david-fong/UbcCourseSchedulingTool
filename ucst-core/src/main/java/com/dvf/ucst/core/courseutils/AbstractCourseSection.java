@@ -35,6 +35,7 @@ public abstract class AbstractCourseSection implements
     private final Set<CourseSectionBlock> blocks;
 
     AbstractCourseSection(final Element sectionElement) throws MalformedXmlDataException {
+        assert sectionElement.getTagName().equals(SecXml.COURSE_SECTION_TAG.getXmlConstantValue());
         this.sectionIdToken = XmlUtils.getMandatoryAttr(
                 sectionElement, SecXml.SECTION_CODE_ATTR
         ).getValue();

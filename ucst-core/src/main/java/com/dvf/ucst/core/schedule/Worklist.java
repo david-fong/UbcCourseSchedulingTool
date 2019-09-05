@@ -64,6 +64,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     // Reconstruct from saved user-data:
     Worklist(final Element worklistElement) throws MalformedXmlDataException {
         super(worklistElement);
+        assert worklistElement.getTagName().equals(Xml.WORKLIST_TAG.getXmlConstantValue());
         final String name = XmlUtils.getMandatoryAttr(worklistElement, Xml.WORKLIST_NAME_ATTR).getValue();
         if (!PERMITTED_NAME_TESTER.test(name)) {
             throw new MalformedXmlDataException(new MalformedWorklistNameArgumentException());
@@ -274,7 +275,7 @@ public final class Worklist extends ScheduleBuild implements XmlUtils.UserDataXm
     }
 
     public enum Xml implements XmlUtils.XmlConstant {
-        WORKLIST_TAG("Worklist"), // for user data. do not use for data from UBC's registration site.
+        WORKLIST_TAG ("Worklist"), // for user data. do not use for data from UBC's registration site.
         WORKLIST_NAME_ATTR ("worklistName"),
         WORKLIST_IS_LOCKED_ATTR ("locked"), // parsing: true if attribute exists and false otherwise.
         WORKLIST_FAVORABILITY_ATTR ("favorability"), // parsing: see [WorklistFavorability.decodeXmlAttr]

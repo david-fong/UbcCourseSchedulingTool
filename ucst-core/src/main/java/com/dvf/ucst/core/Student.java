@@ -41,6 +41,7 @@ public final class Student implements XmlUtils.UserDataXml {
 
     // read cached student data.
     public Student(final Element studentElement) throws MalformedXmlDataException {
+        assert studentElement.getTagName().equals(Xml.STUDENT_TAG.getXmlConstantValue());
         this.firstName = XmlUtils.getMandatoryAttr(studentElement, Xml.FIRST_NAME_ATTR).getValue();
         this.lastName = XmlUtils.getMandatoryAttr(studentElement, Xml.LAST_NAME_ATTR).getValue();
         this.coreQualities = new StudentCoreQualities(XmlUtils.getMandatoryUniqueChildByTag(

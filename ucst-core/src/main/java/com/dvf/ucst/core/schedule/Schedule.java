@@ -16,12 +16,20 @@ import java.util.Set;
 public final class Schedule implements ScheduleIf<CourseSectionRef> {
 
     static final String STT_NAME_FOR_SCHEDULE_WITHOUT_AN_STT = "N/A";
+    private static final Set<String> VALID_ELEMENT_TAGS;
+    static {
+        VALID_ELEMENT_TAGS = Set.of(
+                Xml.SCHEDULE_TAG.getXmlConstantValue(),
+                Worklist.Xml.WORKLIST_TAG.getXmlConstantValue()
+        );
+    }
 
     private final Set<CourseSectionRef> courseSections; // unmodifiable.
     private final String sttName;
     private final Set<CourseSectionRef> sttSections; // unmodifiable.
 
     public Schedule(final Element scheduleElement) throws MalformedXmlDataException {
+        assert VALID_ELEMENT_TAGS.contains(scheduleElement.getTagName());
         final Element manualSectionListElement
                 = XmlUtils.getOptionalUniqueChildByTag(
                         scheduleElement, Xml.MANUAL_SECTION_LIST_TAG

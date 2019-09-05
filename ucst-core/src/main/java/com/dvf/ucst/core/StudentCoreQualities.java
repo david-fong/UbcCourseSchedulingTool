@@ -33,6 +33,7 @@ public final class StudentCoreQualities implements XmlUtils.UserDataXml {
 
     // xml constructor:
     StudentCoreQualities(final Element qualitiesElement) throws MalformedXmlDataException {
+        assert qualitiesElement.getTagName().equals(Xml.CORE_QUALITIES_TAG.getXmlConstantValue());
         this.yearOfStudy = YearOfStudy.decodeXmlAttr(XmlUtils.getMandatoryAttr(
                 qualitiesElement, Xml.YEAR_OF_STUDY_ATTR
         ));

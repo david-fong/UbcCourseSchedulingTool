@@ -25,6 +25,7 @@ public final class Professor {
     private final String lastName;
 
     Professor(final Element profElement) throws MalformedXmlDataException {
+        assert profElement.getTagName().equals(Xml.PROFESSOR_TAG.getXmlConstantValue());
         this.firstName = XmlUtils.getMandatoryAttr(profElement, Xml.FIRST_NAME_ATTR).getValue();
         this.lastName  = XmlUtils.getMandatoryAttr(profElement, Xml.LAST_NAME_ATTR).getValue();
 

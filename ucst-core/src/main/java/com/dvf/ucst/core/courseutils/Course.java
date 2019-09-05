@@ -44,6 +44,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     private final Set<CourseSection> tutorialSections;
 
     public Course(final Element courseElement) throws MalformedXmlDataException {
+        assert courseElement.getTagName().equals(Xml.COURSE_TAG.getXmlConstantValue());
         try { // get faculty node:
             this.facultyTreeNode = UbcCampuses.getCampusByIdToken(
                     XmlUtils.getMandatoryAttr(courseElement, Xml.COURSE_CAMPUS_ATTR).getValue()
@@ -273,7 +274,7 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         private final Set<CourseSection> requiredTutorialOptions;
         private final Set<Set<CourseSection>> pickyBuildFriends; // unmodifiable;
 
-        CourseLectureSection(final Element lectureElement) throws MalformedXmlDataException {
+        private CourseLectureSection(final Element lectureElement) throws MalformedXmlDataException {
             super(lectureElement);
 
             this.requiredLabOptions = getComplimentarySectionOptionsFromElement(
