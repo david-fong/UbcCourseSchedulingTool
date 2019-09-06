@@ -3,7 +3,6 @@ package com.dvf.ucst.core.faculties;
 import com.dvf.ucst.core.courseutils.Course;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 
@@ -16,8 +15,6 @@ import java.util.Map;
  * - https://courses.students.ubc.ca/cs/courseschedule?pname=subjarea&tname=subj-all-departments
  */
 public interface FacultyTreeRootCampus extends FacultyTreeNode {
-
-    Map<String, Course> EMPTY_COURSE_CODE_MAP = Collections.emptyMap();
 
     @Override
     default String getNameWithTitle() {
@@ -44,11 +41,6 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
     }
 
     @Override
-    default Path getCampusAnchoredPathTo(final FacultyCourseSubDir subDir) { // TODO: delete this method.
-        return Paths.get(getAbbreviation()).resolve(subDir.getPathToken());
-    }
-
-    @Override
     String getRegistrationSiteUrl();
 
     @Override
@@ -68,7 +60,7 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
      */
     @Override
     default Map<String, Course> getCourseIdTokenToCourseMap() {
-        return EMPTY_COURSE_CODE_MAP;
+        return Collections.emptyMap();
     }
 
 }

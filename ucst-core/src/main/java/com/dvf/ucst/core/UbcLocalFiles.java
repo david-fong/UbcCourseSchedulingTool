@@ -32,6 +32,23 @@ public interface UbcLocalFiles {
         public Path getRootDir() {
             return rootDir;
         }
+
+
+
+        public enum CourseSubDirs {
+            SUB_FACULTIES ("subfaculties"),
+            COURSE_XML ("coursedefs");
+
+            private final String subDirName;
+
+            CourseSubDirs(final String subDirName) {
+                this.subDirName = subDirName;
+            }
+
+            public String getSubDirName() {
+                return subDirName;
+            }
+        }
     }
 
 }

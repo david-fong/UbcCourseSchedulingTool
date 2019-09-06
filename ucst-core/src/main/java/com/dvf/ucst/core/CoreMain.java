@@ -3,8 +3,10 @@ package com.dvf.ucst.core;
 import com.dvf.ucst.core.coursedata.CourseDataLocator;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
 import com.dvf.ucst.core.faculties.UbcCampuses;
+import com.dvf.ucst.core.faculties.vancouver.VancouverFaculties;
 
 import java.nio.file.Files;
+import java.util.Arrays;
 
 /**
  * Fetches [Course] data from UBC's registration sites for [FacultyTreeNode]s
@@ -35,6 +37,9 @@ public final class CoreMain {
         }
         System.out.println(CourseDataLocator.StagedDataPath.PRE_DEPLOYMENT.path);
         System.out.println(CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path);
+
+        // for some reason, the tree doesn't statically load until I do something like the below line.
+        System.out.println(VancouverFaculties.APSC);
         System.out.println(UbcCampuses.VANCOUVER.getSubTreeString());
     }
 

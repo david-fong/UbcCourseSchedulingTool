@@ -2,6 +2,7 @@ package com.dvf.ucst.core.faculties;
 
 import com.dvf.ucst.core.HyperlinkBookIf;
 import com.dvf.ucst.core.UbcLocalFiles;
+import com.dvf.ucst.core.UbcLocalFiles.UbcLocalDataCategory.CourseSubDirs;
 import com.dvf.ucst.core.coursedata.CourseDataLocator;
 import com.dvf.ucst.core.courseutils.Course;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
@@ -9,12 +10,15 @@ import com.dvf.ucst.utils.xml.XmlIoUtils;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * A property of a [Course].
@@ -59,17 +63,6 @@ public interface FacultyTreeNode extends HyperlinkBookIf, UbcLocalFiles {
      */
     FacultyTreeNode[] getChildren();
 
-    /**
-     * implementation note: [FacultyTreeRootCampus]s must break the upward recursion.
-     * @param subDir The class of information being looked for. Must not be [null].
-     * @return The path to the contained data specified by [subDir].
-     */
-    default Path getCampusAnchoredPathTo(final FacultyCourseSubDir subDir) {
-        return getParentNode().getCampusAnchoredPathTo(FacultyCourseSubDir.CHILD_FACULTY_NODES)
-                .resolve(getAbbreviation())
-                .resolve(subDir.getPathToken());
-    }
-
     @Override
     default String getRegistrationSiteUrl() {
         return RegistrationSubjAreaQuery.getFacultyUrl(this);
@@ -78,7 +71,7 @@ public interface FacultyTreeNode extends HyperlinkBookIf, UbcLocalFiles {
     @Override
     default Path getLocalDataPath() {
         return getParentNode().getLocalDataPath()
-                .resolve("children") // TODO: turn string literal into a constant string.
+                .resolve(CourseSubDirs.SUB_FACULTIES.getSubDirName())
                 .resolve(getAbbreviation());
     }
 
@@ -127,18 +120,57 @@ public interface FacultyTreeNode extends HyperlinkBookIf, UbcLocalFiles {
      */
     Map<String, Course> getCourseIdTokenToCourseMap();
 
+    /**
+     * Not for public use. To be called after all enum constructors. Populates map
+     * with keys of file names without their xml file extensions, mapping them to
+     * [null].
+     * TODO: make a call for this somewhere through all campuses and forEachChild.
+     */
+    default void initCourseIdTokenToCourseMap() {
+        final Path anchoringDirectory = Paths.get(""); // TODO: what will the anchoring directory be?
+        for (final CourseSubDirs courseSubDirs : CourseSubDirs.values()) {
+            try {
+                Files.createDirectories(anchoringDirectory
+                        .resolve(getLocalDataPath())
+                        .resolve(courseSubDirs.getSubDirName())
+                );
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     default String getSubTreeString() {
         final StringJoiner treeStringJoiner = new StringJoiner("\n");
-        getSubTreeString(0, treeStringJoiner);
+        //getSubTreeString(0, treeStringJoiner);
+        forEachChild((treeNode, depth) -> {
+            treeStringJoiner.add(
+                    new String(new char[depth]).replace("\0", "   ") // <- String repetition
+                            + "- " + treeNode.getAbbreviation() + ": " + treeNode.getLocalDataPath()
+            );
+        });
         return treeStringJoiner.toString();
     }
-    private void getSubTreeString(final int scrubTabLevel, final StringJoiner stringJoiner) {
-        stringJoiner.add(
-                new String(new char[scrubTabLevel]).replace("\0", "   ") // <- String repetition
-                        + "- " + getAbbreviation()
-        );
-        for (final FacultyTreeNode child : getChildren()) {
-            child.getSubTreeString(scrubTabLevel + 1, stringJoiner);
+
+    /**
+     * The utmost care should be taken not to accidentally use instance methods when
+     * methods applied through the first argument of [action] are meant to be used.
+     *
+     * @param action A [BiConsumer] of a [FacultyTreeNode] and a depth starting from
+     *     zero that should be applied for each child recursively in a depth-first
+     *     manner, with [this] [FacultyTreeNode] treated as the root.
+     */
+    default void forEachChild(final BiConsumer<FacultyTreeNode, Integer> action) {
+        forEachChild(this, action, 0);
+    }
+    private static void forEachChild(
+            final FacultyTreeNode scrub,
+            final BiConsumer<FacultyTreeNode, Integer> action,
+            final int depth
+    ) {
+        for (final FacultyTreeNode childNode : scrub.getChildren()) {
+            action.accept(childNode, depth + 1);
+            forEachChild(childNode, action, depth + 1);
         }
     }
 
@@ -200,25 +232,6 @@ public interface FacultyTreeNode extends HyperlinkBookIf, UbcLocalFiles {
 
         FacultyTreeNodeType(String title) {
             this.title = title;
-        }
-    }
-
-    /**
-     * Course data saved locally is organized into the following subdirectories:
-     */
-    enum FacultyCourseSubDir {
-        THIS (""),
-        CHILD_FACULTY_NODES ("childnodes"),
-        COURSE_XML_DATA ("coursedata"),
-        ;
-        private final Path pathToken;
-
-        FacultyCourseSubDir(final String pathTokenString) {
-            this.pathToken = Paths.get(pathTokenString);
-        }
-
-        public Path getPathToken() {
-            return pathToken;
         }
     }
 
