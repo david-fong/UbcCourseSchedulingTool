@@ -17,6 +17,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -29,10 +31,15 @@ import java.nio.file.Path;
 public final class XmlIoUtils {
 
     public static final String XML_EXTENSION_STRING = ".xml";
+    public static final DirectoryStream.Filter<Path> XML_FILE_FILTER;
+
     private static final DocumentBuilder DOC_BUILDER;
     private static final Transformer PLAIN_TRANSFORMER;
     private static final Transformer PRETTY_TRANSFORMER;
     static {
+        XML_FILE_FILTER = (entry) -> Files.isRegularFile(entry)
+                && entry.getFileName().toString().toLowerCase()
+                .endsWith(XML_EXTENSION_STRING.toLowerCase());
         try {
             DOC_BUILDER = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         } catch (ParserConfigurationException e) {
@@ -46,8 +53,28 @@ public final class XmlIoUtils {
             PRETTY_TRANSFORMER = transformerFactory.newTransformer();
             PRETTY_TRANSFORMER.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             PRETTY_TRANSFORMER.setOutputProperty(OutputKeys.INDENT, "yes");
-        } catch (TransformerConfigurationException e) {
+        } catch (final TransformerConfigurationException e) {
             throw new RuntimeException("Could not create a Transformer", e);
+        }
+    }
+
+    /**
+     * @param file A [Path] that is probably a regular file and may have a trailing
+     *     xml file extension. Must not be null.
+     * @return The filename of [file] without the xml file extension, if the extension
+     *     was found. This operation is not case sensitive to the file extension. If
+     *     [file] does not exist or is not a regular file, returns [null].
+     */
+    public static String getFileNameWithoutXmlExtension(final Path file) {
+        final String filename = file.getFileName().toString();
+        if (!Files.isRegularFile(file)) {
+            return null;
+        } else {
+            if (filename.toLowerCase().endsWith(XML_EXTENSION_STRING.toLowerCase())) {
+                return filename.substring(0, filename.length() - XML_EXTENSION_STRING.length());
+            } else {
+                return filename;
+            }
         }
     }
 

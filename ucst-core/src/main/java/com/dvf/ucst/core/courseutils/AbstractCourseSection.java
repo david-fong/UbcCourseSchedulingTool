@@ -26,7 +26,8 @@ import java.util.function.Function;
  */
 public abstract class AbstractCourseSection implements
         HyperlinkBookIf,
-        SectionIdString {
+        SectionIdString
+{
 
     private final String sectionIdToken;
     private final CourseUtils.Semester semester;

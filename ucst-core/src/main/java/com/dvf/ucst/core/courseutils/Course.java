@@ -2,11 +2,12 @@ package com.dvf.ucst.core.courseutils;
 
 import com.dvf.ucst.core.HyperlinkBookIf;
 import com.dvf.ucst.core.SectionIdString;
+import com.dvf.ucst.core.Student.CompletedCourse;
 import com.dvf.ucst.core.StudentCoreQualities;
+import com.dvf.ucst.core.UbcLocalFiles;
 import com.dvf.ucst.core.faculties.CampusNotFoundException;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
 import com.dvf.ucst.core.faculties.UbcCampuses;
-import com.dvf.ucst.core.schedule.Schedule;
 import com.dvf.ucst.core.spider.CourseWip;
 import com.dvf.ucst.core.spider.CourseWip.CourseSectionWip;
 import com.dvf.ucst.utils.general.WorkInProgress.IncompleteWipException;
@@ -15,16 +16,18 @@ import com.dvf.ucst.utils.requirement.Requirement;
 import com.dvf.ucst.utils.requirement.matching.CreditValued;
 import com.dvf.ucst.utils.requirement.matching.MatchingRequirementIf;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
+import com.dvf.ucst.utils.xml.XmlIoUtils;
 import com.dvf.ucst.utils.xml.XmlUtils;
 import org.w3c.dom.Element;
 
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
 
 /**
  *
  */
-public final class Course implements CreditValued, HyperlinkBookIf, SectionIdString {
+public final class Course implements CreditValued, HyperlinkBookIf, SectionIdString, UbcLocalFiles {
 
     private static final String LAB_SECTION_ID_TOKEN_PREFIX = "L";
     private static final String TUTORIAL_SECTION_ID_TOKEN_PREFIX = "T";
@@ -35,9 +38,9 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     private final String descriptionString;
 
     // reqs are non-null:
-    private final Requirement<StudentCoreQualities> studentReqs; // TODO: go look at real requirement examples and see what attributes they include.
-    private final MatchingRequirementIf<Schedule> prerequisites;
-    private final MatchingRequirementIf<Schedule> corequisites;
+    private final Requirement<StudentCoreQualities> studentReqs;
+    private final MatchingRequirementIf<Set<CompletedCourse>> prerequisites;
+    private final MatchingRequirementIf<Set<CompletedCourse>> corequisites;
 
     private final Set<CourseLectureSection> lectureSections;
     private final Set<CourseSection> labSections;
@@ -130,15 +133,25 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
         return RegistrationSubjAreaQuery.getCourseUrl(this);
     }
 
+    @Override
+    public Path getLocalDataPath() {
+        return getLocalDataPath(getFacultyTreeNode(), getCourseIdToken());
+    }
+    public static Path getLocalDataPath(final FacultyTreeNode facultyNode, final String courseIdToken) {
+        return facultyNode.getLocalDataPath()
+                .resolve("courses") // TODO: replace string literal with a constant string
+                .resolve(courseIdToken + XmlIoUtils.XML_EXTENSION_STRING);
+    }
+
     public final Requirement<StudentCoreQualities> getStudentReqs() {
         return studentReqs;
     }
 
-    public final MatchingRequirementIf<Schedule> getPrerequisites() {
+    public final MatchingRequirementIf<Set<CompletedCourse>> getPrerequisites() {
         return prerequisites;
     }
 
-    public final MatchingRequirementIf<Schedule> getCorequisites() {
+    public final MatchingRequirementIf<Set<CompletedCourse>> getCorequisites() {
         return corequisites;
     }
 

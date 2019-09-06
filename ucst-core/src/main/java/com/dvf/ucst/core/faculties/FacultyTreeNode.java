@@ -1,6 +1,8 @@
 package com.dvf.ucst.core.faculties;
 
 import com.dvf.ucst.core.HyperlinkBookIf;
+import com.dvf.ucst.core.UbcLocalFiles;
+import com.dvf.ucst.core.UbcLocalFiles.UbcLocalDataCategory.CourseSubDirs;
 import com.dvf.ucst.core.coursedata.CourseDataLocator;
 import com.dvf.ucst.core.courseutils.Course;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
@@ -8,18 +10,21 @@ import com.dvf.ucst.utils.xml.XmlIoUtils;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * A property of a [Course].
  * All implementations should call [verifyProperTree(this)] at the end of their constructors.
  */
-public interface FacultyTreeNode extends HyperlinkBookIf {
+public interface FacultyTreeNode extends HyperlinkBookIf, UbcLocalFiles {
 
     String getNameNoTitle();
 
@@ -58,50 +63,49 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
      */
     FacultyTreeNode[] getChildren();
 
-    /**
-     * implementation note: [FacultyTreeRootCampus]s must break the upward recursion.
-     * @param subDir The class of information being looked for. Must not be [null].
-     * @return The path to the contained data specified by [subDir].
-     */
-    default Path getCampusAnchoredPathTo(final FacultyCourseSubDir subDir) {
-        return getParentNode().getCampusAnchoredPathTo(FacultyCourseSubDir.CHILD_FACULTY_NODES)
-                .resolve(getAbbreviation())
-                .resolve(subDir.getPathToken());
-    }
-
     @Override
     default String getRegistrationSiteUrl() {
         return RegistrationSubjAreaQuery.getFacultyUrl(this);
     }
 
+    @Override
+    default Path getLocalDataPath() {
+        return getParentNode().getLocalDataPath()
+                .resolve(CourseSubDirs.SUB_FACULTIES.getSubDirName())
+                .resolve(getAbbreviation());
+    }
+
     /**
      *
-     * @param codeString must not be null. Ex "101". This operation will only succeed if
-     * @return The course registered by the code [codeString].
-     * @throws FacultyCourseNotFoundException If a file could not be located under
+     * @param courseIdToken Must not be null. Ex "101". This operation will only
+     *     succeed if a course by this id token exists.
+     * @return The course registered by the code [courseIdToken].
+     * @throws FacultyCourseNotFoundException if a file could not be located under
      *     [this][FacultyTreeNode] following the path spec during lazy initialization
-     *     of the [Course] registered by the code [codeString].
+     *     of the [Course] registered by the code [courseIdToken].
      */
-    default Course getCourseByCodeString(final String codeString) throws FacultyCourseNotFoundException {
-        if (!getCourseIdTokenToCourseMap().containsKey(codeString)) {
+    default Course getCourseByCodeString(final String courseIdToken) throws FacultyCourseNotFoundException {
+        if (!getCourseIdTokenToCourseMap().containsKey(courseIdToken)) {
             final String message = "code string not registered in faculty tree node";
             throw new FacultyCourseNotFoundException(message, this);
         }
-        Course course = getCourseIdTokenToCourseMap().get(codeString);
+        Course course = getCourseIdTokenToCourseMap().get(courseIdToken);
         if (course != null) {
+            // the course has already been loaded from its xml file.
             return course;
         } else {
-            final Path coursePath = CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path.resolve(
-                    getCampusAnchoredPathTo(FacultyCourseSubDir.COURSE_XML_DATA)
-            ).resolve(codeString + XmlIoUtils.XML_EXTENSION_STRING);
+            // the course has not yet been loaded from its xml file.
+            final Path coursePath = CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path
+                    .resolve(Course.getLocalDataPath(this, courseIdToken));
             try {
+                // try to reconstruct the course from xml:
                 course = new Course(XmlIoUtils.readXmlFromFile(coursePath).getDocumentElement());
             } catch (SAXException | IOException e) {
                 throw new RuntimeException("could not get xml from file", e);
             } catch (MalformedXmlDataException e) {
                 throw new RuntimeException("malformed xml course data", e);
             }
-            getCourseIdTokenToCourseMap().put(codeString, course);
+            getCourseIdTokenToCourseMap().put(courseIdToken, course);
             return course;
         }
     }
@@ -110,22 +114,63 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
      * @return A map from course code strings to [Course]s. Must not be [null].
      *     All existing [Course]s under the implementing [FacultyTreeNode]
      *     must have their code string as a key after an implementation's
-     *     construction. Keys in the returned set must never change.
+     *     construction. Keys in the returned set must never change. Do not use
+     *     this method to get a [Course], since that course may not have been
+     *     loaded from its xml file yet. Instead, use [::getCourseByCodeString].
      */
     Map<String, Course> getCourseIdTokenToCourseMap();
 
+    /**
+     * Not for public use. To be called after all enum constructors. Populates map
+     * with keys of file names without their xml file extensions, mapping them to
+     * [null].
+     * TODO: make a call for this somewhere through all campuses and forEachChild.
+     */
+    default void initCourseIdTokenToCourseMap() {
+        final Path anchoringDirectory = Paths.get(""); // TODO: what will the anchoring directory be?
+        for (final CourseSubDirs courseSubDirs : CourseSubDirs.values()) {
+            try {
+                Files.createDirectories(anchoringDirectory
+                        .resolve(getLocalDataPath())
+                        .resolve(courseSubDirs.getSubDirName())
+                );
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     default String getSubTreeString() {
         final StringJoiner treeStringJoiner = new StringJoiner("\n");
-        getSubTreeString(0, treeStringJoiner);
+        //getSubTreeString(0, treeStringJoiner);
+        forEachChild((treeNode, depth) -> {
+            treeStringJoiner.add(
+                    new String(new char[depth]).replace("\0", "   ") // <- String repetition
+                            + "- " + treeNode.getAbbreviation() + ": " + treeNode.getLocalDataPath()
+            );
+        });
         return treeStringJoiner.toString();
     }
-    private void getSubTreeString(final int scrubTabLevel, final StringJoiner stringJoiner) {
-        stringJoiner.add(
-                new String(new char[scrubTabLevel]).replace("\0", "   ") // <- String repetition
-                        + "- " + getAbbreviation()
-        );
-        for (final FacultyTreeNode child : getChildren()) {
-            child.getSubTreeString(scrubTabLevel + 1, stringJoiner);
+
+    /**
+     * The utmost care should be taken not to accidentally use instance methods when
+     * methods applied through the first argument of [action] are meant to be used.
+     *
+     * @param action A [BiConsumer] of a [FacultyTreeNode] and a depth starting from
+     *     zero that should be applied for each child recursively in a depth-first
+     *     manner, with [this] [FacultyTreeNode] treated as the root.
+     */
+    default void forEachChild(final BiConsumer<FacultyTreeNode, Integer> action) {
+        forEachChild(this, action, 0);
+    }
+    private static void forEachChild(
+            final FacultyTreeNode scrub,
+            final BiConsumer<FacultyTreeNode, Integer> action,
+            final int depth
+    ) {
+        for (final FacultyTreeNode childNode : scrub.getChildren()) {
+            action.accept(childNode, depth + 1);
+            forEachChild(childNode, action, depth + 1);
         }
     }
 
@@ -187,26 +232,6 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
 
         FacultyTreeNodeType(String title) {
             this.title = title;
-        }
-    }
-
-    /**
-     * Course data saved locally is organized into the following subdirectories:
-     */
-    enum FacultyCourseSubDir {
-        THIS (""),
-        CHILD_FACULTY_NODES ("childnodes"),
-        COURSE_XML_DATA ("coursedata"),
-        STANDARD_TIMETABLES ("stts"), // an xml file for each year of study.
-        ;
-        private final Path pathToken;
-
-        FacultyCourseSubDir(final String pathTokenString) {
-            this.pathToken = Paths.get(pathTokenString);
-        }
-
-        public Path getPathToken() {
-            return pathToken;
         }
     }
 
