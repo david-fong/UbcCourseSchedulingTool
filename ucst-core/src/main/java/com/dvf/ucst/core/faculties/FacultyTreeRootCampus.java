@@ -44,12 +44,18 @@ public interface FacultyTreeRootCampus extends FacultyTreeNode {
     }
 
     @Override
-    default Path getCampusAnchoredPathTo(final FacultyCourseSubDir subDir) {
+    default Path getCampusAnchoredPathTo(final FacultyCourseSubDir subDir) { // TODO: delete this method.
         return Paths.get(getAbbreviation()).resolve(subDir.getPathToken());
     }
 
     @Override
     String getRegistrationSiteUrl();
+
+    @Override
+    default Path getLocalDataPath() {
+        return UbcLocalDataCategory.COURSES.getRootDir()
+                .resolve(getAbbreviation());
+    }
 
     /**
      * @return An unmodifiable [Map] from faculty names under [this] campus to the

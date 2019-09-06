@@ -1,6 +1,7 @@
 package com.dvf.ucst.core.faculties;
 
 import com.dvf.ucst.core.HyperlinkBookIf;
+import com.dvf.ucst.core.UbcLocalFiles;
 import com.dvf.ucst.core.coursedata.CourseDataLocator;
 import com.dvf.ucst.core.courseutils.Course;
 import com.dvf.ucst.utils.xml.MalformedXmlDataException;
@@ -19,7 +20,7 @@ import java.util.StringJoiner;
  * A property of a [Course].
  * All implementations should call [verifyProperTree(this)] at the end of their constructors.
  */
-public interface FacultyTreeNode extends HyperlinkBookIf {
+public interface FacultyTreeNode extends HyperlinkBookIf, UbcLocalFiles {
 
     String getNameNoTitle();
 
@@ -74,34 +75,44 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
         return RegistrationSubjAreaQuery.getFacultyUrl(this);
     }
 
+    @Override
+    default Path getLocalDataPath() {
+        return getParentNode().getLocalDataPath()
+                .resolve("children") // TODO: turn string literal into a constant string.
+                .resolve(getAbbreviation());
+    }
+
     /**
      *
-     * @param codeString must not be null. Ex "101". This operation will only succeed if
-     * @return The course registered by the code [codeString].
-     * @throws FacultyCourseNotFoundException If a file could not be located under
+     * @param courseIdToken Must not be null. Ex "101". This operation will only
+     *     succeed if a course by this id token exists.
+     * @return The course registered by the code [courseIdToken].
+     * @throws FacultyCourseNotFoundException if a file could not be located under
      *     [this][FacultyTreeNode] following the path spec during lazy initialization
-     *     of the [Course] registered by the code [codeString].
+     *     of the [Course] registered by the code [courseIdToken].
      */
-    default Course getCourseByCodeString(final String codeString) throws FacultyCourseNotFoundException {
-        if (!getCourseIdTokenToCourseMap().containsKey(codeString)) {
+    default Course getCourseByCodeString(final String courseIdToken) throws FacultyCourseNotFoundException {
+        if (!getCourseIdTokenToCourseMap().containsKey(courseIdToken)) {
             final String message = "code string not registered in faculty tree node";
             throw new FacultyCourseNotFoundException(message, this);
         }
-        Course course = getCourseIdTokenToCourseMap().get(codeString);
+        Course course = getCourseIdTokenToCourseMap().get(courseIdToken);
         if (course != null) {
+            // the course has already been loaded from its xml file.
             return course;
         } else {
-            final Path coursePath = CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path.resolve(
-                    getCampusAnchoredPathTo(FacultyCourseSubDir.COURSE_XML_DATA)
-            ).resolve(codeString + XmlIoUtils.XML_EXTENSION_STRING);
+            // the course has not yet been loaded from its xml file.
+            final Path coursePath = CourseDataLocator.StagedDataPath.POST_DEPLOYMENT.path
+                    .resolve(Course.getLocalDataPath(this, courseIdToken));
             try {
+                // try to reconstruct the course from xml:
                 course = new Course(XmlIoUtils.readXmlFromFile(coursePath).getDocumentElement());
             } catch (SAXException | IOException e) {
                 throw new RuntimeException("could not get xml from file", e);
             } catch (MalformedXmlDataException e) {
                 throw new RuntimeException("malformed xml course data", e);
             }
-            getCourseIdTokenToCourseMap().put(codeString, course);
+            getCourseIdTokenToCourseMap().put(courseIdToken, course);
             return course;
         }
     }
@@ -110,7 +121,9 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
      * @return A map from course code strings to [Course]s. Must not be [null].
      *     All existing [Course]s under the implementing [FacultyTreeNode]
      *     must have their code string as a key after an implementation's
-     *     construction. Keys in the returned set must never change.
+     *     construction. Keys in the returned set must never change. Do not use
+     *     this method to get a [Course], since that course may not have been
+     *     loaded from its xml file yet. Instead, use [::getCourseByCodeString].
      */
     Map<String, Course> getCourseIdTokenToCourseMap();
 
@@ -197,7 +210,6 @@ public interface FacultyTreeNode extends HyperlinkBookIf {
         THIS (""),
         CHILD_FACULTY_NODES ("childnodes"),
         COURSE_XML_DATA ("coursedata"),
-        STANDARD_TIMETABLES ("stts"), // an xml file for each year of study.
         ;
         private final Path pathToken;
 

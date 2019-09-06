@@ -28,7 +28,10 @@ public final class Spider {
      * @param absolutePathToCampuses Specifies pre/post-deployment path to campuses
      *     directory.
      */
-    public final void fetchDataFromWebAndCache(FacultyTreeNode faculty, StagedDataPath absolutePathToCampuses) {
+    public final void fetchDataFromWebAndCache(
+            final FacultyTreeNode faculty,
+            final StagedDataPath absolutePathToCampuses
+    ) {
         switch (absolutePathToCampuses) {
             case PRE_DEPLOYMENT:
                 try {
@@ -44,36 +47,30 @@ public final class Spider {
 
             case POST_DEPLOYMENT:
                 // Check that path to data exists:
-                for (FacultyTreeNode.FacultyCourseSubDir subDir : FacultyTreeNode.FacultyCourseSubDir.values()) {
-                    if (!Files.isDirectory(absolutePathToCampuses.path.resolve(
-                            faculty.getCampusAnchoredPathTo(subDir)
-                    ))) {
+                for (final FacultyTreeNode.FacultyCourseSubDir subDir : FacultyTreeNode.FacultyCourseSubDir.values()) {
+                    if (!Files.isDirectory(absolutePathToCampuses.path
+                            .resolve(faculty.getCampusAnchoredPathTo(subDir))
+                    )) {
                         throw new RuntimeException(String.format("%s \"%s\" under the campus \"%s\""
                                 + " is missing the subdirectory \"%s\".",
-                                FacultyTreeNode.class.getName(), faculty.getNameWithTitle(),
+                                FacultyTreeNode.class, faculty.getNameWithTitle(),
                                 faculty.getRootCampus().getNameWithTitle(), subDir.getPathToken()
                         ));
                     }
                 }
                 // Init keys of [getCodeStringToCourseMap] with names of files under the faculty folder:
-                final Path courseXmlPath = StagedDataPath.POST_DEPLOYMENT.path.resolve(
-                        faculty.getCampusAnchoredPathTo(FacultyTreeNode.FacultyCourseSubDir.COURSE_XML_DATA)
-                );
-                try (final DirectoryStream<Path> fileStream = Files.newDirectoryStream(courseXmlPath, XML_FILE_FILTER)) {
-                    fileStream.forEach(file -> {
-                        String fileName = file.getFileName().toString();
-                        fileName = fileName.substring(0, fileName.length() - XmlIoUtils.XML_EXTENSION_STRING.length());
-                        faculty.getCourseIdTokenToCourseMap().putIfAbsent(fileName, null);
-                    });
+                final Path courseXmlPath = StagedDataPath.POST_DEPLOYMENT.path
+                        .resolve(faculty.getCampusAnchoredPathTo(FacultyTreeNode.FacultyCourseSubDir.COURSE_XML_DATA));
+                try (final DirectoryStream<Path> fileStream = Files.newDirectoryStream(courseXmlPath, XmlIoUtils.XML_FILE_FILTER)) {
+                    fileStream.forEach(file -> faculty.getCourseIdTokenToCourseMap().putIfAbsent(
+                            XmlIoUtils.getFileNameWithoutXmlExtension(file),
+                            null
+                    ));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
         }
     }
-
-    private static final DirectoryStream.Filter<Path> XML_FILE_FILTER = entry ->
-            Files.isDirectory(entry) && entry.getFileName()
-                    .toString().endsWith(XmlIoUtils.XML_EXTENSION_STRING);
 
 }
