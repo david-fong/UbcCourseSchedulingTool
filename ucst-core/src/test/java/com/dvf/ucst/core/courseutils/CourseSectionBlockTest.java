@@ -228,7 +228,7 @@ class CourseSectionBlockTest {
 
 
     /**
-     * Tests for the private class [BlockTimeEnclosure]
+     * Tests for the private class [BlockTimeEnclosure].
      */
     @Nested
     final class BlockTimeEnclosureTest {

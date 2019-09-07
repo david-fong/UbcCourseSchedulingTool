@@ -173,7 +173,7 @@ public final class CourseWip implements WorkInProgress<CourseWip> {
             return this;
         }
 
-        public CourseSectionWip setWaitlist(Boolean waitlist) {
+        CourseSectionWip setWaitlist(Boolean waitlist) {
             isWaitlist = waitlist;
             return this;
         }
