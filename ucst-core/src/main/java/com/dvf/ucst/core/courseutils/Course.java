@@ -5,6 +5,7 @@ import com.dvf.ucst.core.SectionIdString;
 import com.dvf.ucst.core.Student.CompletedCourse;
 import com.dvf.ucst.core.StudentCoreQualities;
 import com.dvf.ucst.core.UbcLocalFiles;
+import com.dvf.ucst.core.courseutils.categorymatchers.CourseCategory;
 import com.dvf.ucst.core.faculties.CampusNotFoundException;
 import com.dvf.ucst.core.faculties.FacultyTreeNode;
 import com.dvf.ucst.core.faculties.UbcCampuses;
@@ -36,6 +37,8 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
     private final String courseIdToken;
     private final int creditValue;
     private final String descriptionString;
+    private final Set<CourseCategory> categories =
+            Collections.unmodifiableSet(EnumSet.noneOf(CourseCategory.class)); // unmodifiable. // TODO
 
     // reqs are non-null:
     private final Requirement<StudentCoreQualities> studentReqs;
@@ -109,6 +112,10 @@ public final class Course implements CreditValued, HyperlinkBookIf, SectionIdStr
 
     public final String getCourseDescription() {
         return descriptionString;
+    }
+
+    public Set<CourseCategory> getCategories() {
+        return categories;
     }
 
     @Override
